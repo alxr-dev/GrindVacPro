@@ -5,7 +5,6 @@ from __future__ import annotations
 import json
 from typing import Any
 
-from arq import create_pool
 from arq.connections import RedisSettings
 from openai import AsyncOpenAI
 from sqlalchemy import select, update
@@ -79,7 +78,7 @@ async def analyze_vacancy(ctx: dict[str, Any], vacancy_id: int) -> None:
     # ── Parse JSON response ───────────────────────────────────────
     try:
         analysis: dict[str, Any] = json.loads(raw_content)
-        score = int(analysis["score"])
+        score = max(0, min(100, int(analysis["score"])))
         pros = list(analysis["pros"])
         cons = list(analysis["cons"])
         cover_letter = str(analysis["cover_letter"])

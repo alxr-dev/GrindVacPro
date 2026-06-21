@@ -74,11 +74,17 @@ def _max_similarity(chunks: list[str]) -> tuple[float, np.ndarray | None]:
         return 0.0, None
 
     chunk_vectors = _encode_chunks(chunks)
-    # Cosine similarity = 1 - cosine distance via normalized dot product
+    # Cosine similarity via normalized dot product
     norms = np.linalg.norm(chunk_vectors, axis=1, keepdims=True)
     norms = np.where(norms == 0, 1, norms)  # avoid division by zero
     normalized = chunk_vectors / norms
-    resume_norm = _resume_vector / np.linalg.norm(_resume_vector)
+
+    resume_norm_val: float = float(np.linalg.norm(_resume_vector))
+    if resume_norm_val == 0:
+        # Empty resume vector — cannot compute similarity; reject all
+        return 0.0, None
+
+    resume_norm = _resume_vector / resume_norm_val
     similarities: np.ndarray = np.dot(normalized, resume_norm)
 
     max_idx = int(np.argmax(similarities))
@@ -215,12 +221,14 @@ async def on_startup(ctx: dict[str, Any]) -> None:
     _markitdown = MarkItDown()
 
     if settings.target_resume:
-        logger.info("Encoding target resume…")
+        logger.info("Encoding target resume")
         _resume_vector = _model.encode([settings.target_resume])[0]
         logger.info("Resume vector ready (dim=%d)", len(_resume_vector))
     else:
-        logger.warning("TARGET_RESUME is empty — all vacancies will pass the filter")
-        _resume_vector = np.zeros(EMBEDDING_DIM, dtype=np.float32)
+        raise ValueError(
+            "TARGET_RESUME is empty — transformer cannot function without a resume. "
+            "Set TARGET_RESUME in your .env file."
+        )
 
 
 async def on_shutdown(ctx: dict[str, Any]) -> None:

@@ -5,12 +5,6 @@ from __future__ import annotations
 from pydantic import BaseModel
 
 
-class ScrapeTaskDTO(BaseModel):
-    """Payload enqueued by the scraper to trigger HTML download + parsing."""
-
-    vacancy_link_id: int
-
-
 class TransformTaskDTO(BaseModel):
     """Payload enqueued by the scraper pipeline to trigger CPU-bound transform."""
 

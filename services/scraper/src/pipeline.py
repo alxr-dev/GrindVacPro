@@ -3,94 +3,31 @@
 import asyncio
 import json
 import random
-from pathlib import Path
 from typing import Any
 from urllib.parse import urlparse
 
 from arq import create_pool
 from arq.connections import RedisSettings
 from curl_cffi.requests import AsyncSession
-from sqlalchemy import insert, select, update
-from sqlalchemy.orm import selectinload
+from sqlalchemy import select, update
 
 from shared.src.config import settings
 from shared.src.database import get_session_maker
 from shared.src.models import Vacancy, VacancyLink
+from shared.src.selectors import load_selectors, resolve_domain, resolve_platform_slug
 from shared.src.utils.logger import get_logger
 
 logger = get_logger("scraper.pipeline")
 
-_SELECTORS_PATH = Path("/app/selectors.json")
+_SELECTORS_PATH = "/app/selectors.json"
 _BATCH_SIZE = 50
 _MAX_RETRIES = 3
 
-# Platform slug mapping
-_PLATFORM_SLUGS: dict[str, str] = {
-    "hh.ru": "hh",
-    "career.habr.com": "habr",
-}
 
-
-async def _enqueue_transform(vacancy_id: int) -> None:
+async def _enqueue_transform(pool, vacancy_id: int) -> None:
     """Enqueue a *transform_vacancy* task into the arq ``html_queue``."""
-    pool = await create_pool(RedisSettings.from_dsn(settings.redis_url))
-    try:
-        await pool.enqueue_job("transform_vacancy", vacancy_id=vacancy_id)
-        logger.info("Enqueued transform_vacancy for vacancy #%d", vacancy_id)
-    finally:
-        await pool.close()
-
-
-def _load_selectors() -> dict:
-    """Load CSS selectors configuration from JSON file."""
-    if not _SELECTORS_PATH.exists():
-        raise FileNotFoundError(f"Selectors file not found: {_SELECTORS_PATH}")
-    with _SELECTORS_PATH.open("r", encoding="utf-8") as fh:
-        return json.load(fh)
-
-
-def _resolve_domain(url: str, selectors: dict) -> str:
-    """Match URL domain to a key in selectors.json.
-
-    Raises ``ValueError`` when no match is found.
-    """
-    hostname = urlparse(url).netloc.lower().lstrip("www.")
-    for domain in selectors:
-        if domain in hostname:
-            return domain
-    raise ValueError(f"Unsupported domain for URL: {url}")
-
-
-def _resolve_platform_slug(domain: str) -> str:
-    """Map a full domain to its canonical slug."""
-    for key, slug in _PLATFORM_SLUGS.items():
-        if key in domain:
-            return slug
-    raise ValueError(f"No platform slug for domain: {domain}")
-
-
-async def _fetch_html(session: AsyncSession, url: str) -> str | None:
-    """Download a page with rate limiting and retries. Returns HTML text or None."""
-    last_exc: Exception | None = None
-    for attempt in range(1, _MAX_RETRIES + 1):
-        await asyncio.sleep(random.uniform(1.0, 1.5))
-        try:
-            response = await session.get(url, impersonate="chrome", timeout=30)
-            response.raise_for_status()
-            return response.text
-        except Exception as exc:
-            last_exc = exc
-            logger.warning(
-                "Attempt %d/%d failed for %s: %s",
-                attempt, _MAX_RETRIES, url, exc,
-            )
-            if attempt < _MAX_RETRIES:
-                # Exponential backoff with jitter
-                backoff = (2 ** attempt) + random.uniform(0.0, 1.0)
-                await asyncio.sleep(backoff)
-
-    logger.error("All %d attempts failed for %s: %s", _MAX_RETRIES, url, last_exc)
-    return None
+    await pool.enqueue_job("transform_vacancy", vacancy_id=vacancy_id)
+    logger.info("Enqueued transform_vacancy for vacancy #%d", vacancy_id)
 
 
 def _parse_vacancy(html: str, url: str, selectors: dict) -> dict | None:
@@ -98,7 +35,7 @@ def _parse_vacancy(html: str, url: str, selectors: dict) -> dict | None:
     from bs4 import BeautifulSoup
 
     try:
-        domain = _resolve_domain(url, selectors)
+        domain = resolve_domain(url, selectors)
     except ValueError as exc:
         logger.warning("%s — skipping", exc)
         return None
@@ -131,7 +68,7 @@ def _parse_vacancy(html: str, url: str, selectors: dict) -> dict | None:
         )
         return None
 
-    platform = _resolve_platform_slug(domain)
+    platform = resolve_platform_slug(domain, selectors)
     return {
         "platform": platform,
         "title": title,
@@ -140,10 +77,34 @@ def _parse_vacancy(html: str, url: str, selectors: dict) -> dict | None:
     }
 
 
+async def _fetch_html(session: AsyncSession, url: str) -> str | None:
+    """Download a page with rate limiting and retries. Returns HTML text or None."""
+    last_exc: Exception | None = None
+    for attempt in range(1, _MAX_RETRIES + 1):
+        await asyncio.sleep(random.uniform(1.0, 1.5))
+        try:
+            response = await session.get(url, impersonate="chrome", timeout=30)
+            response.raise_for_status()
+            return response.text
+        except Exception as exc:
+            last_exc = exc
+            logger.warning(
+                "Attempt %d/%d failed for %s: %s",
+                attempt, _MAX_RETRIES, url, exc,
+            )
+            if attempt < _MAX_RETRIES:
+                # Exponential backoff with jitter
+                backoff = (2 ** attempt) + random.uniform(0.0, 1.0)
+                await asyncio.sleep(backoff)
+
+    logger.error("All %d attempts failed for %s: %s", _MAX_RETRIES, url, last_exc)
+    return None
+
+
 async def _mark_link_status(
     session, link_id: int, status: str, reason: str | None = None
 ) -> None:
-    """Update the status of a vacancy link, optionally storing a failure reason."""
+    """Update the status of a vacancy link."""
     values: dict[str, Any] = {"status": status}
     await session.execute(
         update(VacancyLink).where(VacancyLink.id == link_id).values(**values)
@@ -155,6 +116,7 @@ async def _process_batch(
     http: AsyncSession,
     links: list[VacancyLink],
     selectors: dict,
+    arq_pool,
 ) -> int:
     """Download, parse, and save a batch of vacancies. Returns count of saved."""
     maker = get_session_maker()
@@ -196,7 +158,7 @@ async def _process_batch(
 
         # Enqueue to arq html_queue for transformer
         try:
-            await _enqueue_transform(vacancy.id)
+            await _enqueue_transform(arq_pool, vacancy.id)
         except Exception as exc:
             logger.error("Failed to enqueue vacancy #%d: %s", vacancy.id, exc)
             async with maker() as session:
@@ -211,22 +173,26 @@ async def _process_batch(
 
 async def run_pipeline() -> None:
     """Fetch 'new' links, download HTML, parse, save vacancies, enqueue to arq."""
-    selectors = _load_selectors()
+    selectors = load_selectors()
     maker = get_session_maker()
 
-    async with AsyncSession() as http:
-        while True:
-            async with maker() as session:
-                result = await session.execute(
-                    select(VacancyLink)
-                    .where(VacancyLink.status == "new")
-                    .limit(_BATCH_SIZE)
-                )
-                links = result.scalars().all()
+    arq_pool = await create_pool(RedisSettings.from_dsn(settings.redis_url))
+    try:
+        async with AsyncSession() as http:
+            while True:
+                async with maker() as session:
+                    result = await session.execute(
+                        select(VacancyLink)
+                        .where(VacancyLink.status == "new")
+                        .limit(_BATCH_SIZE)
+                    )
+                    links = result.scalars().all()
 
-            if not links:
-                logger.info("No more 'new' links to process")
-                break
+                if not links:
+                    logger.info("No more 'new' links to process")
+                    break
 
-            count = await _process_batch(http, links, selectors)
-            logger.info("Batch processed: %d/%d saved", count, len(links))
+                count = await _process_batch(http, links, selectors, arq_pool)
+                logger.info("Batch processed: %d/%d saved", count, len(links))
+    finally:
+        await arq_pool.close()

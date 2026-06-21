@@ -2,15 +2,15 @@ services:
 
   # ── PostgreSQL 18 + pgvector ──────────────────────────────────────
   postgres:
-    image: pgvector/pgvector:pg18
+    image: pgvector/pgvector:0.8.2-pg18
     container_name: grindvac-postgres
     restart: unless-stopped
     ports:
-      - "5432:5432"
+      - "127.0.0.1:5432:5432"
     environment:
       POSTGRES_DB: ${POSTGRES_DB:-grindvac}
       POSTGRES_USER: ${POSTGRES_USER:-grindvac}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-grindvac_secret}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ./infra/postgres/init.sql:/docker-entrypoint-initdb.d/01-init.sql:ro
@@ -26,11 +26,16 @@ services:
     container_name: grindvac-redis
     restart: unless-stopped
     ports:
-      - "6379:6379"
+      - "127.0.0.1:6379:6379"
+    command: >
+      redis-server
+      --requirepass ${REDIS_PASSWORD}
+      --appendonly yes
+      --save 60 1
     volumes:
       - redis_data:/data
     healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
+      test: ["CMD", "redis-cli", "-a", "${REDIS_PASSWORD}", "ping"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -47,11 +52,10 @@ services:
       redis:
         condition: service_healthy
     environment:
-      DATABASE_URL: ${DATABASE_URL:-postgresql+asyncpg://grindvac:grindvac_secret@postgres:5432/grindvac}
-      REDIS_URL: ${REDIS_URL:-redis://redis:6379}
+      DATABASE_URL: ${DATABASE_URL}
+      REDIS_URL: ${REDIS_URL}
     volumes:
       - ./services/scraper/selectors.json:/app/selectors.json:ro
-      - shared_code:/app/shared:ro
     command: ["python", "-m", "src.main"]
 
   # ── Transformer — фильтрация и эмбеддинги (CPU-bound) ──────────
@@ -66,11 +70,9 @@ services:
       redis:
         condition: service_healthy
     environment:
-      DATABASE_URL: ${DATABASE_URL:-postgresql+asyncpg://grindvac:grindvac_secret@postgres:5432/grindvac}
-      REDIS_URL: ${REDIS_URL:-redis://redis:6379}
-      TARGET_RESUME: ${TARGET_RESUME:-}
-    volumes:
-      - shared_code:/app/shared:ro
+      DATABASE_URL: ${DATABASE_URL}
+      REDIS_URL: ${REDIS_URL}
+      TARGET_RESUME: ${TARGET_RESUME}
     deploy:
       resources:
         limits:
@@ -89,21 +91,13 @@ services:
       redis:
         condition: service_healthy
     environment:
-      DATABASE_URL: ${DATABASE_URL:-postgresql+asyncpg://grindvac:grindvac_secret@postgres:5432/grindvac}
-      REDIS_URL: ${REDIS_URL:-redis://redis:6379}
-      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      DATABASE_URL: ${DATABASE_URL}
+      REDIS_URL: ${REDIS_URL}
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
       OPENAI_BASE_URL: ${OPENAI_BASE_URL:-https://api.openai.com/v1}
       OPENAI_MODEL_NAME: ${OPENAI_MODEL_NAME:-gpt-4o-mini}
-      TARGET_RESUME: ${TARGET_RESUME:-}
-    volumes:
-      - shared_code:/app/shared:ro
+      TARGET_RESUME: ${TARGET_RESUME}
 
 volumes:
   postgres_data:
   redis_data:
-  shared_code:
-    driver: local
-    driver_opts:
-      type: none
-      o: bind
-      device: ./shared

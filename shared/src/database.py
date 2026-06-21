@@ -1,7 +1,5 @@
 """GrindVacPro — Async database engine and session factory (SQLAlchemy 2.0)."""
 
-from collections.abc import AsyncIterator
-
 from sqlalchemy.ext.asyncio import (
     AsyncEngine,
     AsyncSession,
@@ -40,10 +38,3 @@ def get_session_maker() -> async_sessionmaker[AsyncSession]:
             expire_on_commit=False,
         )
     return _async_session_maker
-
-
-async def get_session() -> AsyncIterator[AsyncSession]:
-    """FastAPI-style dependency: yield a transactional session."""
-    maker = get_session_maker()
-    async with maker() as session:
-        yield session
