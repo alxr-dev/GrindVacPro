@@ -9,7 +9,11 @@ from sqlalchemy import insert
 
 from shared.src.database import get_session_maker
 from shared.src.models import VacancyLink
-from shared.src.selectors import load_selectors, PLATFORM_SLUGS, resolve_platform_slug
+from shared.src.selectors import (
+    load_selectors,
+    resolve_platform_slug,
+    validate_url,
+)
 from shared.src.utils.logger import get_logger
 
 logger = get_logger("scraper.search")
@@ -47,6 +51,11 @@ async def _fetch_search_page(
             if href.startswith("/"):
                 parsed = urlparse(url)
                 href = f"{parsed.scheme}://{parsed.netloc}{href}"
+            try:
+                validate_url(href, selectors)
+            except ValueError as exc:
+                logger.warning("Skipping unsafe URL: %s (%s)", href, exc)
+                continue
             urls.append(href)
 
     return urls
@@ -72,14 +81,16 @@ async def _save_links(urls: list[str], selectors: dict) -> int:
         return 0
 
     async with maker() as session:
+        # Use RETURNING + xmax trick: xmax=0 means actually inserted (not skipped by ON CONFLICT)
         stmt = (
             insert(VacancyLink)
             .values(rows)
             .on_conflict_do_nothing(index_elements=["url"])
+            .returning(VacancyLink.id)
         )
         result = await session.execute(stmt)
         await session.commit()
-        return result.rowcount or 0
+        return len(result.all())
 
 
 async def run_search() -> None:

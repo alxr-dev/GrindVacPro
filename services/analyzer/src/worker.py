@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import asyncio
 import json
 from typing import Any
 
@@ -20,6 +21,7 @@ logger = get_logger("analyzer.worker")
 
 # ── Module-level state ───────────────────────────────────────────
 _openai_client: AsyncOpenAI | None = None
+_llm_semaphore = asyncio.Semaphore(5)  # cap concurrent LLM calls
 
 
 async def analyze_vacancy(ctx: dict[str, Any], vacancy_id: int) -> None:
@@ -43,37 +45,38 @@ async def analyze_vacancy(ctx: dict[str, Any], vacancy_id: int) -> None:
             logger.warning("Vacancy #%d has no content to analyze", vacancy_id)
             return
 
-    # ── Call LLM ─────────────────────────────────────────────────
-    try:
-        response = await _openai_client.chat.completions.create(
-            model=settings.openai_model_name,
-            messages=[
-                {"role": "system", "content": SYSTEM_PROMPT},
-                {
-                    "role": "user",
-                    "content": (
-                        f"Вакансия: {vacancy.title}\n"
-                        f"Компания: {vacancy.company_name}\n"
-                        f"Описание:\n{markdown}"
-                    ),
-                },
-            ],
-            response_format={"type": "json_object"},
-            max_tokens=2048,
-        )
-        raw_content = response.choices[0].message.content
-        if raw_content is None:
-            raise ValueError("Empty response from LLM")
-    except Exception as exc:
-        logger.error("LLM call failed for vacancy #%d: %s", vacancy_id, exc)
-        async with maker() as session:
-            await session.execute(
-                update(VacancyLink)
-                .where(VacancyLink.vacancy_id == vacancy_id)
-                .values(status="failed")
+    # ── Call LLM (rate-limited via semaphore) ─────────────────────
+    async with _llm_semaphore:
+        try:
+            response = await _openai_client.chat.completions.create(
+                model=settings.openai_model_name,
+                messages=[
+                    {"role": "system", "content": SYSTEM_PROMPT},
+                    {
+                        "role": "user",
+                        "content": (
+                            f"Вакансия: {vacancy.title}\n"
+                            f"Компания: {vacancy.company_name}\n"
+                            f"Описание:\n{markdown}"
+                        ),
+                    },
+                ],
+                response_format={"type": "json_object"},
+                max_tokens=2048,
             )
-            await session.commit()
-        return
+            raw_content = response.choices[0].message.content
+            if raw_content is None:
+                raise ValueError("Empty response from LLM")
+        except Exception as exc:
+            logger.error("LLM call failed for vacancy #%d: %s", vacancy_id, exc)
+            async with maker() as session:
+                await session.execute(
+                    update(VacancyLink)
+                    .where(VacancyLink.vacancy_id == vacancy_id)
+                    .values(status="failed")
+                )
+                await session.commit()
+            return
 
     # ── Parse JSON response ───────────────────────────────────────
     try:
@@ -83,11 +86,13 @@ async def analyze_vacancy(ctx: dict[str, Any], vacancy_id: int) -> None:
         cons = list(analysis["cons"])
         cover_letter = str(analysis["cover_letter"])
     except (json.JSONDecodeError, KeyError, TypeError, ValueError) as exc:
+        # Sanitize: replace control chars to prevent log injection
+        safe_raw = raw_content[:200].replace("\n", " ").replace("\r", " ")
         logger.error(
             "Failed to parse LLM response for vacancy #%d: %s\nRaw: %s",
             vacancy_id,
             exc,
-            raw_content[:500],
+            safe_raw,
         )
         async with maker() as session:
             await session.execute(

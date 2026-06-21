@@ -1,10 +1,8 @@
 """GrindVacPro — Vacancy downloader and HTML parser pipeline."""
 
 import asyncio
-import json
 import random
 from typing import Any
-from urllib.parse import urlparse
 
 from arq import create_pool
 from arq.connections import RedisSettings
@@ -14,7 +12,12 @@ from sqlalchemy import select, update
 from shared.src.config import settings
 from shared.src.database import get_session_maker
 from shared.src.models import Vacancy, VacancyLink
-from shared.src.selectors import load_selectors, resolve_domain, resolve_platform_slug
+from shared.src.selectors import (
+    load_selectors,
+    resolve_domain,
+    resolve_platform_slug,
+    validate_url,
+)
 from shared.src.utils.logger import get_logger
 
 logger = get_logger("scraper.pipeline")
@@ -68,7 +71,7 @@ def _parse_vacancy(html: str, url: str, selectors: dict) -> dict | None:
         )
         return None
 
-    platform = resolve_platform_slug(domain, selectors)
+    platform = resolve_platform_slug(url, selectors)
     return {
         "platform": platform,
         "title": title,
@@ -77,8 +80,14 @@ def _parse_vacancy(html: str, url: str, selectors: dict) -> dict | None:
     }
 
 
-async def _fetch_html(session: AsyncSession, url: str) -> str | None:
+async def _fetch_html(session: AsyncSession, url: str, selectors: dict) -> str | None:
     """Download a page with rate limiting and retries. Returns HTML text or None."""
+    try:
+        validate_url(url, selectors)
+    except ValueError as exc:
+        logger.warning("URL validation failed: %s", exc)
+        return None
+
     last_exc: Exception | None = None
     for attempt in range(1, _MAX_RETRIES + 1):
         await asyncio.sleep(random.uniform(1.0, 1.5))
@@ -123,7 +132,7 @@ async def _process_batch(
     saved = 0
 
     for link in links:
-        html = await _fetch_html(http, link.url)
+        html = await _fetch_html(http, link.url, selectors)
         if html is None:
             async with maker() as session:
                 await _mark_link_status(session, link.id, "failed")

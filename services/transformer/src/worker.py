@@ -9,6 +9,7 @@ from arq.connections import RedisSettings
 from markitdown import MarkItDown
 from sentence_transformers import SentenceTransformer
 from sqlalchemy import select, text, update
+from sqlalchemy.exc import IntegrityError
 
 from shared.src.config import settings
 from shared.src.database import get_session_maker
@@ -94,7 +95,11 @@ def _max_similarity(chunks: list[str]) -> tuple[float, np.ndarray | None]:
 async def _enqueue_analyze(ctx: dict[str, Any], vacancy_id: int) -> None:
     """Send a task to the *ai_queue* via arq using the worker's Redis pool."""
     redis = ctx["redis"]
-    await redis.enqueue_job("analyze_vacancy", vacancy_id=vacancy_id)
+    await redis.enqueue_job(
+        "analyze_vacancy",
+        _queue_name="ai_queue",
+        vacancy_id=vacancy_id,
+    )
 
 
 async def transform_vacancy(ctx: dict[str, Any], vacancy_id: int) -> None:
@@ -197,14 +202,29 @@ async def transform_vacancy(ctx: dict[str, Any], vacancy_id: int) -> None:
         assert best_vector is not None
         embedding_list: list[float] = best_vector.tolist()
 
-        # Store embedding via raw SQL to properly handle pgvector type
-        await session.execute(
-            text(
-                "UPDATE vacancies SET embedding = :emb WHERE id = :vid"
-            ),
-            {"emb": str(embedding_list), "vid": vacancy_id},
-        )
-        await session.commit()
+        # pgvector expects format: [0.123,-0.456,...] (no spaces)
+        embedding_str = "[" + ",".join(f"{x:.6f}" for x in embedding_list) + "]"
+
+        try:
+            await session.execute(
+                text(
+                    "UPDATE vacancies SET embedding = :emb::vector(312) WHERE id = :vid"
+                ),
+                {"emb": embedding_str, "vid": vacancy_id},
+            )
+            await session.commit()
+        except IntegrityError:
+            logger.info(
+                "Duplicate content_hash on commit for vacancy #%d, rejecting", vacancy_id
+            )
+            await session.rollback()
+            await session.execute(
+                update(VacancyLink)
+                .where(VacancyLink.vacancy_id == vacancy_id)
+                .values(status="rejected")
+            )
+            await session.commit()
+            return
 
     logger.info("Vacancy #%d passed filter (sim=%.4f), enqueuing for AI", vacancy_id, max_sim)
     await _enqueue_analyze(ctx, vacancy_id)
@@ -244,6 +264,6 @@ class WorkerSettings:
     on_shutdown = on_shutdown
     max_jobs = 1  # CPU-bound: one job at a time
     max_retries = 3
-    retry_delay = 5  # seconds
+    retry_delay = 30  # seconds — CPU-bound work needs longer recovery
     redis_settings = RedisSettings.from_dsn(settings.redis_url)
     queue_name = "html_queue"
