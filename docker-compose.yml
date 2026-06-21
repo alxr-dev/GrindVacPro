@@ -1,0 +1,109 @@
+services:
+
+  # ── PostgreSQL 18 + pgvector ──────────────────────────────────────
+  postgres:
+    image: pgvector/pgvector:pg18
+    container_name: grindvac-postgres
+    restart: unless-stopped
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-grindvac}
+      POSTGRES_USER: ${POSTGRES_USER:-grindvac}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-grindvac_secret}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./infra/postgres/init.sql:/docker-entrypoint-initdb.d/01-init.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-grindvac} -d ${POSTGRES_DB:-grindvac}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ── Redis 7 (брокер для arq) ───────────────────────────────────
+  redis:
+    image: redis:7-alpine
+    container_name: grindvac-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ── Scraper — сбор данных (Network I/O-bound) ──────────────────
+  scraper:
+    build:
+      context: .
+      dockerfile: services/scraper/Dockerfile
+    container_name: grindvac-scraper
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: ${DATABASE_URL:-postgresql+asyncpg://grindvac:grindvac_secret@postgres:5432/grindvac}
+      REDIS_URL: ${REDIS_URL:-redis://redis:6379}
+    volumes:
+      - ./services/scraper/selectors.json:/app/selectors.json:ro
+      - shared_code:/app/shared:ro
+    command: ["python", "-m", "src.main"]
+
+  # ── Transformer — фильтрация и эмбеддинги (CPU-bound) ──────────
+  transformer:
+    build:
+      context: .
+      dockerfile: services/transformer/Dockerfile
+    container_name: grindvac-transformer
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: ${DATABASE_URL:-postgresql+asyncpg://grindvac:grindvac_secret@postgres:5432/grindvac}
+      REDIS_URL: ${REDIS_URL:-redis://redis:6379}
+      TARGET_RESUME: ${TARGET_RESUME:-}
+    volumes:
+      - shared_code:/app/shared:ro
+    deploy:
+      resources:
+        limits:
+          cpus: "2.0"
+          memory: 2G
+
+  # ── Analyzer — ИИ-анализ (Network I/O-bound) ───────────────────
+  analyzer:
+    build:
+      context: .
+      dockerfile: services/analyzer/Dockerfile
+    container_name: grindvac-analyzer
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: ${DATABASE_URL:-postgresql+asyncpg://grindvac:grindvac_secret@postgres:5432/grindvac}
+      REDIS_URL: ${REDIS_URL:-redis://redis:6379}
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      OPENAI_BASE_URL: ${OPENAI_BASE_URL:-https://api.openai.com/v1}
+      OPENAI_MODEL_NAME: ${OPENAI_MODEL_NAME:-gpt-4o-mini}
+      TARGET_RESUME: ${TARGET_RESUME:-}
+    volumes:
+      - shared_code:/app/shared:ro
+
+volumes:
+  postgres_data:
+  redis_data:
+  shared_code:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ./shared

@@ -1,0 +1,232 @@
+"""GrindVacPro — Vacancy downloader and HTML parser pipeline."""
+
+import asyncio
+import json
+import random
+from pathlib import Path
+from typing import Any
+from urllib.parse import urlparse
+
+from arq import create_pool
+from arq.connections import RedisSettings
+from curl_cffi.requests import AsyncSession
+from sqlalchemy import insert, select, update
+from sqlalchemy.orm import selectinload
+
+from shared.src.config import settings
+from shared.src.database import get_session_maker
+from shared.src.models import Vacancy, VacancyLink
+from shared.src.utils.logger import get_logger
+
+logger = get_logger("scraper.pipeline")
+
+_SELECTORS_PATH = Path("/app/selectors.json")
+_BATCH_SIZE = 50
+_MAX_RETRIES = 3
+
+# Platform slug mapping
+_PLATFORM_SLUGS: dict[str, str] = {
+    "hh.ru": "hh",
+    "career.habr.com": "habr",
+}
+
+
+async def _enqueue_transform(vacancy_id: int) -> None:
+    """Enqueue a *transform_vacancy* task into the arq ``html_queue``."""
+    pool = await create_pool(RedisSettings.from_dsn(settings.redis_url))
+    try:
+        await pool.enqueue_job("transform_vacancy", vacancy_id=vacancy_id)
+        logger.info("Enqueued transform_vacancy for vacancy #%d", vacancy_id)
+    finally:
+        await pool.close()
+
+
+def _load_selectors() -> dict:
+    """Load CSS selectors configuration from JSON file."""
+    if not _SELECTORS_PATH.exists():
+        raise FileNotFoundError(f"Selectors file not found: {_SELECTORS_PATH}")
+    with _SELECTORS_PATH.open("r", encoding="utf-8") as fh:
+        return json.load(fh)
+
+
+def _resolve_domain(url: str, selectors: dict) -> str:
+    """Match URL domain to a key in selectors.json.
+
+    Raises ``ValueError`` when no match is found.
+    """
+    hostname = urlparse(url).netloc.lower().lstrip("www.")
+    for domain in selectors:
+        if domain in hostname:
+            return domain
+    raise ValueError(f"Unsupported domain for URL: {url}")
+
+
+def _resolve_platform_slug(domain: str) -> str:
+    """Map a full domain to its canonical slug."""
+    for key, slug in _PLATFORM_SLUGS.items():
+        if key in domain:
+            return slug
+    raise ValueError(f"No platform slug for domain: {domain}")
+
+
+async def _fetch_html(session: AsyncSession, url: str) -> str | None:
+    """Download a page with rate limiting and retries. Returns HTML text or None."""
+    last_exc: Exception | None = None
+    for attempt in range(1, _MAX_RETRIES + 1):
+        await asyncio.sleep(random.uniform(1.0, 1.5))
+        try:
+            response = await session.get(url, impersonate="chrome", timeout=30)
+            response.raise_for_status()
+            return response.text
+        except Exception as exc:
+            last_exc = exc
+            logger.warning(
+                "Attempt %d/%d failed for %s: %s",
+                attempt, _MAX_RETRIES, url, exc,
+            )
+            if attempt < _MAX_RETRIES:
+                # Exponential backoff with jitter
+                backoff = (2 ** attempt) + random.uniform(0.0, 1.0)
+                await asyncio.sleep(backoff)
+
+    logger.error("All %d attempts failed for %s: %s", _MAX_RETRIES, url, last_exc)
+    return None
+
+
+def _parse_vacancy(html: str, url: str, selectors: dict) -> dict | None:
+    """Extract vacancy fields from HTML using platform-specific selectors."""
+    from bs4 import BeautifulSoup
+
+    try:
+        domain = _resolve_domain(url, selectors)
+    except ValueError as exc:
+        logger.warning("%s — skipping", exc)
+        return None
+
+    parser_cfg = selectors[domain]["parser"]
+    soup = BeautifulSoup(html, "lxml")
+
+    def _extract(field: str) -> str:
+        selector = parser_cfg.get(field, "")
+        if not selector:
+            return ""
+        # Support comma-separated fallback selectors
+        for sel in selector.split(","):
+            sel = sel.strip()
+            tag = soup.select_one(sel)
+            if tag:
+                return tag.get_text(strip=True) if field != "description" else str(tag)
+        return ""
+
+    title = _extract("title")
+    company_name = _extract("company_name")
+    description_html = _extract("description")
+
+    if not title or not description_html:
+        logger.warning(
+            "Incomplete parse for %s (title=%s, desc_len=%d)",
+            url,
+            bool(title),
+            len(description_html),
+        )
+        return None
+
+    platform = _resolve_platform_slug(domain)
+    return {
+        "platform": platform,
+        "title": title,
+        "company_name": company_name or "Unknown",
+        "description_html": description_html,
+    }
+
+
+async def _mark_link_status(
+    session, link_id: int, status: str, reason: str | None = None
+) -> None:
+    """Update the status of a vacancy link, optionally storing a failure reason."""
+    values: dict[str, Any] = {"status": status}
+    await session.execute(
+        update(VacancyLink).where(VacancyLink.id == link_id).values(**values)
+    )
+    await session.commit()
+
+
+async def _process_batch(
+    http: AsyncSession,
+    links: list[VacancyLink],
+    selectors: dict,
+) -> int:
+    """Download, parse, and save a batch of vacancies. Returns count of saved."""
+    maker = get_session_maker()
+    saved = 0
+
+    for link in links:
+        html = await _fetch_html(http, link.url)
+        if html is None:
+            async with maker() as session:
+                await _mark_link_status(session, link.id, "failed")
+            continue
+
+        parsed = _parse_vacancy(html, link.url, selectors)
+        if parsed is None:
+            async with maker() as session:
+                await _mark_link_status(session, link.id, "failed")
+            continue
+
+        async with maker() as session:
+            # Create vacancy record with temporary content_hash (updated by transformer)
+            temp_hash = f"pending_{link.id}"
+            vacancy = Vacancy(
+                platform=parsed["platform"],
+                title=parsed["title"],
+                company_name=parsed["company_name"],
+                description_html=parsed["description_html"],
+                content_hash=temp_hash,
+            )
+            session.add(vacancy)
+            await session.flush()
+
+            # Link the vacancy_link to the new vacancy and mark as parsed
+            await session.execute(
+                update(VacancyLink)
+                .where(VacancyLink.id == link.id)
+                .values(vacancy_id=vacancy.id, status="parsed")
+            )
+            await session.commit()
+
+        # Enqueue to arq html_queue for transformer
+        try:
+            await _enqueue_transform(vacancy.id)
+        except Exception as exc:
+            logger.error("Failed to enqueue vacancy #%d: %s", vacancy.id, exc)
+            async with maker() as session:
+                await _mark_link_status(session, link.id, "failed")
+            continue
+
+        saved += 1
+        logger.info("Saved vacancy #%d: %s", link.id, parsed["title"])
+
+    return saved
+
+
+async def run_pipeline() -> None:
+    """Fetch 'new' links, download HTML, parse, save vacancies, enqueue to arq."""
+    selectors = _load_selectors()
+    maker = get_session_maker()
+
+    async with AsyncSession() as http:
+        while True:
+            async with maker() as session:
+                result = await session.execute(
+                    select(VacancyLink)
+                    .where(VacancyLink.status == "new")
+                    .limit(_BATCH_SIZE)
+                )
+                links = result.scalars().all()
+
+            if not links:
+                logger.info("No more 'new' links to process")
+                break
+
+            count = await _process_batch(http, links, selectors)
+            logger.info("Batch processed: %d/%d saved", count, len(links))

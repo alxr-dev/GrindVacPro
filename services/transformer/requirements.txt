@@ -1,0 +1,12 @@
+# ══════════════════════════════════════════════════════════════
+# Transformer service — Specific dependencies (CPU-bound)
+# ══════════════════════════════════════════════════════════════
+
+# ── Sentence embeddings (rubert-tiny2) ──────────────────────────
+sentence-transformers==4.1.0
+
+# ── HTML → Markdown converter ───────────────────────────────────
+markitdown==0.0.2
+
+# ── Numerical computation ───────────────────────────────────────
+numpy==2.2.6
