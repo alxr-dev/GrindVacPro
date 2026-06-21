@@ -2,9 +2,10 @@
 
 from __future__ import annotations
 
+import asyncio
+import functools
 import ipaddress
 import json
-import socket
 from pathlib import Path
 from urllib.parse import urlparse
 
@@ -21,41 +22,82 @@ _ALLOWED_SCHEMES = {"https", "http"}
 
 # Private/reserved IP ranges blocked to prevent SSRF
 _PRIVATE_NETWORKS = [
+    ipaddress.ip_network("0.0.0.0/8"),
     ipaddress.ip_network("10.0.0.0/8"),
-    ipaddress.ip_network("172.16.0.0/12"),
-    ipaddress.ip_network("192.168.0.0/16"),
     ipaddress.ip_network("127.0.0.0/8"),
     ipaddress.ip_network("169.254.0.0/16"),
+    ipaddress.ip_network("172.16.0.0/12"),
+    ipaddress.ip_network("192.168.0.0/16"),
     ipaddress.ip_network("::1/128"),
     ipaddress.ip_network("fc00::/7"),
     ipaddress.ip_network("fe80::/10"),
+    ipaddress.ip_network("::ffff:0:0/96"),  # IPv4-mapped IPv6
 ]
 
+# DNS resolution timeout in seconds
+_DNS_TIMEOUT = 5
 
-def _is_private_host(hostname: str) -> bool:
-    """Return True if *hostname* resolves to a private/reserved IP address."""
+
+def _strip_www(hostname: str) -> str:
+    """Remove 'www.' prefix from hostname (character-safe)."""
+    if hostname.startswith("www."):
+        return hostname[4:]
+    return hostname
+
+
+def _is_private_ip(addr: ipaddress.IPv4Address | ipaddress.IPv6Address) -> bool:
+    """Check if an IP address is in a private/reserved range.
+
+    Handles IPv4-mapped IPv6 addresses by extracting the embedded IPv4.
+    """
+    # Handle IPv4-mapped IPv6: ::ffff:127.0.0.1 → 127.0.0.1
+    if isinstance(addr, ipaddress.IPv6Address) and addr.ipv4_mapped:
+        addr = addr.ipv4_mapped
+    return any(addr in net for net in _PRIVATE_NETWORKS)
+
+
+async def _is_private_host(hostname: str) -> bool:
+    """Return True if *hostname* resolves to a private/reserved IP address.
+
+    Uses non-blocking DNS resolution with a timeout.
+    """
+    # Fast path: literal IP address
     try:
         addr = ipaddress.ip_address(hostname)
-        return any(addr in net for net in _PRIVATE_NETWORKS)
+        return _is_private_ip(addr)
     except ValueError:
-        pass  # not a literal IP, try DNS
+        pass  # not a literal IP, need DNS
 
+    # Async DNS resolution with timeout
     try:
-        for info in socket.getaddrinfo(hostname, None):
+        loop = asyncio.get_running_loop()
+        infos = await asyncio.wait_for(
+            loop.getaddrinfo(hostname, None),
+            timeout=_DNS_TIMEOUT,
+        )
+        for info in infos:
             addr = ipaddress.ip_address(info[4][0])
-            if any(addr in net for net in _PRIVATE_NETWORKS):
+            if _is_private_ip(addr):
                 return True
-    except (socket.gaierror, OSError):
-        return True  # unresolved → block
+        return False
+    except (asyncio.TimeoutError, OSError):
+        # DNS resolution failed or timed out → block to be safe
+        return True
 
-    return False
+
+def _domain_matches(hostname: str, domain: str) -> bool:
+    """Check if *hostname* matches *domain* with proper boundary.
+
+    Prevents substring spoofing: `hh.ru.evil.com` does NOT match `hh.ru`.
+    """
+    return hostname == domain or hostname.endswith("." + domain)
 
 
-def validate_url(url: str, selectors: dict) -> None:
+async def validate_url(url: str, selectors: dict) -> None:
     """Validate that *url* is safe to fetch.
 
-    Checks scheme, hostname, and resolves the destination IP to block
-    private/reserved ranges (SSRF protection).
+    Checks scheme, hostname against allowlist, and resolves the
+    destination IP to block private/reserved ranges (SSRF protection).
 
     Raises ``ValueError`` if the URL is not allowed.
     """
@@ -68,12 +110,13 @@ def validate_url(url: str, selectors: dict) -> None:
     if not hostname:
         raise ValueError(f"Missing hostname in URL: {url}")
 
-    # Must match a known platform domain
-    hostname_lower = hostname.lower().lstrip("www.")
-    if not any(domain in hostname_lower for domain in selectors):
+    hostname_lower = _strip_www(hostname.lower())
+
+    # Must match a known platform domain (exact or suffix with dot boundary)
+    if not any(_domain_matches(hostname_lower, domain) for domain in selectors):
         raise ValueError(f"URL domain not in selectors.json: {url}")
 
-    if _is_private_host(hostname):
+    if await _is_private_host(hostname):
         raise ValueError(f"URL resolves to private/reserved IP: {url}")
 
 
@@ -114,9 +157,9 @@ def resolve_platform_slug(url: str, selectors: dict) -> str:
 
     Raises ``ValueError`` when the domain is not configured.
     """
-    hostname = urlparse(url).netloc.lower().lstrip("www.")
+    hostname = _strip_www(urlparse(url).netloc.lower())
     for domain, slug in PLATFORM_SLUGS.items():
-        if domain in hostname:
+        if _domain_matches(hostname, domain):
             if domain not in selectors:
                 raise ValueError(f"Domain '{domain}' not in selectors.json")
             return slug
@@ -128,8 +171,8 @@ def resolve_domain(url: str, selectors: dict) -> str:
 
     Raises ``ValueError`` when no match is found.
     """
-    hostname = urlparse(url).netloc.lower().lstrip("www.")
+    hostname = _strip_www(urlparse(url).netloc.lower())
     for domain in selectors:
-        if domain in hostname:
+        if _domain_matches(hostname, domain):
             return domain
     raise ValueError(f"Unsupported domain for URL: {url}")

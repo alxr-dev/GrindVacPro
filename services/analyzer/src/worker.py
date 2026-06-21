@@ -6,6 +6,8 @@ import asyncio
 import json
 from typing import Any
 
+from urllib.parse import urlparse
+
 from arq.connections import RedisSettings
 from openai import AsyncOpenAI
 from sqlalchemy import select, update
@@ -28,6 +30,14 @@ async def analyze_vacancy(ctx: dict[str, Any], vacancy_id: int) -> None:
     """Analyze a vacancy via LLM and store the structured result."""
     assert _openai_client is not None
 
+    async with _llm_semaphore:
+        await _analyze_vacancy_impl(ctx, vacancy_id)
+
+
+async def _analyze_vacancy_impl(ctx: dict[str, Any], vacancy_id: int) -> None:
+    """Implementation of vacancy analysis (runs inside semaphore)."""
+    assert _openai_client is not None
+
     maker = get_session_maker()
 
     async with maker() as session:
@@ -45,38 +55,37 @@ async def analyze_vacancy(ctx: dict[str, Any], vacancy_id: int) -> None:
             logger.warning("Vacancy #%d has no content to analyze", vacancy_id)
             return
 
-    # ── Call LLM (rate-limited via semaphore) ─────────────────────
-    async with _llm_semaphore:
-        try:
-            response = await _openai_client.chat.completions.create(
-                model=settings.openai_model_name,
-                messages=[
-                    {"role": "system", "content": SYSTEM_PROMPT},
-                    {
-                        "role": "user",
-                        "content": (
-                            f"Вакансия: {vacancy.title}\n"
-                            f"Компания: {vacancy.company_name}\n"
-                            f"Описание:\n{markdown}"
-                        ),
-                    },
-                ],
-                response_format={"type": "json_object"},
-                max_tokens=2048,
+    # ── Call LLM ─────────────────────────────────────────────────
+    try:
+        response = await _openai_client.chat.completions.create(
+            model=settings.openai_model_name,
+            messages=[
+                {"role": "system", "content": SYSTEM_PROMPT},
+                {
+                    "role": "user",
+                    "content": (
+                        f"Вакансия: {vacancy.title}\n"
+                        f"Компания: {vacancy.company_name}\n"
+                        f"Описание:\n{markdown}"
+                    ),
+                },
+            ],
+            response_format={"type": "json_object"},
+            max_tokens=2048,
+        )
+        raw_content = response.choices[0].message.content
+        if raw_content is None:
+            raise ValueError("Empty response from LLM")
+    except Exception as exc:
+        logger.error("LLM call failed for vacancy #%d: %s", vacancy_id, exc)
+        async with maker() as session:
+            await session.execute(
+                update(VacancyLink)
+                .where(VacancyLink.vacancy_id == vacancy_id)
+                .values(status="failed")
             )
-            raw_content = response.choices[0].message.content
-            if raw_content is None:
-                raise ValueError("Empty response from LLM")
-        except Exception as exc:
-            logger.error("LLM call failed for vacancy #%d: %s", vacancy_id, exc)
-            async with maker() as session:
-                await session.execute(
-                    update(VacancyLink)
-                    .where(VacancyLink.vacancy_id == vacancy_id)
-                    .values(status="failed")
-                )
-                await session.commit()
-            return
+            await session.commit()
+        return
 
     # ── Parse JSON response ───────────────────────────────────────
     try:
@@ -140,10 +149,13 @@ async def on_startup(ctx: dict[str, Any]) -> None:
         api_key=settings.openai_api_key,
         base_url=settings.openai_base_url,
     )
+    # Log only scheme+host to avoid leaking credentials from userinfo
+    parsed = urlparse(settings.openai_base_url)
+    safe_base = f"{parsed.scheme}://{parsed.hostname}" if parsed.hostname else settings.openai_base_url
     logger.info(
         "OpenAI client ready (model=%s, base_url=%s)",
         settings.openai_model_name,
-        settings.openai_base_url,
+        safe_base,
     )
 
 

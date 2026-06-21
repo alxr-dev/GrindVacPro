@@ -113,12 +113,11 @@ async def _fetch_html(session: AsyncSession, url: str, selectors: dict) -> str |
 async def _mark_link_status(
     session, link_id: int, status: str, reason: str | None = None
 ) -> None:
-    """Update the status of a vacancy link."""
+    """Update the status of a vacancy link (no commit — caller manages transaction)."""
     values: dict[str, Any] = {"status": status}
     await session.execute(
         update(VacancyLink).where(VacancyLink.id == link_id).values(**values)
     )
-    await session.commit()
 
 
 async def _process_batch(
@@ -131,20 +130,18 @@ async def _process_batch(
     maker = get_session_maker()
     saved = 0
 
-    for link in links:
-        html = await _fetch_html(http, link.url, selectors)
-        if html is None:
-            async with maker() as session:
+    async with maker() as session:
+        for link in links:
+            html = await _fetch_html(http, link.url, selectors)
+            if html is None:
                 await _mark_link_status(session, link.id, "failed")
-            continue
+                continue
 
-        parsed = _parse_vacancy(html, link.url, selectors)
-        if parsed is None:
-            async with maker() as session:
+            parsed = _parse_vacancy(html, link.url, selectors)
+            if parsed is None:
                 await _mark_link_status(session, link.id, "failed")
-            continue
+                continue
 
-        async with maker() as session:
             # Create vacancy record with temporary content_hash (updated by transformer)
             temp_hash = f"pending_{link.id}"
             vacancy = Vacancy(
@@ -163,19 +160,19 @@ async def _process_batch(
                 .where(VacancyLink.id == link.id)
                 .values(vacancy_id=vacancy.id, status="parsed")
             )
-            await session.commit()
 
-        # Enqueue to arq html_queue for transformer
-        try:
-            await _enqueue_transform(arq_pool, vacancy.id)
-        except Exception as exc:
-            logger.error("Failed to enqueue vacancy #%d: %s", vacancy.id, exc)
-            async with maker() as session:
+            # Enqueue to arq html_queue for transformer
+            try:
+                await _enqueue_transform(arq_pool, vacancy.id)
+            except Exception as exc:
+                logger.error("Failed to enqueue vacancy #%d: %s", vacancy.id, exc)
                 await _mark_link_status(session, link.id, "failed")
-            continue
+                continue
 
-        saved += 1
-        logger.info("Saved vacancy #%d: %s", link.id, parsed["title"])
+            saved += 1
+            logger.info("Saved vacancy #%d: %s", link.id, parsed["title"])
+
+        await session.commit()
 
     return saved
 

@@ -90,7 +90,7 @@ async def _save_links(urls: list[str], selectors: dict) -> int:
         )
         result = await session.execute(stmt)
         await session.commit()
-        return len(result.all())
+        return result.rowcount or 0
 
 
 async def run_search() -> None:
