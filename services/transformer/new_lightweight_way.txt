@@ -1,0 +1,34 @@
+# 1. Используем легковесный базовый образ на базе Debian с Python 3.12
+FROM python:3.12-slim as builder
+
+WORKDIR /app
+
+# 2. Устанавливаем минимальные системные зависимости для сборки wheel-пакетов
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    && rm -rf /var/lib/apt/lists/*
+
+# 3. КРИТИЧЕСКИЙ ШАГ: Установка CPU-версии PyTorch (весит в 3 раза меньше GPU-версии)
+RUN pip install --no-cache-dir torch --index-url https://download.pytorch.org/whl/cpu
+
+# 4. Установка Sentence-Transformers 5.6.0 без лишних мультимедийных пакетов
+RUN pip install --no-cache-dir sentence-transformers==5.6.0
+
+# 5. Запекаем модель cointegrated/rubert-tiny2 внутрь образа
+# Это исключит скачивание модели из интернета при старте контейнера
+ENV HF_HOME=/app/.cache/huggingface
+RUN python -c "from sentence_transformers import SentenceTransformer; SentenceTransformer('cointegrated/rubert-tiny2')"
+
+# 6. Финальный этап: собираем чистый образ без мусора от сборки
+FROM python:3.12-slim
+
+WORKDIR /app
+
+# Копируем установленные библиотеки и закэшированную модель из builder-этапа для Python 3.12
+COPY --from=builder /usr/local/lib/python3.12/site-packages /usr/local/lib/python3.12/site-packages
+COPY --from=builder /usr/local/bin /usr/local/bin
+COPY --from=builder /app/.cache /app/.cache
+
+# Указываем переменные окружения, чтобы библиотека искала модель локально
+ENV HF_HOME=/app/.cache/huggingface
+ENV HF_HUB_OFFLINE=1

@@ -18,4 +18,5 @@ RUN pip install --no-cache-dir -r /app/requirements.txt
 COPY services/analyzer/src /app/src
 
 # ── Default entrypoint ──────────────────────────────────────────
-CMD ["python", "-m", "src.worker"]
+# Default entrypoint — use arq CLI to run the worker
+CMD ["arq", "src.worker.WorkerSettings"]

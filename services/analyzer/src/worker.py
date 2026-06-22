@@ -178,3 +178,4 @@ class WorkerSettings:
     retry_delay = 10  # seconds
     redis_settings = RedisSettings.from_dsn(settings.redis_url)
     queue_name = "ai_queue"
+    burst = False  # Keep worker running, wait for jobs

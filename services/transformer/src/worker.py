@@ -267,3 +267,4 @@ class WorkerSettings:
     retry_delay = 30  # seconds — CPU-bound work needs longer recovery
     redis_settings = RedisSettings.from_dsn(settings.redis_url)
     queue_name = "html_queue"
+    burst = False  # Keep worker running, wait for jobs

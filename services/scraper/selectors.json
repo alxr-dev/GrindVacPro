@@ -1,12 +1,12 @@
 {
   "hh.ru": {
     "searcher": {
-      "vacancy_link": "a[data-qa='vacancy-serp__vacancy-title']"
+      "vacancy_link": "a[data-qa='serp-item__title']"
     },
     "parser": {
       "title": "h1[data-qa='vacancy-title']",
-      "salary": "span[data-qa='vacancy-salary']",
-      "company_name": "a[data-qa='vacancy-company-name']",
+      "salary": "div[data-qa='vacancy-salary']",
+      "company_name": "span.vacancy-company-name span",
       "description": "div[data-qa='vacancy-description']"
     }
   },

@@ -12,11 +12,11 @@ from sqlalchemy import select, update
 from shared.src.config import settings
 from shared.src.database import get_session_maker
 from shared.src.models import Vacancy, VacancyLink
+from shared.src.security import validate_url
 from shared.src.selectors import (
     load_selectors,
     resolve_domain,
     resolve_platform_slug,
-    validate_url,
 )
 from shared.src.utils.logger import get_logger
 
@@ -29,7 +29,11 @@ _MAX_RETRIES = 3
 
 async def _enqueue_transform(pool, vacancy_id: int) -> None:
     """Enqueue a *transform_vacancy* task into the arq ``html_queue``."""
-    await pool.enqueue_job("transform_vacancy", vacancy_id=vacancy_id)
+    await pool.enqueue_job(
+        "transform_vacancy",
+        _queue_name="html_queue",
+        vacancy_id=vacancy_id,
+    )
     logger.info("Enqueued transform_vacancy for vacancy #%d", vacancy_id)
 
 
@@ -83,7 +87,7 @@ def _parse_vacancy(html: str, url: str, selectors: dict) -> dict | None:
 async def _fetch_html(session: AsyncSession, url: str, selectors: dict) -> str | None:
     """Download a page with rate limiting and retries. Returns HTML text or None."""
     try:
-        validate_url(url, selectors)
+        await validate_url(url, selectors)
     except ValueError as exc:
         logger.warning("URL validation failed: %s", exc)
         return None
