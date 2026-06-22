@@ -124,7 +124,8 @@ async def transform_vacancy(ctx: dict[str, Any], vacancy_id: int) -> None:
         # ── Step 1: HTML → Markdown ──────────────────────────────
         try:
             md_result = _markitdown.convert_stream(
-                io.BytesIO(vacancy.description_html.encode("utf-8"))
+                io.BytesIO(vacancy.description_html.encode("utf-8")),
+                file_extension=".html",
             )
             markdown_text = md_result.text_content
         except Exception as exc:
@@ -206,12 +207,11 @@ async def transform_vacancy(ctx: dict[str, Any], vacancy_id: int) -> None:
 
         # pgvector expects format: [0.123,-0.456,...] (no spaces)
         embedding_str = "[" + ",".join(f"{x:.6f}" for x in embedding_list) + "]"
-        embedding_dim = _model.get_embedding_dimension()
 
         try:
             await session.execute(
                 text(
-                    f"UPDATE vacancies SET embedding = :emb::vector({embedding_dim}) WHERE id = :vid"
+                    "UPDATE vacancies SET embedding = CAST(:emb AS vector) WHERE id = :vid"
                 ),
                 {"emb": embedding_str, "vid": vacancy_id},
             )

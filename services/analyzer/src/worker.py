@@ -12,7 +12,7 @@ from arq.connections import RedisSettings
 from openai import AsyncOpenAI
 from sqlalchemy import select, update
 
-from shared.src.config import settings
+from shared.src.config import load_resume, settings
 from shared.src.database import get_session_maker
 from shared.src.models import Vacancy, VacancyLink
 from shared.src.utils.logger import get_logger
@@ -23,6 +23,7 @@ logger = get_logger("analyzer.worker")
 
 # ── Module-level state ───────────────────────────────────────────
 _openai_client: AsyncOpenAI | None = None
+_resume_text: str = ""
 _llm_semaphore = asyncio.Semaphore(5)  # cap concurrent LLM calls
 
 
@@ -64,6 +65,8 @@ async def _analyze_vacancy_impl(ctx: dict[str, Any], vacancy_id: int) -> None:
                 {
                     "role": "user",
                     "content": (
+                        f"Резюме кандидата:\n{_resume_text}\n\n"
+                        f"---\n\n"
                         f"Вакансия: {vacancy.title}\n"
                         f"Компания: {vacancy.company_name}\n"
                         f"Описание:\n{markdown}"
@@ -143,12 +146,21 @@ async def _analyze_vacancy_impl(ctx: dict[str, Any], vacancy_id: int) -> None:
 
 
 async def on_startup(ctx: dict[str, Any]) -> None:
-    """Initialize the async OpenAI client."""
-    global _openai_client
+    """Initialize the async OpenAI client and load resume."""
+    global _openai_client, _resume_text
     _openai_client = AsyncOpenAI(
         api_key=settings.openai_api_key,
         base_url=settings.openai_base_url,
     )
+    # Load resume text for LLM prompts
+    try:
+        _resume_text = load_resume()
+        logger.info("Resume loaded (%d chars)", len(_resume_text))
+    except FileNotFoundError as exc:
+        raise ValueError(
+            f"Resume file not found — analyzer cannot function without a resume. "
+            f"Details: {exc}"
+        ) from exc
     # Log only scheme+host to avoid leaking credentials from userinfo
     parsed = urlparse(settings.openai_base_url)
     safe_base = f"{parsed.scheme}://{parsed.hostname}" if parsed.hostname else settings.openai_base_url

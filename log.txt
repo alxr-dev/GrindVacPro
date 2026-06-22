@@ -1,0 +1,1194 @@
+2026-06-22 17:44:52.189 | 14:44:52: Starting worker for 1 functions: analyze_vacancy
+2026-06-22 17:44:52.193 | 14:44:52: redis_version=7.4.9 mem_usage=1.04M clients_connected=1 db_keys=0
+2026-06-22 17:44:52.472 | 2026-06-22 14:44:52 | INFO     | grindvac.analyzer.worker | Resume loaded (2194 chars)
+2026-06-22 17:44:52.475 | 2026-06-22 14:44:52 | INFO     | grindvac.analyzer.worker | OpenAI client ready (model=kilo-auto/free, base_url=https://api.kilo.ai)
+2026-06-22 17:45:48.692 | 14:45:48:   0.24s → 96c304a4a62b42a1bdf48feb423c0f04:analyze_vacancy(vacancy_id=1)
+2026-06-22 17:45:50.665 | 14:45:50:   0.92s → 905940b6b9624cfb94407e2a718ff82e:analyze_vacancy(vacancy_id=2)
+2026-06-22 17:45:51.168 | 14:45:51:   0.26s → fbe223e5bbd24d4ab74f011b854c6f77:analyze_vacancy(vacancy_id=3)
+2026-06-22 17:45:53.175 | 14:45:53:   0.25s → f618852ac9a94a46bdb1799d6d1f921a:analyze_vacancy(vacancy_id=5)
+2026-06-22 17:45:54.173 | 14:45:54:   0.19s → 52dcfb10f40b4d5894564d0f4d57a25f:analyze_vacancy(vacancy_id=6)
+2026-06-22 17:45:56.692 | 14:45:56:   0.21s → b0080168fe3642cfbd89ad7119eb5c1b:analyze_vacancy(vacancy_id=7)
+2026-06-22 17:45:58.207 | 14:45:58:   0.38s → 242e07dd94b94c1fbc1fcd27c2e891ec:analyze_vacancy(vacancy_id=8)
+2026-06-22 17:46:00.207 | 14:46:00:   0.38s → 76b7a33e303f4d399477d534f6002eee:analyze_vacancy(vacancy_id=9)
+2026-06-22 17:46:01.717 | 14:46:01:   0.26s → 0f6e332858d44513af1e3a5c2042427d:analyze_vacancy(vacancy_id=10)
+2026-06-22 17:46:02.718 | 14:46:02:   0.10s → be55e5a9874647f79099702a7c565a4e:analyze_vacancy(vacancy_id=11)
+2026-06-22 17:46:04.234 | 14:46:04:   0.42s → a1b0410e30bb4883910412142d038e49:analyze_vacancy(vacancy_id=12)
+2026-06-22 17:46:06.247 | 14:46:06:   0.47s → 7762c018f36a4271b08d45eea577f19d:analyze_vacancy(vacancy_id=13)
+2026-06-22 17:46:07.761 | 14:46:07:   0.51s → 8eee8a982fb749c9b5f25ff2cf898966:analyze_vacancy(vacancy_id=14)
+2026-06-22 17:46:08.795 | 14:46:08:   0.38s → 761b3c5a561444b3890095968219d397:analyze_vacancy(vacancy_id=15)
+2026-06-22 17:46:09.765 | 14:46:09:   0.42s → c14a74d1dbf348a78e1d022351606bf2:analyze_vacancy(vacancy_id=16)
+2026-06-22 17:50:16.172 | 2026-06-22 14:50:16 | INFO     | grindvac.analyzer.worker | Vacancy #2 analyzed: score=70, pros=8, cons=6
+2026-06-22 17:50:16.177 | 14:50:16: 265.51s ← 905940b6b9624cfb94407e2a718ff82e:analyze_vacancy ● 
+2026-06-22 17:50:16.409 | 14:50:16: 246.34s → 6233db9e4da447df8fd2f495b5c8d862:analyze_vacancy(vacancy_id=17) delayed=246.34s
+2026-06-22 17:50:19.424 | 2026-06-22 14:50:19 | INFO     | grindvac.analyzer.worker | Vacancy #3 analyzed: score=52, pros=6, cons=8
+2026-06-22 17:50:19.425 | 14:50:19: 268.26s ← fbe223e5bbd24d4ab74f011b854c6f77:analyze_vacancy ● 
+2026-06-22 17:50:19.904 | 14:50:19: 248.43s → 70089b0514bf487ebdfacf9821b3fbd1:analyze_vacancy(vacancy_id=18) delayed=248.43s
+2026-06-22 17:50:28.358 | 2026-06-22 14:50:28 | ERROR    | grindvac.analyzer.worker | Failed to parse LLM response for vacancy #5: Unterminated string starting at: line 20 column 19 (char 1088)
+2026-06-22 17:50:28.358 | Raw: {   "score": 85,   "pros": [     "Уверенный опыт работы с FastAPI и PostgreSQL (ключевые требования)",     "Глубокий опыт разработки асинхронных систем на Python с использованием Asyncio",     "Практи
+2026-06-22 17:50:28.369 | 14:50:28: 275.19s ← f618852ac9a94a46bdb1799d6d1f921a:analyze_vacancy ● 
+2026-06-22 17:50:28.417 | 14:50:28: 255.42s → 0209fd9e4287410e8b603620251e0648:analyze_vacancy(vacancy_id=19) delayed=255.42s
+2026-06-22 17:50:48.682 | 14:50:48: 299.96s ! 96c304a4a62b42a1bdf48feb423c0f04:analyze_vacancy failed, TimeoutError: 
+2026-06-22 17:50:48.682 | Traceback (most recent call last):
+2026-06-22 17:50:48.682 |   File "/usr/local/lib/python3.12/asyncio/tasks.py", line 520, in wait_for
+2026-06-22 17:50:48.682 |     return await fut
+2026-06-22 17:50:48.682 |            ^^^^^^^^^
+2026-06-22 17:50:48.682 |   File "/app/src/worker.py", line 35, in analyze_vacancy
+2026-06-22 17:50:48.682 |     await _analyze_vacancy_impl(ctx, vacancy_id)
+2026-06-22 17:50:48.682 |   File "/app/src/worker.py", line 61, in _analyze_vacancy_impl
+2026-06-22 17:50:48.682 |     response = await _openai_client.chat.completions.create(
+2026-06-22 17:50:48.682 |                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-22 17:50:48.682 |   File "/usr/local/lib/python3.12/site-packages/openai/resources/chat/completions/completions.py", line 2028, in create
+2026-06-22 17:50:48.682 |     return await self._post(
+2026-06-22 17:50:48.682 |            ^^^^^^^^^^^^^^^^^
+2026-06-22 17:50:48.682 |   File "/usr/local/lib/python3.12/site-packages/openai/_base_client.py", line 1742, in post
+2026-06-22 17:50:48.682 |     return await self.request(cast_to, opts, stream=stream, stream_cls=stream_cls)
+2026-06-22 17:50:48.682 |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-22 17:50:48.682 |   File "/usr/local/lib/python3.12/site-packages/openai/_base_client.py", line 1484, in request
+2026-06-22 17:50:48.682 |     response = await self._client.send(
+2026-06-22 17:50:48.682 |                ^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-22 17:50:48.682 |   File "/usr/local/lib/python3.12/site-packages/httpx/_client.py", line 1643, in send
+2026-06-22 17:50:48.682 |     raise exc
+2026-06-22 17:50:48.682 |   File "/usr/local/lib/python3.12/site-packages/httpx/_client.py", line 1637, in send
+2026-06-22 17:50:48.682 |     await response.aread()
+2026-06-22 17:50:48.682 |   File "/usr/local/lib/python3.12/site-packages/httpx/_models.py", line 979, in aread
+2026-06-22 17:50:48.682 |     self._content = b"".join([part async for part in self.aiter_bytes()])
+2026-06-22 17:50:48.682 |                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-22 17:50:48.682 |   File "/usr/local/lib/python3.12/site-packages/httpx/_models.py", line 997, in aiter_bytes
+2026-06-22 17:50:48.682 |     async for raw_bytes in self.aiter_raw():
+2026-06-22 17:50:48.682 |   File "/usr/local/lib/python3.12/site-packages/httpx/_models.py", line 1055, in aiter_raw
+2026-06-22 17:50:48.682 |     async for raw_stream_bytes in self.stream:
+2026-06-22 17:50:48.682 |   File "/usr/local/lib/python3.12/site-packages/httpx/_client.py", line 176, in __aiter__
+2026-06-22 17:50:48.682 |     async for chunk in self._stream:
+2026-06-22 17:50:48.682 |   File "/usr/local/lib/python3.12/site-packages/httpx/_transports/default.py", line 271, in __aiter__
+2026-06-22 17:50:48.682 |     async for part in self._httpcore_stream:
+2026-06-22 17:50:48.682 |   File "/usr/local/lib/python3.12/site-packages/httpcore/_async/connection_pool.py", line 407, in __aiter__
+2026-06-22 17:50:48.682 |     raise exc from None
+2026-06-22 17:50:48.682 |   File "/usr/local/lib/python3.12/site-packages/httpcore/_async/connection_pool.py", line 403, in __aiter__
+2026-06-22 17:50:48.682 |     async for part in self._stream:
+2026-06-22 17:50:48.682 |   File "/usr/local/lib/python3.12/site-packages/httpcore/_async/http11.py", line 342, in __aiter__
+2026-06-22 17:50:48.682 |     raise exc
+2026-06-22 17:50:48.682 |   File "/usr/local/lib/python3.12/site-packages/httpcore/_async/http11.py", line 334, in __aiter__
+2026-06-22 17:50:48.682 |     async for chunk in self._connection._receive_response_body(**kwargs):
+2026-06-22 17:50:48.682 |   File "/usr/local/lib/python3.12/site-packages/httpcore/_async/http11.py", line 203, in _receive_response_body
+2026-06-22 17:50:48.682 |     event = await self._receive_event(timeout=timeout)
+2026-06-22 17:50:48.682 |             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-22 17:50:48.682 |   File "/usr/local/lib/python3.12/site-packages/httpcore/_async/http11.py", line 217, in _receive_event
+2026-06-22 17:50:48.682 |     data = await self._network_stream.read(
+2026-06-22 17:50:48.682 |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-22 17:50:48.682 |   File "/usr/local/lib/python3.12/site-packages/httpcore/_backends/anyio.py", line 35, in read
+2026-06-22 17:50:48.682 |     return await self._stream.receive(max_bytes=max_bytes)
+2026-06-22 17:50:48.682 |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-22 17:50:48.682 |   File "/usr/local/lib/python3.12/site-packages/anyio/streams/tls.py", line 239, in receive
+2026-06-22 17:50:48.682 |     data = await self._call_sslobject_method(self._ssl_object.read, max_bytes)
+2026-06-22 17:50:48.682 |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-22 17:50:48.682 |   File "/usr/local/lib/python3.12/site-packages/anyio/streams/tls.py", line 182, in _call_sslobject_method
+2026-06-22 17:50:48.682 |     data = await self.transport_stream.receive()
+2026-06-22 17:50:48.682 |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-22 17:50:48.682 |   File "/usr/local/lib/python3.12/site-packages/anyio/_backends/_asyncio.py", line 1314, in receive
+2026-06-22 17:50:48.682 |     await self._protocol.read_event.wait()
+2026-06-22 17:50:48.682 |   File "/usr/local/lib/python3.12/asyncio/locks.py", line 212, in wait
+2026-06-22 17:50:48.682 |     await fut
+2026-06-22 17:50:48.682 | asyncio.exceptions.CancelledError
+2026-06-22 17:50:48.682 | 
+2026-06-22 17:50:48.682 | The above exception was the direct cause of the following exception:
+2026-06-22 17:50:48.682 | 
+2026-06-22 17:50:48.682 | Traceback (most recent call last):
+2026-06-22 17:50:48.682 |   File "/usr/local/lib/python3.12/site-packages/arq/worker.py", line 594, in run_job
+2026-06-22 17:50:48.682 |     result = await asyncio.wait_for(task, timeout_s)
+2026-06-22 17:50:48.682 |              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-22 17:50:48.682 |   File "/usr/local/lib/python3.12/asyncio/tasks.py", line 519, in wait_for
+2026-06-22 17:50:48.682 |     async with timeouts.timeout(timeout):
+2026-06-22 17:50:48.682 |                ^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-22 17:50:48.682 |   File "/usr/local/lib/python3.12/asyncio/timeouts.py", line 115, in __aexit__
+2026-06-22 17:50:48.682 |     raise TimeoutError from exc_val
+2026-06-22 17:50:48.682 | TimeoutError
+2026-06-22 17:50:48.954 | 14:50:48: 274.43s → b8ee1106e48d4250a99410e11adfadba:analyze_vacancy(vacancy_id=20) delayed=274.43s
+2026-06-22 17:50:54.143 | 14:50:54: 299.96s ! 52dcfb10f40b4d5894564d0f4d57a25f:analyze_vacancy failed, TimeoutError: 
+2026-06-22 17:50:54.143 | Traceback (most recent call last):
+2026-06-22 17:50:54.143 |   File "/usr/local/lib/python3.12/asyncio/tasks.py", line 520, in wait_for
+2026-06-22 17:50:54.143 |     return await fut
+2026-06-22 17:50:54.143 |            ^^^^^^^^^
+2026-06-22 17:50:54.143 |   File "/app/src/worker.py", line 35, in analyze_vacancy
+2026-06-22 17:50:54.143 |     await _analyze_vacancy_impl(ctx, vacancy_id)
+2026-06-22 17:50:54.143 |   File "/app/src/worker.py", line 61, in _analyze_vacancy_impl
+2026-06-22 17:50:54.143 |     response = await _openai_client.chat.completions.create(
+2026-06-22 17:50:54.143 |                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-22 17:50:54.143 |   File "/usr/local/lib/python3.12/site-packages/openai/resources/chat/completions/completions.py", line 2028, in create
+2026-06-22 17:50:54.143 |     return await self._post(
+2026-06-22 17:50:54.143 |            ^^^^^^^^^^^^^^^^^
+2026-06-22 17:50:54.143 |   File "/usr/local/lib/python3.12/site-packages/openai/_base_client.py", line 1742, in post
+2026-06-22 17:50:54.143 |     return await self.request(cast_to, opts, stream=stream, stream_cls=stream_cls)
+2026-06-22 17:50:54.143 |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-22 17:50:54.143 |   File "/usr/local/lib/python3.12/site-packages/openai/_base_client.py", line 1484, in request
+2026-06-22 17:50:54.143 |     response = await self._client.send(
+2026-06-22 17:50:54.143 |                ^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-22 17:50:54.143 |   File "/usr/local/lib/python3.12/site-packages/httpx/_client.py", line 1643, in send
+2026-06-22 17:50:54.143 |     raise exc
+2026-06-22 17:50:54.143 |   File "/usr/local/lib/python3.12/site-packages/httpx/_client.py", line 1637, in send
+2026-06-22 17:50:54.143 |     await response.aread()
+2026-06-22 17:50:54.143 |   File "/usr/local/lib/python3.12/site-packages/httpx/_models.py", line 979, in aread
+2026-06-22 17:50:54.143 |     self._content = b"".join([part async for part in self.aiter_bytes()])
+2026-06-22 17:50:54.143 |                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-22 17:50:54.143 |   File "/usr/local/lib/python3.12/site-packages/httpx/_models.py", line 997, in aiter_bytes
+2026-06-22 17:50:54.143 |     async for raw_bytes in self.aiter_raw():
+2026-06-22 17:50:54.143 |   File "/usr/local/lib/python3.12/site-packages/httpx/_models.py", line 1055, in aiter_raw
+2026-06-22 17:50:54.143 |     async for raw_stream_bytes in self.stream:
+2026-06-22 17:50:54.143 |   File "/usr/local/lib/python3.12/site-packages/httpx/_client.py", line 176, in __aiter__
+2026-06-22 17:50:54.143 |     async for chunk in self._stream:
+2026-06-22 17:50:54.143 |   File "/usr/local/lib/python3.12/site-packages/httpx/_transports/default.py", line 271, in __aiter__
+2026-06-22 17:50:54.143 |     async for part in self._httpcore_stream:
+2026-06-22 17:50:54.143 |   File "/usr/local/lib/python3.12/site-packages/httpcore/_async/connection_pool.py", line 407, in __aiter__
+2026-06-22 17:50:54.143 |     raise exc from None
+2026-06-22 17:50:54.143 |   File "/usr/local/lib/python3.12/site-packages/httpcore/_async/connection_pool.py", line 403, in __aiter__
+2026-06-22 17:50:54.143 |     async for part in self._stream:
+2026-06-22 17:50:54.143 |   File "/usr/local/lib/python3.12/site-packages/httpcore/_async/http11.py", line 342, in __aiter__
+2026-06-22 17:50:54.143 |     raise exc
+2026-06-22 17:50:54.143 |   File "/usr/local/lib/python3.12/site-packages/httpcore/_async/http11.py", line 334, in __aiter__
+2026-06-22 17:50:54.143 |     async for chunk in self._connection._receive_response_body(**kwargs):
+2026-06-22 17:50:54.143 |   File "/usr/local/lib/python3.12/site-packages/httpcore/_async/http11.py", line 203, in _receive_response_body
+2026-06-22 17:50:54.143 |     event = await self._receive_event(timeout=timeout)
+2026-06-22 17:50:54.143 |             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-22 17:50:54.143 |   File "/usr/local/lib/python3.12/site-packages/httpcore/_async/http11.py", line 217, in _receive_event
+2026-06-22 17:50:54.143 |     data = await self._network_stream.read(
+2026-06-22 17:50:54.143 |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-22 17:50:54.143 |   File "/usr/local/lib/python3.12/site-packages/httpcore/_backends/anyio.py", line 35, in read
+2026-06-22 17:50:54.143 |     return await self._stream.receive(max_bytes=max_bytes)
+2026-06-22 17:50:54.143 |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-22 17:50:54.143 |   File "/usr/local/lib/python3.12/site-packages/anyio/streams/tls.py", line 239, in receive
+2026-06-22 17:50:54.143 |     data = await self._call_sslobject_method(self._ssl_object.read, max_bytes)
+2026-06-22 17:50:54.143 |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-22 17:50:54.143 |   File "/usr/local/lib/python3.12/site-packages/anyio/streams/tls.py", line 182, in _call_sslobject_method
+2026-06-22 17:50:54.143 |     data = await self.transport_stream.receive()
+2026-06-22 17:50:54.143 |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-22 17:50:54.143 |   File "/usr/local/lib/python3.12/site-packages/anyio/_backends/_asyncio.py", line 1314, in receive
+2026-06-22 17:50:54.143 |     await self._protocol.read_event.wait()
+2026-06-22 17:50:54.143 |   File "/usr/local/lib/python3.12/asyncio/locks.py", line 212, in wait
+2026-06-22 17:50:54.143 |     await fut
+2026-06-22 17:50:54.143 | asyncio.exceptions.CancelledError
+2026-06-22 17:50:54.143 | 
+2026-06-22 17:50:54.143 | The above exception was the direct cause of the following exception:
+2026-06-22 17:50:54.143 | 
+2026-06-22 17:50:54.143 | Traceback (most recent call last):
+2026-06-22 17:50:54.144 |   File "/usr/local/lib/python3.12/site-packages/arq/worker.py", line 594, in run_job
+2026-06-22 17:50:54.144 |     result = await asyncio.wait_for(task, timeout_s)
+2026-06-22 17:50:54.144 |              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-22 17:50:54.144 |   File "/usr/local/lib/python3.12/asyncio/tasks.py", line 519, in wait_for
+2026-06-22 17:50:54.144 |     async with timeouts.timeout(timeout):
+2026-06-22 17:50:54.144 |                ^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-22 17:50:54.144 |   File "/usr/local/lib/python3.12/asyncio/timeouts.py", line 115, in __aexit__
+2026-06-22 17:50:54.144 |     raise TimeoutError from exc_val
+2026-06-22 17:50:54.144 | TimeoutError
+2026-06-22 17:50:54.464 | 14:50:54: 265.45s → b942e04abcd645c29cfc1cb173456e1a:analyze_vacancy(vacancy_id=21) delayed=265.45s
+2026-06-22 17:50:56.660 | 14:50:56: 299.97s ! b0080168fe3642cfbd89ad7119eb5c1b:analyze_vacancy failed, TimeoutError: 
+2026-06-22 17:50:56.660 | Traceback (most recent call last):
+2026-06-22 17:50:56.660 |   File "/usr/local/lib/python3.12/asyncio/tasks.py", line 520, in wait_for
+2026-06-22 17:50:56.660 |     return await fut
+2026-06-22 17:50:56.660 |            ^^^^^^^^^
+2026-06-22 17:50:56.660 |   File "/app/src/worker.py", line 35, in analyze_vacancy
+2026-06-22 17:50:56.660 |     await _analyze_vacancy_impl(ctx, vacancy_id)
+2026-06-22 17:50:56.660 |   File "/app/src/worker.py", line 61, in _analyze_vacancy_impl
+2026-06-22 17:50:56.660 |     response = await _openai_client.chat.completions.create(
+2026-06-22 17:50:56.660 |                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-22 17:50:56.660 |   File "/usr/local/lib/python3.12/site-packages/openai/resources/chat/completions/completions.py", line 2028, in create
+2026-06-22 17:50:56.660 |     return await self._post(
+2026-06-22 17:50:56.660 |            ^^^^^^^^^^^^^^^^^
+2026-06-22 17:50:56.660 |   File "/usr/local/lib/python3.12/site-packages/openai/_base_client.py", line 1742, in post
+2026-06-22 17:50:56.660 |     return await self.request(cast_to, opts, stream=stream, stream_cls=stream_cls)
+2026-06-22 17:50:56.660 |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-22 17:50:56.660 |   File "/usr/local/lib/python3.12/site-packages/openai/_base_client.py", line 1484, in request
+2026-06-22 17:50:56.660 |     response = await self._client.send(
+2026-06-22 17:50:56.660 |                ^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-22 17:50:56.660 |   File "/usr/local/lib/python3.12/site-packages/httpx/_client.py", line 1643, in send
+2026-06-22 17:50:56.660 |     raise exc
+2026-06-22 17:50:56.660 |   File "/usr/local/lib/python3.12/site-packages/httpx/_client.py", line 1637, in send
+2026-06-22 17:50:56.660 |     await response.aread()
+2026-06-22 17:50:56.660 |   File "/usr/local/lib/python3.12/site-packages/httpx/_models.py", line 979, in aread
+2026-06-22 17:50:56.660 |     self._content = b"".join([part async for part in self.aiter_bytes()])
+2026-06-22 17:50:56.660 |                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-22 17:50:56.660 |   File "/usr/local/lib/python3.12/site-packages/httpx/_models.py", line 997, in aiter_bytes
+2026-06-22 17:50:56.660 |     async for raw_bytes in self.aiter_raw():
+2026-06-22 17:50:56.660 |   File "/usr/local/lib/python3.12/site-packages/httpx/_models.py", line 1055, in aiter_raw
+2026-06-22 17:50:56.660 |     async for raw_stream_bytes in self.stream:
+2026-06-22 17:50:56.660 |   File "/usr/local/lib/python3.12/site-packages/httpx/_client.py", line 176, in __aiter__
+2026-06-22 17:50:56.660 |     async for chunk in self._stream:
+2026-06-22 17:50:56.660 |   File "/usr/local/lib/python3.12/site-packages/httpx/_transports/default.py", line 271, in __aiter__
+2026-06-22 17:50:56.660 |     async for part in self._httpcore_stream:
+2026-06-22 17:50:56.660 |   File "/usr/local/lib/python3.12/site-packages/httpcore/_async/connection_pool.py", line 407, in __aiter__
+2026-06-22 17:50:56.660 |     raise exc from None
+2026-06-22 17:50:56.660 |   File "/usr/local/lib/python3.12/site-packages/httpcore/_async/connection_pool.py", line 403, in __aiter__
+2026-06-22 17:50:56.660 |     async for part in self._stream:
+2026-06-22 17:50:56.660 |   File "/usr/local/lib/python3.12/site-packages/httpcore/_async/http11.py", line 342, in __aiter__
+2026-06-22 17:50:56.660 |     raise exc
+2026-06-22 17:50:56.660 |   File "/usr/local/lib/python3.12/site-packages/httpcore/_async/http11.py", line 334, in __aiter__
+2026-06-22 17:50:56.660 |     async for chunk in self._connection._receive_response_body(**kwargs):
+2026-06-22 17:50:56.660 |   File "/usr/local/lib/python3.12/site-packages/httpcore/_async/http11.py", line 203, in _receive_response_body
+2026-06-22 17:50:56.660 |     event = await self._receive_event(timeout=timeout)
+2026-06-22 17:50:56.660 |             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-22 17:50:56.660 |   File "/usr/local/lib/python3.12/site-packages/httpcore/_async/http11.py", line 217, in _receive_event
+2026-06-22 17:50:56.660 |     data = await self._network_stream.read(
+2026-06-22 17:50:56.660 |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-22 17:50:56.660 |   File "/usr/local/lib/python3.12/site-packages/httpcore/_backends/anyio.py", line 35, in read
+2026-06-22 17:50:56.660 |     return await self._stream.receive(max_bytes=max_bytes)
+2026-06-22 17:50:56.660 |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-22 17:50:56.660 |   File "/usr/local/lib/python3.12/site-packages/anyio/streams/tls.py", line 239, in receive
+2026-06-22 17:50:56.660 |     data = await self._call_sslobject_method(self._ssl_object.read, max_bytes)
+2026-06-22 17:50:56.660 |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-22 17:50:56.660 |   File "/usr/local/lib/python3.12/site-packages/anyio/streams/tls.py", line 182, in _call_sslobject_method
+2026-06-22 17:50:56.660 |     data = await self.transport_stream.receive()
+2026-06-22 17:50:56.660 |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-22 17:50:56.660 |   File "/usr/local/lib/python3.12/site-packages/anyio/_backends/_asyncio.py", line 1314, in receive
+2026-06-22 17:50:56.660 |     await self._protocol.read_event.wait()
+2026-06-22 17:50:56.660 |   File "/usr/local/lib/python3.12/asyncio/locks.py", line 212, in wait
+2026-06-22 17:50:56.660 |     await fut
+2026-06-22 17:50:56.660 | asyncio.exceptions.CancelledError
+2026-06-22 17:50:56.660 | 
+2026-06-22 17:50:56.660 | The above exception was the direct cause of the following exception:
+2026-06-22 17:50:56.660 | 
+2026-06-22 17:50:56.660 | Traceback (most recent call last):
+2026-06-22 17:50:56.660 |   File "/usr/local/lib/python3.12/site-packages/arq/worker.py", line 594, in run_job
+2026-06-22 17:50:56.660 |     result = await asyncio.wait_for(task, timeout_s)
+2026-06-22 17:50:56.660 |              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-22 17:50:56.660 |   File "/usr/local/lib/python3.12/asyncio/tasks.py", line 519, in wait_for
+2026-06-22 17:50:56.660 |     async with timeouts.timeout(timeout):
+2026-06-22 17:50:56.660 |                ^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-22 17:50:56.660 |   File "/usr/local/lib/python3.12/asyncio/timeouts.py", line 115, in __aexit__
+2026-06-22 17:50:56.660 |     raise TimeoutError from exc_val
+2026-06-22 17:50:56.660 | TimeoutError
+2026-06-22 17:50:56.979 | 14:50:56: 266.24s → e97a7ec710df4d89b7b086fa48411d58:analyze_vacancy(vacancy_id=22) delayed=266.24s
+2026-06-22 17:50:58.176 | 14:50:58: 299.97s ! 242e07dd94b94c1fbc1fcd27c2e891ec:analyze_vacancy failed, TimeoutError: 
+2026-06-22 17:50:58.176 | Traceback (most recent call last):
+2026-06-22 17:50:58.176 |   File "/usr/local/lib/python3.12/asyncio/tasks.py", line 520, in wait_for
+2026-06-22 17:50:58.176 |     return await fut
+2026-06-22 17:50:58.176 |            ^^^^^^^^^
+2026-06-22 17:50:58.176 |   File "/app/src/worker.py", line 35, in analyze_vacancy
+2026-06-22 17:50:58.176 |     await _analyze_vacancy_impl(ctx, vacancy_id)
+2026-06-22 17:50:58.176 |   File "/app/src/worker.py", line 61, in _analyze_vacancy_impl
+2026-06-22 17:50:58.176 |     response = await _openai_client.chat.completions.create(
+2026-06-22 17:50:58.176 |                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-22 17:50:58.176 |   File "/usr/local/lib/python3.12/site-packages/openai/resources/chat/completions/completions.py", line 2028, in create
+2026-06-22 17:50:58.176 |     return await self._post(
+2026-06-22 17:50:58.176 |            ^^^^^^^^^^^^^^^^^
+2026-06-22 17:50:58.176 |   File "/usr/local/lib/python3.12/site-packages/openai/_base_client.py", line 1742, in post
+2026-06-22 17:50:58.176 |     return await self.request(cast_to, opts, stream=stream, stream_cls=stream_cls)
+2026-06-22 17:50:58.176 |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-22 17:50:58.176 |   File "/usr/local/lib/python3.12/site-packages/openai/_base_client.py", line 1484, in request
+2026-06-22 17:50:58.176 |     response = await self._client.send(
+2026-06-22 17:50:58.176 |                ^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-22 17:50:58.176 |   File "/usr/local/lib/python3.12/site-packages/httpx/_client.py", line 1643, in send
+2026-06-22 17:50:58.176 |     raise exc
+2026-06-22 17:50:58.176 |   File "/usr/local/lib/python3.12/site-packages/httpx/_client.py", line 1637, in send
+2026-06-22 17:50:58.176 |     await response.aread()
+2026-06-22 17:50:58.176 |   File "/usr/local/lib/python3.12/site-packages/httpx/_models.py", line 979, in aread
+2026-06-22 17:50:58.176 |     self._content = b"".join([part async for part in self.aiter_bytes()])
+2026-06-22 17:50:58.176 |                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-22 17:50:58.176 |   File "/usr/local/lib/python3.12/site-packages/httpx/_models.py", line 997, in aiter_bytes
+2026-06-22 17:50:58.176 |     async for raw_bytes in self.aiter_raw():
+2026-06-22 17:50:58.176 |   File "/usr/local/lib/python3.12/site-packages/httpx/_models.py", line 1055, in aiter_raw
+2026-06-22 17:50:58.176 |     async for raw_stream_bytes in self.stream:
+2026-06-22 17:50:58.176 |   File "/usr/local/lib/python3.12/site-packages/httpx/_client.py", line 176, in __aiter__
+2026-06-22 17:50:58.176 |     async for chunk in self._stream:
+2026-06-22 17:50:58.176 |   File "/usr/local/lib/python3.12/site-packages/httpx/_transports/default.py", line 271, in __aiter__
+2026-06-22 17:50:58.176 |     async for part in self._httpcore_stream:
+2026-06-22 17:50:58.176 |   File "/usr/local/lib/python3.12/site-packages/httpcore/_async/connection_pool.py", line 407, in __aiter__
+2026-06-22 17:50:58.176 |     raise exc from None
+2026-06-22 17:50:58.176 |   File "/usr/local/lib/python3.12/site-packages/httpcore/_async/connection_pool.py", line 403, in __aiter__
+2026-06-22 17:50:58.176 |     async for part in self._stream:
+2026-06-22 17:50:58.176 |   File "/usr/local/lib/python3.12/site-packages/httpcore/_async/http11.py", line 342, in __aiter__
+2026-06-22 17:50:58.176 |     raise exc
+2026-06-22 17:50:58.176 |   File "/usr/local/lib/python3.12/site-packages/httpcore/_async/http11.py", line 334, in __aiter__
+2026-06-22 17:50:58.176 |     async for chunk in self._connection._receive_response_body(**kwargs):
+2026-06-22 17:50:58.176 |   File "/usr/local/lib/python3.12/site-packages/httpcore/_async/http11.py", line 203, in _receive_response_body
+2026-06-22 17:50:58.176 |     event = await self._receive_event(timeout=timeout)
+2026-06-22 17:50:58.176 |             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-22 17:50:58.176 |   File "/usr/local/lib/python3.12/site-packages/httpcore/_async/http11.py", line 217, in _receive_event
+2026-06-22 17:50:58.176 |     data = await self._network_stream.read(
+2026-06-22 17:50:58.176 |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-22 17:50:58.176 |   File "/usr/local/lib/python3.12/site-packages/httpcore/_backends/anyio.py", line 35, in read
+2026-06-22 17:50:58.176 |     return await self._stream.receive(max_bytes=max_bytes)
+2026-06-22 17:50:58.176 |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-22 17:50:58.176 |   File "/usr/local/lib/python3.12/site-packages/anyio/streams/tls.py", line 239, in receive
+2026-06-22 17:50:58.176 |     data = await self._call_sslobject_method(self._ssl_object.read, max_bytes)
+2026-06-22 17:50:58.176 |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-22 17:50:58.176 |   File "/usr/local/lib/python3.12/site-packages/anyio/streams/tls.py", line 182, in _call_sslobject_method
+2026-06-22 17:50:58.176 |     data = await self.transport_stream.receive()
+2026-06-22 17:50:58.176 |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-22 17:50:58.176 |   File "/usr/local/lib/python3.12/site-packages/anyio/_backends/_asyncio.py", line 1314, in receive
+2026-06-22 17:50:58.176 |     await self._protocol.read_event.wait()
+2026-06-22 17:50:58.176 |   File "/usr/local/lib/python3.12/asyncio/locks.py", line 212, in wait
+2026-06-22 17:50:58.176 |     await fut
+2026-06-22 17:50:58.176 | asyncio.exceptions.CancelledError
+2026-06-22 17:50:58.176 | 
+2026-06-22 17:50:58.176 | The above exception was the direct cause of the following exception:
+2026-06-22 17:50:58.176 | 
+2026-06-22 17:50:58.176 | Traceback (most recent call last):
+2026-06-22 17:50:58.176 |   File "/usr/local/lib/python3.12/site-packages/arq/worker.py", line 594, in run_job
+2026-06-22 17:50:58.176 |     result = await asyncio.wait_for(task, timeout_s)
+2026-06-22 17:50:58.176 |              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-22 17:50:58.176 |   File "/usr/local/lib/python3.12/asyncio/tasks.py", line 519, in wait_for
+2026-06-22 17:50:58.176 |     async with timeouts.timeout(timeout):
+2026-06-22 17:50:58.176 |                ^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-22 17:50:58.176 |   File "/usr/local/lib/python3.12/asyncio/timeouts.py", line 115, in __aexit__
+2026-06-22 17:50:58.176 |     raise TimeoutError from exc_val
+2026-06-22 17:50:58.176 | TimeoutError
+2026-06-22 17:50:58.478 | 14:50:58: 266.84s → 2e7566c9ca32488bb589679f98aff32e:analyze_vacancy(vacancy_id=23) delayed=266.84s
+2026-06-22 17:51:00.175 | 14:51:00: 299.96s ! 76b7a33e303f4d399477d534f6002eee:analyze_vacancy failed, TimeoutError: 
+2026-06-22 17:51:00.175 | Traceback (most recent call last):
+2026-06-22 17:51:00.175 |   File "/usr/local/lib/python3.12/asyncio/tasks.py", line 520, in wait_for
+2026-06-22 17:51:00.175 |     return await fut
+2026-06-22 17:51:00.175 |            ^^^^^^^^^
+2026-06-22 17:51:00.175 |   File "/app/src/worker.py", line 35, in analyze_vacancy
+2026-06-22 17:51:00.175 |     await _analyze_vacancy_impl(ctx, vacancy_id)
+2026-06-22 17:51:00.175 |   File "/app/src/worker.py", line 61, in _analyze_vacancy_impl
+2026-06-22 17:51:00.175 |     response = await _openai_client.chat.completions.create(
+2026-06-22 17:51:00.175 |                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-22 17:51:00.175 |   File "/usr/local/lib/python3.12/site-packages/openai/resources/chat/completions/completions.py", line 2028, in create
+2026-06-22 17:51:00.175 |     return await self._post(
+2026-06-22 17:51:00.175 |            ^^^^^^^^^^^^^^^^^
+2026-06-22 17:51:00.175 |   File "/usr/local/lib/python3.12/site-packages/openai/_base_client.py", line 1742, in post
+2026-06-22 17:51:00.175 |     return await self.request(cast_to, opts, stream=stream, stream_cls=stream_cls)
+2026-06-22 17:51:00.175 |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-22 17:51:00.175 |   File "/usr/local/lib/python3.12/site-packages/openai/_base_client.py", line 1484, in request
+2026-06-22 17:51:00.175 |     response = await self._client.send(
+2026-06-22 17:51:00.175 |                ^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-22 17:51:00.175 |   File "/usr/local/lib/python3.12/site-packages/httpx/_client.py", line 1643, in send
+2026-06-22 17:51:00.175 |     raise exc
+2026-06-22 17:51:00.175 |   File "/usr/local/lib/python3.12/site-packages/httpx/_client.py", line 1637, in send
+2026-06-22 17:51:00.175 |     await response.aread()
+2026-06-22 17:51:00.175 |   File "/usr/local/lib/python3.12/site-packages/httpx/_models.py", line 979, in aread
+2026-06-22 17:51:00.175 |     self._content = b"".join([part async for part in self.aiter_bytes()])
+2026-06-22 17:51:00.175 |                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-22 17:51:00.175 |   File "/usr/local/lib/python3.12/site-packages/httpx/_models.py", line 997, in aiter_bytes
+2026-06-22 17:51:00.175 |     async for raw_bytes in self.aiter_raw():
+2026-06-22 17:51:00.175 |   File "/usr/local/lib/python3.12/site-packages/httpx/_models.py", line 1055, in aiter_raw
+2026-06-22 17:51:00.175 |     async for raw_stream_bytes in self.stream:
+2026-06-22 17:51:00.175 |   File "/usr/local/lib/python3.12/site-packages/httpx/_client.py", line 176, in __aiter__
+2026-06-22 17:51:00.175 |     async for chunk in self._stream:
+2026-06-22 17:51:00.175 |   File "/usr/local/lib/python3.12/site-packages/httpx/_transports/default.py", line 271, in __aiter__
+2026-06-22 17:51:00.175 |     async for part in self._httpcore_stream:
+2026-06-22 17:51:00.175 |   File "/usr/local/lib/python3.12/site-packages/httpcore/_async/connection_pool.py", line 407, in __aiter__
+2026-06-22 17:51:00.175 |     raise exc from None
+2026-06-22 17:51:00.175 |   File "/usr/local/lib/python3.12/site-packages/httpcore/_async/connection_pool.py", line 403, in __aiter__
+2026-06-22 17:51:00.175 |     async for part in self._stream:
+2026-06-22 17:51:00.175 |   File "/usr/local/lib/python3.12/site-packages/httpcore/_async/http11.py", line 342, in __aiter__
+2026-06-22 17:51:00.175 |     raise exc
+2026-06-22 17:51:00.175 |   File "/usr/local/lib/python3.12/site-packages/httpcore/_async/http11.py", line 334, in __aiter__
+2026-06-22 17:51:00.175 |     async for chunk in self._connection._receive_response_body(**kwargs):
+2026-06-22 17:51:00.175 |   File "/usr/local/lib/python3.12/site-packages/httpcore/_async/http11.py", line 203, in _receive_response_body
+2026-06-22 17:51:00.175 |     event = await self._receive_event(timeout=timeout)
+2026-06-22 17:51:00.175 |             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-22 17:51:00.175 |   File "/usr/local/lib/python3.12/site-packages/httpcore/_async/http11.py", line 217, in _receive_event
+2026-06-22 17:51:00.175 |     data = await self._network_stream.read(
+2026-06-22 17:51:00.175 |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-22 17:51:00.175 |   File "/usr/local/lib/python3.12/site-packages/httpcore/_backends/anyio.py", line 35, in read
+2026-06-22 17:51:00.175 |     return await self._stream.receive(max_bytes=max_bytes)
+2026-06-22 17:51:00.175 |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-22 17:51:00.175 |   File "/usr/local/lib/python3.12/site-packages/anyio/streams/tls.py", line 239, in receive
+2026-06-22 17:51:00.175 |     data = await self._call_sslobject_method(self._ssl_object.read, max_bytes)
+2026-06-22 17:51:00.175 |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-22 17:51:00.175 |   File "/usr/local/lib/python3.12/site-packages/anyio/streams/tls.py", line 182, in _call_sslobject_method
+2026-06-22 17:51:00.175 |     data = await self.transport_stream.receive()
+2026-06-22 17:51:00.175 |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-22 17:51:00.175 |   File "/usr/local/lib/python3.12/site-packages/anyio/_backends/_asyncio.py", line 1314, in receive
+2026-06-22 17:51:00.175 |     await self._protocol.read_event.wait()
+2026-06-22 17:51:00.175 |   File "/usr/local/lib/python3.12/asyncio/locks.py", line 212, in wait
+2026-06-22 17:51:00.175 |     await fut
+2026-06-22 17:51:00.175 | asyncio.exceptions.CancelledError
+2026-06-22 17:51:00.175 | 
+2026-06-22 17:51:00.175 | The above exception was the direct cause of the following exception:
+2026-06-22 17:51:00.175 | 
+2026-06-22 17:51:00.175 | Traceback (most recent call last):
+2026-06-22 17:51:00.175 |   File "/usr/local/lib/python3.12/site-packages/arq/worker.py", line 594, in run_job
+2026-06-22 17:51:00.175 |     result = await asyncio.wait_for(task, timeout_s)
+2026-06-22 17:51:00.175 |              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-22 17:51:00.175 |   File "/usr/local/lib/python3.12/asyncio/tasks.py", line 519, in wait_for
+2026-06-22 17:51:00.175 |     async with timeouts.timeout(timeout):
+2026-06-22 17:51:00.175 |                ^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-22 17:51:00.175 |   File "/usr/local/lib/python3.12/asyncio/timeouts.py", line 115, in __aexit__
+2026-06-22 17:51:00.175 |     raise TimeoutError from exc_val
+2026-06-22 17:51:00.175 | TimeoutError
+2026-06-22 17:51:00.481 | 14:51:00: 268.04s → bde40a23a9b14619a6ba3d7c90423fc4:analyze_vacancy(vacancy_id=24) delayed=268.04s
+2026-06-22 17:51:01.686 | 14:51:01: 299.96s ! 0f6e332858d44513af1e3a5c2042427d:analyze_vacancy failed, TimeoutError: 
+2026-06-22 17:51:01.686 | Traceback (most recent call last):
+2026-06-22 17:51:01.686 |   File "/usr/local/lib/python3.12/asyncio/tasks.py", line 520, in wait_for
+2026-06-22 17:51:01.686 |     return await fut
+2026-06-22 17:51:01.686 |            ^^^^^^^^^
+2026-06-22 17:51:01.686 |   File "/app/src/worker.py", line 35, in analyze_vacancy
+2026-06-22 17:51:01.686 |     await _analyze_vacancy_impl(ctx, vacancy_id)
+2026-06-22 17:51:01.686 |   File "/app/src/worker.py", line 61, in _analyze_vacancy_impl
+2026-06-22 17:51:01.686 |     response = await _openai_client.chat.completions.create(
+2026-06-22 17:51:01.686 |                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-22 17:51:01.686 |   File "/usr/local/lib/python3.12/site-packages/openai/resources/chat/completions/completions.py", line 2028, in create
+2026-06-22 17:51:01.686 |     return await self._post(
+2026-06-22 17:51:01.686 |            ^^^^^^^^^^^^^^^^^
+2026-06-22 17:51:01.686 |   File "/usr/local/lib/python3.12/site-packages/openai/_base_client.py", line 1742, in post
+2026-06-22 17:51:01.686 |     return await self.request(cast_to, opts, stream=stream, stream_cls=stream_cls)
+2026-06-22 17:51:01.686 |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-22 17:51:01.686 |   File "/usr/local/lib/python3.12/site-packages/openai/_base_client.py", line 1484, in request
+2026-06-22 17:51:01.686 |     response = await self._client.send(
+2026-06-22 17:51:01.686 |                ^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-22 17:51:01.686 |   File "/usr/local/lib/python3.12/site-packages/httpx/_client.py", line 1643, in send
+2026-06-22 17:51:01.686 |     raise exc
+2026-06-22 17:51:01.686 |   File "/usr/local/lib/python3.12/site-packages/httpx/_client.py", line 1637, in send
+2026-06-22 17:51:01.686 |     await response.aread()
+2026-06-22 17:51:01.686 |   File "/usr/local/lib/python3.12/site-packages/httpx/_models.py", line 979, in aread
+2026-06-22 17:51:01.686 |     self._content = b"".join([part async for part in self.aiter_bytes()])
+2026-06-22 17:51:01.686 |                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-22 17:51:01.686 |   File "/usr/local/lib/python3.12/site-packages/httpx/_models.py", line 997, in aiter_bytes
+2026-06-22 17:51:01.686 |     async for raw_bytes in self.aiter_raw():
+2026-06-22 17:51:01.686 |   File "/usr/local/lib/python3.12/site-packages/httpx/_models.py", line 1055, in aiter_raw
+2026-06-22 17:51:01.686 |     async for raw_stream_bytes in self.stream:
+2026-06-22 17:51:01.686 |   File "/usr/local/lib/python3.12/site-packages/httpx/_client.py", line 176, in __aiter__
+2026-06-22 17:51:01.686 |     async for chunk in self._stream:
+2026-06-22 17:51:01.686 |   File "/usr/local/lib/python3.12/site-packages/httpx/_transports/default.py", line 271, in __aiter__
+2026-06-22 17:51:01.686 |     async for part in self._httpcore_stream:
+2026-06-22 17:51:01.686 |   File "/usr/local/lib/python3.12/site-packages/httpcore/_async/connection_pool.py", line 407, in __aiter__
+2026-06-22 17:51:01.686 |     raise exc from None
+2026-06-22 17:51:01.686 |   File "/usr/local/lib/python3.12/site-packages/httpcore/_async/connection_pool.py", line 403, in __aiter__
+2026-06-22 17:51:01.686 |     async for part in self._stream:
+2026-06-22 17:51:01.686 |   File "/usr/local/lib/python3.12/site-packages/httpcore/_async/http11.py", line 342, in __aiter__
+2026-06-22 17:51:01.686 |     raise exc
+2026-06-22 17:51:01.686 |   File "/usr/local/lib/python3.12/site-packages/httpcore/_async/http11.py", line 334, in __aiter__
+2026-06-22 17:51:01.686 |     async for chunk in self._connection._receive_response_body(**kwargs):
+2026-06-22 17:51:01.686 |   File "/usr/local/lib/python3.12/site-packages/httpcore/_async/http11.py", line 203, in _receive_response_body
+2026-06-22 17:51:01.686 |     event = await self._receive_event(timeout=timeout)
+2026-06-22 17:51:01.686 |             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-22 17:51:01.686 |   File "/usr/local/lib/python3.12/site-packages/httpcore/_async/http11.py", line 217, in _receive_event
+2026-06-22 17:51:01.686 |     data = await self._network_stream.read(
+2026-06-22 17:51:01.686 |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-22 17:51:01.686 |   File "/usr/local/lib/python3.12/site-packages/httpcore/_backends/anyio.py", line 35, in read
+2026-06-22 17:51:01.686 |     return await self._stream.receive(max_bytes=max_bytes)
+2026-06-22 17:51:01.686 |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-22 17:51:01.686 |   File "/usr/local/lib/python3.12/site-packages/anyio/streams/tls.py", line 239, in receive
+2026-06-22 17:51:01.686 |     data = await self._call_sslobject_method(self._ssl_object.read, max_bytes)
+2026-06-22 17:51:01.686 |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-22 17:51:01.686 |   File "/usr/local/lib/python3.12/site-packages/anyio/streams/tls.py", line 182, in _call_sslobject_method
+2026-06-22 17:51:01.686 |     data = await self.transport_stream.receive()
+2026-06-22 17:51:01.686 |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-22 17:51:01.687 |   File "/usr/local/lib/python3.12/site-packages/anyio/_backends/_asyncio.py", line 1314, in receive
+2026-06-22 17:51:01.687 |     await self._protocol.read_event.wait()
+2026-06-22 17:51:01.687 |   File "/usr/local/lib/python3.12/asyncio/locks.py", line 212, in wait
+2026-06-22 17:51:01.687 |     await fut
+2026-06-22 17:51:01.687 | asyncio.exceptions.CancelledError
+2026-06-22 17:51:01.687 | 
+2026-06-22 17:51:01.687 | The above exception was the direct cause of the following exception:
+2026-06-22 17:51:01.687 | 
+2026-06-22 17:51:01.687 | Traceback (most recent call last):
+2026-06-22 17:51:01.687 |   File "/usr/local/lib/python3.12/site-packages/arq/worker.py", line 594, in run_job
+2026-06-22 17:51:01.687 |     result = await asyncio.wait_for(task, timeout_s)
+2026-06-22 17:51:01.687 |              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-22 17:51:01.687 |   File "/usr/local/lib/python3.12/asyncio/tasks.py", line 519, in wait_for
+2026-06-22 17:51:01.687 |     async with timeouts.timeout(timeout):
+2026-06-22 17:51:01.687 |                ^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-22 17:51:01.687 |   File "/usr/local/lib/python3.12/asyncio/timeouts.py", line 115, in __aexit__
+2026-06-22 17:51:01.687 |     raise TimeoutError from exc_val
+2026-06-22 17:51:01.687 | TimeoutError
+2026-06-22 17:51:01.980 | 14:51:01: 268.34s → 0ca472a462c14fdfa952f69e1e53666f:analyze_vacancy(vacancy_id=25) delayed=268.34s
+2026-06-22 17:51:02.687 | 14:51:02: 299.96s ! be55e5a9874647f79099702a7c565a4e:analyze_vacancy failed, TimeoutError: 
+2026-06-22 17:51:02.687 | Traceback (most recent call last):
+2026-06-22 17:51:02.687 |   File "/usr/local/lib/python3.12/asyncio/tasks.py", line 520, in wait_for
+2026-06-22 17:51:02.687 |     return await fut
+2026-06-22 17:51:02.687 |            ^^^^^^^^^
+2026-06-22 17:51:02.687 |   File "/app/src/worker.py", line 35, in analyze_vacancy
+2026-06-22 17:51:02.687 |     await _analyze_vacancy_impl(ctx, vacancy_id)
+2026-06-22 17:51:02.687 |   File "/app/src/worker.py", line 61, in _analyze_vacancy_impl
+2026-06-22 17:51:02.687 |     response = await _openai_client.chat.completions.create(
+2026-06-22 17:51:02.687 |                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-22 17:51:02.687 |   File "/usr/local/lib/python3.12/site-packages/openai/resources/chat/completions/completions.py", line 2028, in create
+2026-06-22 17:51:02.687 |     return await self._post(
+2026-06-22 17:51:02.687 |            ^^^^^^^^^^^^^^^^^
+2026-06-22 17:51:02.687 |   File "/usr/local/lib/python3.12/site-packages/openai/_base_client.py", line 1742, in post
+2026-06-22 17:51:02.687 |     return await self.request(cast_to, opts, stream=stream, stream_cls=stream_cls)
+2026-06-22 17:51:02.687 |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-22 17:51:02.687 |   File "/usr/local/lib/python3.12/site-packages/openai/_base_client.py", line 1484, in request
+2026-06-22 17:51:02.687 |     response = await self._client.send(
+2026-06-22 17:51:02.687 |                ^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-22 17:51:02.687 |   File "/usr/local/lib/python3.12/site-packages/httpx/_client.py", line 1643, in send
+2026-06-22 17:51:02.687 |     raise exc
+2026-06-22 17:51:02.687 |   File "/usr/local/lib/python3.12/site-packages/httpx/_client.py", line 1637, in send
+2026-06-22 17:51:02.687 |     await response.aread()
+2026-06-22 17:51:02.687 |   File "/usr/local/lib/python3.12/site-packages/httpx/_models.py", line 979, in aread
+2026-06-22 17:51:02.687 |     self._content = b"".join([part async for part in self.aiter_bytes()])
+2026-06-22 17:51:02.687 |                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-22 17:51:02.687 |   File "/usr/local/lib/python3.12/site-packages/httpx/_models.py", line 997, in aiter_bytes
+2026-06-22 17:51:02.687 |     async for raw_bytes in self.aiter_raw():
+2026-06-22 17:51:02.687 |   File "/usr/local/lib/python3.12/site-packages/httpx/_models.py", line 1055, in aiter_raw
+2026-06-22 17:51:02.687 |     async for raw_stream_bytes in self.stream:
+2026-06-22 17:51:02.687 |   File "/usr/local/lib/python3.12/site-packages/httpx/_client.py", line 176, in __aiter__
+2026-06-22 17:51:02.687 |     async for chunk in self._stream:
+2026-06-22 17:51:02.687 |   File "/usr/local/lib/python3.12/site-packages/httpx/_transports/default.py", line 271, in __aiter__
+2026-06-22 17:51:02.687 |     async for part in self._httpcore_stream:
+2026-06-22 17:51:02.687 |   File "/usr/local/lib/python3.12/site-packages/httpcore/_async/connection_pool.py", line 407, in __aiter__
+2026-06-22 17:51:02.687 |     raise exc from None
+2026-06-22 17:51:02.687 |   File "/usr/local/lib/python3.12/site-packages/httpcore/_async/connection_pool.py", line 403, in __aiter__
+2026-06-22 17:51:02.687 |     async for part in self._stream:
+2026-06-22 17:51:02.687 |   File "/usr/local/lib/python3.12/site-packages/httpcore/_async/http11.py", line 342, in __aiter__
+2026-06-22 17:51:02.687 |     raise exc
+2026-06-22 17:51:02.687 |   File "/usr/local/lib/python3.12/site-packages/httpcore/_async/http11.py", line 334, in __aiter__
+2026-06-22 17:51:02.687 |     async for chunk in self._connection._receive_response_body(**kwargs):
+2026-06-22 17:51:02.687 |   File "/usr/local/lib/python3.12/site-packages/httpcore/_async/http11.py", line 203, in _receive_response_body
+2026-06-22 17:51:02.687 |     event = await self._receive_event(timeout=timeout)
+2026-06-22 17:51:02.687 |             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-22 17:51:02.687 |   File "/usr/local/lib/python3.12/site-packages/httpcore/_async/http11.py", line 217, in _receive_event
+2026-06-22 17:51:02.687 |     data = await self._network_stream.read(
+2026-06-22 17:51:02.687 |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-22 17:51:02.687 |   File "/usr/local/lib/python3.12/site-packages/httpcore/_backends/anyio.py", line 35, in read
+2026-06-22 17:51:02.687 |     return await self._stream.receive(max_bytes=max_bytes)
+2026-06-22 17:51:02.687 |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-22 17:51:02.687 |   File "/usr/local/lib/python3.12/site-packages/anyio/streams/tls.py", line 239, in receive
+2026-06-22 17:51:02.687 |     data = await self._call_sslobject_method(self._ssl_object.read, max_bytes)
+2026-06-22 17:51:02.687 |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-22 17:51:02.687 |   File "/usr/local/lib/python3.12/site-packages/anyio/streams/tls.py", line 182, in _call_sslobject_method
+2026-06-22 17:51:02.687 |     data = await self.transport_stream.receive()
+2026-06-22 17:51:02.687 |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-22 17:51:02.687 |   File "/usr/local/lib/python3.12/site-packages/anyio/_backends/_asyncio.py", line 1314, in receive
+2026-06-22 17:51:02.687 |     await self._protocol.read_event.wait()
+2026-06-22 17:51:02.687 |   File "/usr/local/lib/python3.12/asyncio/locks.py", line 212, in wait
+2026-06-22 17:51:02.687 |     await fut
+2026-06-22 17:51:02.687 | asyncio.exceptions.CancelledError
+2026-06-22 17:51:02.687 | 
+2026-06-22 17:51:02.687 | The above exception was the direct cause of the following exception:
+2026-06-22 17:51:02.687 | 
+2026-06-22 17:51:02.687 | Traceback (most recent call last):
+2026-06-22 17:51:02.687 |   File "/usr/local/lib/python3.12/site-packages/arq/worker.py", line 594, in run_job
+2026-06-22 17:51:02.687 |     result = await asyncio.wait_for(task, timeout_s)
+2026-06-22 17:51:02.687 |              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-22 17:51:02.687 |   File "/usr/local/lib/python3.12/asyncio/tasks.py", line 519, in wait_for
+2026-06-22 17:51:02.687 |     async with timeouts.timeout(timeout):
+2026-06-22 17:51:02.687 |                ^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-22 17:51:02.687 |   File "/usr/local/lib/python3.12/asyncio/timeouts.py", line 115, in __aexit__
+2026-06-22 17:51:02.687 |     raise TimeoutError from exc_val
+2026-06-22 17:51:02.687 | TimeoutError
+2026-06-22 17:51:02.985 | 14:51:02: 268.25s → 25834c699c47424d84abd38f089ee340:analyze_vacancy(vacancy_id=26) delayed=268.25s
+2026-06-22 17:51:04.202 | 14:51:04: 299.96s ! a1b0410e30bb4883910412142d038e49:analyze_vacancy failed, TimeoutError: 
+2026-06-22 17:51:04.202 | Traceback (most recent call last):
+2026-06-22 17:51:04.202 |   File "/usr/local/lib/python3.12/asyncio/tasks.py", line 520, in wait_for
+2026-06-22 17:51:04.202 |     return await fut
+2026-06-22 17:51:04.202 |            ^^^^^^^^^
+2026-06-22 17:51:04.202 |   File "/app/src/worker.py", line 35, in analyze_vacancy
+2026-06-22 17:51:04.202 |     await _analyze_vacancy_impl(ctx, vacancy_id)
+2026-06-22 17:51:04.202 |   File "/app/src/worker.py", line 61, in _analyze_vacancy_impl
+2026-06-22 17:51:04.202 |     response = await _openai_client.chat.completions.create(
+2026-06-22 17:51:04.202 |                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-22 17:51:04.202 |   File "/usr/local/lib/python3.12/site-packages/openai/resources/chat/completions/completions.py", line 2028, in create
+2026-06-22 17:51:04.202 |     return await self._post(
+2026-06-22 17:51:04.202 |            ^^^^^^^^^^^^^^^^^
+2026-06-22 17:51:04.202 |   File "/usr/local/lib/python3.12/site-packages/openai/_base_client.py", line 1742, in post
+2026-06-22 17:51:04.202 |     return await self.request(cast_to, opts, stream=stream, stream_cls=stream_cls)
+2026-06-22 17:51:04.202 |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-22 17:51:04.202 |   File "/usr/local/lib/python3.12/site-packages/openai/_base_client.py", line 1484, in request
+2026-06-22 17:51:04.202 |     response = await self._client.send(
+2026-06-22 17:51:04.202 |                ^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-22 17:51:04.202 |   File "/usr/local/lib/python3.12/site-packages/httpx/_client.py", line 1643, in send
+2026-06-22 17:51:04.202 |     raise exc
+2026-06-22 17:51:04.202 |   File "/usr/local/lib/python3.12/site-packages/httpx/_client.py", line 1637, in send
+2026-06-22 17:51:04.202 |     await response.aread()
+2026-06-22 17:51:04.202 |   File "/usr/local/lib/python3.12/site-packages/httpx/_models.py", line 979, in aread
+2026-06-22 17:51:04.202 |     self._content = b"".join([part async for part in self.aiter_bytes()])
+2026-06-22 17:51:04.202 |                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-22 17:51:04.202 |   File "/usr/local/lib/python3.12/site-packages/httpx/_models.py", line 997, in aiter_bytes
+2026-06-22 17:51:04.202 |     async for raw_bytes in self.aiter_raw():
+2026-06-22 17:51:04.202 |   File "/usr/local/lib/python3.12/site-packages/httpx/_models.py", line 1055, in aiter_raw
+2026-06-22 17:51:04.202 |     async for raw_stream_bytes in self.stream:
+2026-06-22 17:51:04.202 |   File "/usr/local/lib/python3.12/site-packages/httpx/_client.py", line 176, in __aiter__
+2026-06-22 17:51:04.202 |     async for chunk in self._stream:
+2026-06-22 17:51:04.202 |   File "/usr/local/lib/python3.12/site-packages/httpx/_transports/default.py", line 271, in __aiter__
+2026-06-22 17:51:04.202 |     async for part in self._httpcore_stream:
+2026-06-22 17:51:04.202 |   File "/usr/local/lib/python3.12/site-packages/httpcore/_async/connection_pool.py", line 407, in __aiter__
+2026-06-22 17:51:04.202 |     raise exc from None
+2026-06-22 17:51:04.202 |   File "/usr/local/lib/python3.12/site-packages/httpcore/_async/connection_pool.py", line 403, in __aiter__
+2026-06-22 17:51:04.202 |     async for part in self._stream:
+2026-06-22 17:51:04.202 |   File "/usr/local/lib/python3.12/site-packages/httpcore/_async/http11.py", line 342, in __aiter__
+2026-06-22 17:51:04.202 |     raise exc
+2026-06-22 17:51:04.202 |   File "/usr/local/lib/python3.12/site-packages/httpcore/_async/http11.py", line 334, in __aiter__
+2026-06-22 17:51:04.202 |     async for chunk in self._connection._receive_response_body(**kwargs):
+2026-06-22 17:51:04.202 |   File "/usr/local/lib/python3.12/site-packages/httpcore/_async/http11.py", line 203, in _receive_response_body
+2026-06-22 17:51:04.202 |     event = await self._receive_event(timeout=timeout)
+2026-06-22 17:51:04.202 |             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-22 17:51:04.202 |   File "/usr/local/lib/python3.12/site-packages/httpcore/_async/http11.py", line 217, in _receive_event
+2026-06-22 17:51:04.202 |     data = await self._network_stream.read(
+2026-06-22 17:51:04.202 |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-22 17:51:04.202 |   File "/usr/local/lib/python3.12/site-packages/httpcore/_backends/anyio.py", line 35, in read
+2026-06-22 17:51:04.202 |     return await self._stream.receive(max_bytes=max_bytes)
+2026-06-22 17:51:04.202 |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-22 17:51:04.202 |   File "/usr/local/lib/python3.12/site-packages/anyio/streams/tls.py", line 239, in receive
+2026-06-22 17:51:04.202 |     data = await self._call_sslobject_method(self._ssl_object.read, max_bytes)
+2026-06-22 17:51:04.202 |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-22 17:51:04.202 |   File "/usr/local/lib/python3.12/site-packages/anyio/streams/tls.py", line 182, in _call_sslobject_method
+2026-06-22 17:51:04.202 |     data = await self.transport_stream.receive()
+2026-06-22 17:51:04.202 |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-22 17:51:04.202 |   File "/usr/local/lib/python3.12/site-packages/anyio/_backends/_asyncio.py", line 1314, in receive
+2026-06-22 17:51:04.202 |     await self._protocol.read_event.wait()
+2026-06-22 17:51:04.202 |   File "/usr/local/lib/python3.12/asyncio/locks.py", line 212, in wait
+2026-06-22 17:51:04.202 |     await fut
+2026-06-22 17:51:04.202 | asyncio.exceptions.CancelledError
+2026-06-22 17:51:04.202 | 
+2026-06-22 17:51:04.203 | The above exception was the direct cause of the following exception:
+2026-06-22 17:51:04.203 | 
+2026-06-22 17:51:04.203 | Traceback (most recent call last):
+2026-06-22 17:51:04.203 |   File "/usr/local/lib/python3.12/site-packages/arq/worker.py", line 594, in run_job
+2026-06-22 17:51:04.203 |     result = await asyncio.wait_for(task, timeout_s)
+2026-06-22 17:51:04.203 |              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-22 17:51:04.203 |   File "/usr/local/lib/python3.12/asyncio/tasks.py", line 519, in wait_for
+2026-06-22 17:51:04.203 |     async with timeouts.timeout(timeout):
+2026-06-22 17:51:04.203 |                ^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-22 17:51:04.203 |   File "/usr/local/lib/python3.12/asyncio/timeouts.py", line 115, in __aexit__
+2026-06-22 17:51:04.203 |     raise TimeoutError from exc_val
+2026-06-22 17:51:04.203 | TimeoutError
+2026-06-22 17:51:04.486 | 14:51:04: 268.70s → fcbae504bcaa43ba86dd408bc3c763dd:analyze_vacancy(vacancy_id=27) delayed=268.70s
+2026-06-22 17:51:06.216 | 14:51:06: 299.96s ! 7762c018f36a4271b08d45eea577f19d:analyze_vacancy failed, TimeoutError: 
+2026-06-22 17:51:06.216 | Traceback (most recent call last):
+2026-06-22 17:51:06.216 |   File "/usr/local/lib/python3.12/asyncio/tasks.py", line 520, in wait_for
+2026-06-22 17:51:06.216 |     return await fut
+2026-06-22 17:51:06.216 |            ^^^^^^^^^
+2026-06-22 17:51:06.216 |   File "/app/src/worker.py", line 35, in analyze_vacancy
+2026-06-22 17:51:06.216 |     await _analyze_vacancy_impl(ctx, vacancy_id)
+2026-06-22 17:51:06.216 |   File "/app/src/worker.py", line 61, in _analyze_vacancy_impl
+2026-06-22 17:51:06.216 |     response = await _openai_client.chat.completions.create(
+2026-06-22 17:51:06.216 |                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-22 17:51:06.216 |   File "/usr/local/lib/python3.12/site-packages/openai/resources/chat/completions/completions.py", line 2028, in create
+2026-06-22 17:51:06.216 |     return await self._post(
+2026-06-22 17:51:06.216 |            ^^^^^^^^^^^^^^^^^
+2026-06-22 17:51:06.216 |   File "/usr/local/lib/python3.12/site-packages/openai/_base_client.py", line 1742, in post
+2026-06-22 17:51:06.216 |     return await self.request(cast_to, opts, stream=stream, stream_cls=stream_cls)
+2026-06-22 17:51:06.216 |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-22 17:51:06.216 |   File "/usr/local/lib/python3.12/site-packages/openai/_base_client.py", line 1484, in request
+2026-06-22 17:51:06.216 |     response = await self._client.send(
+2026-06-22 17:51:06.216 |                ^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-22 17:51:06.216 |   File "/usr/local/lib/python3.12/site-packages/httpx/_client.py", line 1643, in send
+2026-06-22 17:51:06.216 |     raise exc
+2026-06-22 17:51:06.216 |   File "/usr/local/lib/python3.12/site-packages/httpx/_client.py", line 1637, in send
+2026-06-22 17:51:06.216 |     await response.aread()
+2026-06-22 17:51:06.216 |   File "/usr/local/lib/python3.12/site-packages/httpx/_models.py", line 979, in aread
+2026-06-22 17:51:06.216 |     self._content = b"".join([part async for part in self.aiter_bytes()])
+2026-06-22 17:51:06.216 |                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-22 17:51:06.216 |   File "/usr/local/lib/python3.12/site-packages/httpx/_models.py", line 997, in aiter_bytes
+2026-06-22 17:51:06.216 |     async for raw_bytes in self.aiter_raw():
+2026-06-22 17:51:06.216 |   File "/usr/local/lib/python3.12/site-packages/httpx/_models.py", line 1055, in aiter_raw
+2026-06-22 17:51:06.216 |     async for raw_stream_bytes in self.stream:
+2026-06-22 17:51:06.216 |   File "/usr/local/lib/python3.12/site-packages/httpx/_client.py", line 176, in __aiter__
+2026-06-22 17:51:06.216 |     async for chunk in self._stream:
+2026-06-22 17:51:06.216 |   File "/usr/local/lib/python3.12/site-packages/httpx/_transports/default.py", line 271, in __aiter__
+2026-06-22 17:51:06.216 |     async for part in self._httpcore_stream:
+2026-06-22 17:51:06.216 |   File "/usr/local/lib/python3.12/site-packages/httpcore/_async/connection_pool.py", line 407, in __aiter__
+2026-06-22 17:51:06.216 |     raise exc from None
+2026-06-22 17:51:06.216 |   File "/usr/local/lib/python3.12/site-packages/httpcore/_async/connection_pool.py", line 403, in __aiter__
+2026-06-22 17:51:06.216 |     async for part in self._stream:
+2026-06-22 17:51:06.216 |   File "/usr/local/lib/python3.12/site-packages/httpcore/_async/http11.py", line 342, in __aiter__
+2026-06-22 17:51:06.216 |     raise exc
+2026-06-22 17:51:06.216 |   File "/usr/local/lib/python3.12/site-packages/httpcore/_async/http11.py", line 334, in __aiter__
+2026-06-22 17:51:06.216 |     async for chunk in self._connection._receive_response_body(**kwargs):
+2026-06-22 17:51:06.216 |   File "/usr/local/lib/python3.12/site-packages/httpcore/_async/http11.py", line 203, in _receive_response_body
+2026-06-22 17:51:06.216 |     event = await self._receive_event(timeout=timeout)
+2026-06-22 17:51:06.217 |             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-22 17:51:06.217 |   File "/usr/local/lib/python3.12/site-packages/httpcore/_async/http11.py", line 217, in _receive_event
+2026-06-22 17:51:06.217 |     data = await self._network_stream.read(
+2026-06-22 17:51:06.217 |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-22 17:51:06.217 |   File "/usr/local/lib/python3.12/site-packages/httpcore/_backends/anyio.py", line 35, in read
+2026-06-22 17:51:06.217 |     return await self._stream.receive(max_bytes=max_bytes)
+2026-06-22 17:51:06.217 |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-22 17:51:06.217 |   File "/usr/local/lib/python3.12/site-packages/anyio/streams/tls.py", line 239, in receive
+2026-06-22 17:51:06.217 |     data = await self._call_sslobject_method(self._ssl_object.read, max_bytes)
+2026-06-22 17:51:06.217 |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-22 17:51:06.217 |   File "/usr/local/lib/python3.12/site-packages/anyio/streams/tls.py", line 182, in _call_sslobject_method
+2026-06-22 17:51:06.217 |     data = await self.transport_stream.receive()
+2026-06-22 17:51:06.217 |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-22 17:51:06.217 |   File "/usr/local/lib/python3.12/site-packages/anyio/_backends/_asyncio.py", line 1314, in receive
+2026-06-22 17:51:06.217 |     await self._protocol.read_event.wait()
+2026-06-22 17:51:06.217 |   File "/usr/local/lib/python3.12/asyncio/locks.py", line 212, in wait
+2026-06-22 17:51:06.217 |     await fut
+2026-06-22 17:51:06.217 | asyncio.exceptions.CancelledError
+2026-06-22 17:51:06.217 | 
+2026-06-22 17:51:06.217 | The above exception was the direct cause of the following exception:
+2026-06-22 17:51:06.217 | 
+2026-06-22 17:51:06.217 | Traceback (most recent call last):
+2026-06-22 17:51:06.217 |   File "/usr/local/lib/python3.12/site-packages/arq/worker.py", line 594, in run_job
+2026-06-22 17:51:06.217 |     result = await asyncio.wait_for(task, timeout_s)
+2026-06-22 17:51:06.217 |              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-22 17:51:06.217 |   File "/usr/local/lib/python3.12/asyncio/tasks.py", line 519, in wait_for
+2026-06-22 17:51:06.217 |     async with timeouts.timeout(timeout):
+2026-06-22 17:51:06.217 |                ^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-22 17:51:06.217 |   File "/usr/local/lib/python3.12/asyncio/timeouts.py", line 115, in __aexit__
+2026-06-22 17:51:06.217 |     raise TimeoutError from exc_val
+2026-06-22 17:51:06.217 | TimeoutError
+2026-06-22 17:51:06.496 | 14:51:06: 269.64s → 691bbb4f22f94ca295c02cd03a6092c2:analyze_vacancy(vacancy_id=28) delayed=269.64s
+2026-06-22 17:51:07.730 | 14:51:07: 299.96s ! 8eee8a982fb749c9b5f25ff2cf898966:analyze_vacancy failed, TimeoutError: 
+2026-06-22 17:51:07.730 | Traceback (most recent call last):
+2026-06-22 17:51:07.730 |   File "/usr/local/lib/python3.12/asyncio/tasks.py", line 520, in wait_for
+2026-06-22 17:51:07.730 |     return await fut
+2026-06-22 17:51:07.730 |            ^^^^^^^^^
+2026-06-22 17:51:07.730 |   File "/app/src/worker.py", line 35, in analyze_vacancy
+2026-06-22 17:51:07.730 |     await _analyze_vacancy_impl(ctx, vacancy_id)
+2026-06-22 17:51:07.730 |   File "/app/src/worker.py", line 61, in _analyze_vacancy_impl
+2026-06-22 17:51:07.730 |     response = await _openai_client.chat.completions.create(
+2026-06-22 17:51:07.730 |                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-22 17:51:07.730 |   File "/usr/local/lib/python3.12/site-packages/openai/resources/chat/completions/completions.py", line 2028, in create
+2026-06-22 17:51:07.730 |     return await self._post(
+2026-06-22 17:51:07.730 |            ^^^^^^^^^^^^^^^^^
+2026-06-22 17:51:07.730 |   File "/usr/local/lib/python3.12/site-packages/openai/_base_client.py", line 1742, in post
+2026-06-22 17:51:07.730 |     return await self.request(cast_to, opts, stream=stream, stream_cls=stream_cls)
+2026-06-22 17:51:07.730 |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-22 17:51:07.730 |   File "/usr/local/lib/python3.12/site-packages/openai/_base_client.py", line 1484, in request
+2026-06-22 17:51:07.730 |     response = await self._client.send(
+2026-06-22 17:51:07.730 |                ^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-22 17:51:07.730 |   File "/usr/local/lib/python3.12/site-packages/httpx/_client.py", line 1643, in send
+2026-06-22 17:51:07.730 |     raise exc
+2026-06-22 17:51:07.730 |   File "/usr/local/lib/python3.12/site-packages/httpx/_client.py", line 1637, in send
+2026-06-22 17:51:07.730 |     await response.aread()
+2026-06-22 17:51:07.730 |   File "/usr/local/lib/python3.12/site-packages/httpx/_models.py", line 979, in aread
+2026-06-22 17:51:07.730 |     self._content = b"".join([part async for part in self.aiter_bytes()])
+2026-06-22 17:51:07.730 |                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-22 17:51:07.730 |   File "/usr/local/lib/python3.12/site-packages/httpx/_models.py", line 997, in aiter_bytes
+2026-06-22 17:51:07.730 |     async for raw_bytes in self.aiter_raw():
+2026-06-22 17:51:07.730 |   File "/usr/local/lib/python3.12/site-packages/httpx/_models.py", line 1055, in aiter_raw
+2026-06-22 17:51:07.731 |     async for raw_stream_bytes in self.stream:
+2026-06-22 17:51:07.731 |   File "/usr/local/lib/python3.12/site-packages/httpx/_client.py", line 176, in __aiter__
+2026-06-22 17:51:07.731 |     async for chunk in self._stream:
+2026-06-22 17:51:07.731 |   File "/usr/local/lib/python3.12/site-packages/httpx/_transports/default.py", line 271, in __aiter__
+2026-06-22 17:51:07.731 |     async for part in self._httpcore_stream:
+2026-06-22 17:51:07.731 |   File "/usr/local/lib/python3.12/site-packages/httpcore/_async/connection_pool.py", line 407, in __aiter__
+2026-06-22 17:51:07.731 |     raise exc from None
+2026-06-22 17:51:07.731 |   File "/usr/local/lib/python3.12/site-packages/httpcore/_async/connection_pool.py", line 403, in __aiter__
+2026-06-22 17:51:07.731 |     async for part in self._stream:
+2026-06-22 17:51:07.731 |   File "/usr/local/lib/python3.12/site-packages/httpcore/_async/http11.py", line 342, in __aiter__
+2026-06-22 17:51:07.731 |     raise exc
+2026-06-22 17:51:07.731 |   File "/usr/local/lib/python3.12/site-packages/httpcore/_async/http11.py", line 334, in __aiter__
+2026-06-22 17:51:07.731 |     async for chunk in self._connection._receive_response_body(**kwargs):
+2026-06-22 17:51:07.731 |   File "/usr/local/lib/python3.12/site-packages/httpcore/_async/http11.py", line 203, in _receive_response_body
+2026-06-22 17:51:07.731 |     event = await self._receive_event(timeout=timeout)
+2026-06-22 17:51:07.731 |             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-22 17:51:07.731 |   File "/usr/local/lib/python3.12/site-packages/httpcore/_async/http11.py", line 217, in _receive_event
+2026-06-22 17:51:07.731 |     data = await self._network_stream.read(
+2026-06-22 17:51:07.731 |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-22 17:51:07.731 |   File "/usr/local/lib/python3.12/site-packages/httpcore/_backends/anyio.py", line 35, in read
+2026-06-22 17:51:07.731 |     return await self._stream.receive(max_bytes=max_bytes)
+2026-06-22 17:51:07.731 |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-22 17:51:07.731 |   File "/usr/local/lib/python3.12/site-packages/anyio/streams/tls.py", line 239, in receive
+2026-06-22 17:51:07.731 |     data = await self._call_sslobject_method(self._ssl_object.read, max_bytes)
+2026-06-22 17:51:07.731 |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-22 17:51:07.731 |   File "/usr/local/lib/python3.12/site-packages/anyio/streams/tls.py", line 182, in _call_sslobject_method
+2026-06-22 17:51:07.731 |     data = await self.transport_stream.receive()
+2026-06-22 17:51:07.731 |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-22 17:51:07.731 |   File "/usr/local/lib/python3.12/site-packages/anyio/_backends/_asyncio.py", line 1314, in receive
+2026-06-22 17:51:07.731 |     await self._protocol.read_event.wait()
+2026-06-22 17:51:07.731 |   File "/usr/local/lib/python3.12/asyncio/locks.py", line 212, in wait
+2026-06-22 17:51:07.731 |     await fut
+2026-06-22 17:51:07.731 | asyncio.exceptions.CancelledError
+2026-06-22 17:51:07.731 | 
+2026-06-22 17:51:07.731 | The above exception was the direct cause of the following exception:
+2026-06-22 17:51:07.731 | 
+2026-06-22 17:51:07.731 | Traceback (most recent call last):
+2026-06-22 17:51:07.731 |   File "/usr/local/lib/python3.12/site-packages/arq/worker.py", line 594, in run_job
+2026-06-22 17:51:07.731 |     result = await asyncio.wait_for(task, timeout_s)
+2026-06-22 17:51:07.731 |              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-22 17:51:07.731 |   File "/usr/local/lib/python3.12/asyncio/tasks.py", line 519, in wait_for
+2026-06-22 17:51:07.731 |     async with timeouts.timeout(timeout):
+2026-06-22 17:51:07.731 |                ^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-22 17:51:07.731 |   File "/usr/local/lib/python3.12/asyncio/timeouts.py", line 115, in __aexit__
+2026-06-22 17:51:07.731 |     raise TimeoutError from exc_val
+2026-06-22 17:51:07.731 | TimeoutError
+2026-06-22 17:51:08.017 | 14:51:08: 269.81s → 4bc9bc36b7394a59a8ac9491e68aaa0f:analyze_vacancy(vacancy_id=29) delayed=269.81s
+2026-06-22 17:51:08.763 | 14:51:08: 299.96s ! 761b3c5a561444b3890095968219d397:analyze_vacancy failed, TimeoutError: 
+2026-06-22 17:51:08.763 | Traceback (most recent call last):
+2026-06-22 17:51:08.763 |   File "/usr/local/lib/python3.12/asyncio/tasks.py", line 520, in wait_for
+2026-06-22 17:51:08.763 |     return await fut
+2026-06-22 17:51:08.763 |            ^^^^^^^^^
+2026-06-22 17:51:08.763 |   File "/app/src/worker.py", line 35, in analyze_vacancy
+2026-06-22 17:51:08.763 |     await _analyze_vacancy_impl(ctx, vacancy_id)
+2026-06-22 17:51:08.763 |   File "/app/src/worker.py", line 61, in _analyze_vacancy_impl
+2026-06-22 17:51:08.763 |     response = await _openai_client.chat.completions.create(
+2026-06-22 17:51:08.763 |                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-22 17:51:08.763 |   File "/usr/local/lib/python3.12/site-packages/openai/resources/chat/completions/completions.py", line 2028, in create
+2026-06-22 17:51:08.763 |     return await self._post(
+2026-06-22 17:51:08.763 |            ^^^^^^^^^^^^^^^^^
+2026-06-22 17:51:08.763 |   File "/usr/local/lib/python3.12/site-packages/openai/_base_client.py", line 1742, in post
+2026-06-22 17:51:08.763 |     return await self.request(cast_to, opts, stream=stream, stream_cls=stream_cls)
+2026-06-22 17:51:08.763 |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-22 17:51:08.763 |   File "/usr/local/lib/python3.12/site-packages/openai/_base_client.py", line 1484, in request
+2026-06-22 17:51:08.763 |     response = await self._client.send(
+2026-06-22 17:51:08.763 |                ^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-22 17:51:08.763 |   File "/usr/local/lib/python3.12/site-packages/httpx/_client.py", line 1643, in send
+2026-06-22 17:51:08.763 |     raise exc
+2026-06-22 17:51:08.763 |   File "/usr/local/lib/python3.12/site-packages/httpx/_client.py", line 1637, in send
+2026-06-22 17:51:08.763 |     await response.aread()
+2026-06-22 17:51:08.763 |   File "/usr/local/lib/python3.12/site-packages/httpx/_models.py", line 979, in aread
+2026-06-22 17:51:08.763 |     self._content = b"".join([part async for part in self.aiter_bytes()])
+2026-06-22 17:51:08.763 |                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-22 17:51:08.763 |   File "/usr/local/lib/python3.12/site-packages/httpx/_models.py", line 997, in aiter_bytes
+2026-06-22 17:51:08.763 |     async for raw_bytes in self.aiter_raw():
+2026-06-22 17:51:08.763 |   File "/usr/local/lib/python3.12/site-packages/httpx/_models.py", line 1055, in aiter_raw
+2026-06-22 17:51:08.763 |     async for raw_stream_bytes in self.stream:
+2026-06-22 17:51:08.763 |   File "/usr/local/lib/python3.12/site-packages/httpx/_client.py", line 176, in __aiter__
+2026-06-22 17:51:08.763 |     async for chunk in self._stream:
+2026-06-22 17:51:08.763 |   File "/usr/local/lib/python3.12/site-packages/httpx/_transports/default.py", line 271, in __aiter__
+2026-06-22 17:51:08.763 |     async for part in self._httpcore_stream:
+2026-06-22 17:51:08.763 |   File "/usr/local/lib/python3.12/site-packages/httpcore/_async/connection_pool.py", line 407, in __aiter__
+2026-06-22 17:51:08.763 |     raise exc from None
+2026-06-22 17:51:08.763 |   File "/usr/local/lib/python3.12/site-packages/httpcore/_async/connection_pool.py", line 403, in __aiter__
+2026-06-22 17:51:08.763 |     async for part in self._stream:
+2026-06-22 17:51:08.763 |   File "/usr/local/lib/python3.12/site-packages/httpcore/_async/http11.py", line 342, in __aiter__
+2026-06-22 17:51:08.763 |     raise exc
+2026-06-22 17:51:08.763 |   File "/usr/local/lib/python3.12/site-packages/httpcore/_async/http11.py", line 334, in __aiter__
+2026-06-22 17:51:08.763 |     async for chunk in self._connection._receive_response_body(**kwargs):
+2026-06-22 17:51:08.763 |   File "/usr/local/lib/python3.12/site-packages/httpcore/_async/http11.py", line 203, in _receive_response_body
+2026-06-22 17:51:08.763 |     event = await self._receive_event(timeout=timeout)
+2026-06-22 17:51:08.763 |             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-22 17:51:08.763 |   File "/usr/local/lib/python3.12/site-packages/httpcore/_async/http11.py", line 217, in _receive_event
+2026-06-22 17:51:08.763 |     data = await self._network_stream.read(
+2026-06-22 17:51:08.763 |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-22 17:51:08.763 |   File "/usr/local/lib/python3.12/site-packages/httpcore/_backends/anyio.py", line 35, in read
+2026-06-22 17:51:08.763 |     return await self._stream.receive(max_bytes=max_bytes)
+2026-06-22 17:51:08.763 |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-22 17:51:08.763 |   File "/usr/local/lib/python3.12/site-packages/anyio/streams/tls.py", line 239, in receive
+2026-06-22 17:51:08.763 |     data = await self._call_sslobject_method(self._ssl_object.read, max_bytes)
+2026-06-22 17:51:08.763 |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-22 17:51:08.763 |   File "/usr/local/lib/python3.12/site-packages/anyio/streams/tls.py", line 182, in _call_sslobject_method
+2026-06-22 17:51:08.763 |     data = await self.transport_stream.receive()
+2026-06-22 17:51:08.763 |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-22 17:51:08.763 |   File "/usr/local/lib/python3.12/site-packages/anyio/_backends/_asyncio.py", line 1314, in receive
+2026-06-22 17:51:08.763 |     await self._protocol.read_event.wait()
+2026-06-22 17:51:08.763 |   File "/usr/local/lib/python3.12/asyncio/locks.py", line 212, in wait
+2026-06-22 17:51:08.763 |     await fut
+2026-06-22 17:51:08.763 | asyncio.exceptions.CancelledError
+2026-06-22 17:51:08.763 | 
+2026-06-22 17:51:08.763 | The above exception was the direct cause of the following exception:
+2026-06-22 17:51:08.763 | 
+2026-06-22 17:51:08.763 | Traceback (most recent call last):
+2026-06-22 17:51:08.763 |   File "/usr/local/lib/python3.12/site-packages/arq/worker.py", line 594, in run_job
+2026-06-22 17:51:08.763 |     result = await asyncio.wait_for(task, timeout_s)
+2026-06-22 17:51:08.763 |              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-22 17:51:08.763 |   File "/usr/local/lib/python3.12/asyncio/tasks.py", line 519, in wait_for
+2026-06-22 17:51:08.763 |     async with timeouts.timeout(timeout):
+2026-06-22 17:51:08.764 |                ^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-22 17:51:08.764 |   File "/usr/local/lib/python3.12/asyncio/timeouts.py", line 115, in __aexit__
+2026-06-22 17:51:08.764 |     raise TimeoutError from exc_val
+2026-06-22 17:51:08.764 | TimeoutError
+2026-06-22 17:51:08.997 | 14:51:08: 269.57s → ebb40025946342b1a93cf5604eefaa27:analyze_vacancy(vacancy_id=30) delayed=269.57s
+2026-06-22 17:51:09.734 | 14:51:09: 299.96s ! c14a74d1dbf348a78e1d022351606bf2:analyze_vacancy failed, TimeoutError: 
+2026-06-22 17:51:09.734 | Traceback (most recent call last):
+2026-06-22 17:51:09.734 |   File "/usr/local/lib/python3.12/asyncio/tasks.py", line 520, in wait_for
+2026-06-22 17:51:09.734 |     return await fut
+2026-06-22 17:51:09.734 |            ^^^^^^^^^
+2026-06-22 17:51:09.734 |   File "/app/src/worker.py", line 35, in analyze_vacancy
+2026-06-22 17:51:09.734 |     await _analyze_vacancy_impl(ctx, vacancy_id)
+2026-06-22 17:51:09.734 |   File "/app/src/worker.py", line 61, in _analyze_vacancy_impl
+2026-06-22 17:51:09.734 |     response = await _openai_client.chat.completions.create(
+2026-06-22 17:51:09.734 |                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-22 17:51:09.734 |   File "/usr/local/lib/python3.12/site-packages/openai/resources/chat/completions/completions.py", line 2028, in create
+2026-06-22 17:51:09.734 |     return await self._post(
+2026-06-22 17:51:09.734 |            ^^^^^^^^^^^^^^^^^
+2026-06-22 17:51:09.734 |   File "/usr/local/lib/python3.12/site-packages/openai/_base_client.py", line 1742, in post
+2026-06-22 17:51:09.734 |     return await self.request(cast_to, opts, stream=stream, stream_cls=stream_cls)
+2026-06-22 17:51:09.734 |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-22 17:51:09.734 |   File "/usr/local/lib/python3.12/site-packages/openai/_base_client.py", line 1484, in request
+2026-06-22 17:51:09.734 |     response = await self._client.send(
+2026-06-22 17:51:09.734 |                ^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-22 17:51:09.734 |   File "/usr/local/lib/python3.12/site-packages/httpx/_client.py", line 1643, in send
+2026-06-22 17:51:09.734 |     raise exc
+2026-06-22 17:51:09.734 |   File "/usr/local/lib/python3.12/site-packages/httpx/_client.py", line 1637, in send
+2026-06-22 17:51:09.734 |     await response.aread()
+2026-06-22 17:51:09.734 |   File "/usr/local/lib/python3.12/site-packages/httpx/_models.py", line 979, in aread
+2026-06-22 17:51:09.734 |     self._content = b"".join([part async for part in self.aiter_bytes()])
+2026-06-22 17:51:09.734 |                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-22 17:51:09.734 |   File "/usr/local/lib/python3.12/site-packages/httpx/_models.py", line 997, in aiter_bytes
+2026-06-22 17:51:09.734 |     async for raw_bytes in self.aiter_raw():
+2026-06-22 17:51:09.734 |   File "/usr/local/lib/python3.12/site-packages/httpx/_models.py", line 1055, in aiter_raw
+2026-06-22 17:51:09.734 |     async for raw_stream_bytes in self.stream:
+2026-06-22 17:51:09.734 |   File "/usr/local/lib/python3.12/site-packages/httpx/_client.py", line 176, in __aiter__
+2026-06-22 17:51:09.734 |     async for chunk in self._stream:
+2026-06-22 17:51:09.734 |   File "/usr/local/lib/python3.12/site-packages/httpx/_transports/default.py", line 271, in __aiter__
+2026-06-22 17:51:09.734 |     async for part in self._httpcore_stream:
+2026-06-22 17:51:09.734 |   File "/usr/local/lib/python3.12/site-packages/httpcore/_async/connection_pool.py", line 407, in __aiter__
+2026-06-22 17:51:09.734 |     raise exc from None
+2026-06-22 17:51:09.734 |   File "/usr/local/lib/python3.12/site-packages/httpcore/_async/connection_pool.py", line 403, in __aiter__
+2026-06-22 17:51:09.734 |     async for part in self._stream:
+2026-06-22 17:51:09.734 |   File "/usr/local/lib/python3.12/site-packages/httpcore/_async/http11.py", line 342, in __aiter__
+2026-06-22 17:51:09.734 |     raise exc
+2026-06-22 17:51:09.734 |   File "/usr/local/lib/python3.12/site-packages/httpcore/_async/http11.py", line 334, in __aiter__
+2026-06-22 17:51:09.734 |     async for chunk in self._connection._receive_response_body(**kwargs):
+2026-06-22 17:51:09.734 |   File "/usr/local/lib/python3.12/site-packages/httpcore/_async/http11.py", line 203, in _receive_response_body
+2026-06-22 17:51:09.734 |     event = await self._receive_event(timeout=timeout)
+2026-06-22 17:51:09.734 |             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-22 17:51:09.734 |   File "/usr/local/lib/python3.12/site-packages/httpcore/_async/http11.py", line 217, in _receive_event
+2026-06-22 17:51:09.734 |     data = await self._network_stream.read(
+2026-06-22 17:51:09.734 |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-22 17:51:09.734 |   File "/usr/local/lib/python3.12/site-packages/httpcore/_backends/anyio.py", line 35, in read
+2026-06-22 17:51:09.734 |     return await self._stream.receive(max_bytes=max_bytes)
+2026-06-22 17:51:09.734 |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-22 17:51:09.734 |   File "/usr/local/lib/python3.12/site-packages/anyio/streams/tls.py", line 239, in receive
+2026-06-22 17:51:09.734 |     data = await self._call_sslobject_method(self._ssl_object.read, max_bytes)
+2026-06-22 17:51:09.734 |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-22 17:51:09.734 |   File "/usr/local/lib/python3.12/site-packages/anyio/streams/tls.py", line 182, in _call_sslobject_method
+2026-06-22 17:51:09.734 |     data = await self.transport_stream.receive()
+2026-06-22 17:51:09.734 |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-22 17:51:09.734 |   File "/usr/local/lib/python3.12/site-packages/anyio/_backends/_asyncio.py", line 1314, in receive
+2026-06-22 17:51:09.734 |     await self._protocol.read_event.wait()
+2026-06-22 17:51:09.734 |   File "/usr/local/lib/python3.12/asyncio/locks.py", line 212, in wait
+2026-06-22 17:51:09.734 |     await fut
+2026-06-22 17:51:09.734 | asyncio.exceptions.CancelledError
+2026-06-22 17:51:09.734 | 
+2026-06-22 17:51:09.734 | The above exception was the direct cause of the following exception:
+2026-06-22 17:51:09.734 | 
+2026-06-22 17:51:09.734 | Traceback (most recent call last):
+2026-06-22 17:51:09.734 |   File "/usr/local/lib/python3.12/site-packages/arq/worker.py", line 594, in run_job
+2026-06-22 17:51:09.734 |     result = await asyncio.wait_for(task, timeout_s)
+2026-06-22 17:51:09.734 |              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-22 17:51:09.734 |   File "/usr/local/lib/python3.12/asyncio/tasks.py", line 519, in wait_for
+2026-06-22 17:51:09.734 |     async with timeouts.timeout(timeout):
+2026-06-22 17:51:09.734 |                ^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-22 17:51:09.734 |   File "/usr/local/lib/python3.12/asyncio/timeouts.py", line 115, in __aexit__
+2026-06-22 17:51:09.734 |     raise TimeoutError from exc_val
+2026-06-22 17:51:09.734 | TimeoutError
+2026-06-22 17:51:09.999 | 14:51:09: 269.53s → 560c7a6bda964a10ac731668cfc87bb9:analyze_vacancy(vacancy_id=31) delayed=269.53s
+2026-06-22 17:54:05.387 | 2026-06-22 14:54:05 | INFO     | grindvac.analyzer.worker | Vacancy #17 analyzed: score=75, pros=11, cons=7
+2026-06-22 17:54:05.392 | 14:54:05: 228.98s ← 6233db9e4da447df8fd2f495b5c8d862:analyze_vacancy ● 
+2026-06-22 17:54:05.842 | 14:54:05: 444.23s → 05b528ae80e6490cbf779c665471fad8:analyze_vacancy(vacancy_id=32) delayed=444.23s
+2026-06-22 17:54:07.560 | 2026-06-22 14:54:07 | ERROR    | grindvac.analyzer.worker | LLM call failed for vacancy #22: Error code: 429 - {'error': 'Rate limit exceeded', 'error_type': 'rate_limit_exceeded', 'message': 'Free model usage limit reached. Please try again later or upgrade to a paid model.'}
+2026-06-22 17:54:07.600 | 14:54:07: 190.62s ← e97a7ec710df4d89b7b086fa48411d58:analyze_vacancy ● 
+2026-06-22 17:54:07.878 | 14:54:07: 445.10s → bdeb424d776f42df9e5b8e3cb2a7fd5f:analyze_vacancy(vacancy_id=33) delayed=445.10s
+2026-06-22 17:54:09.840 | 2026-06-22 14:54:09 | ERROR    | grindvac.analyzer.worker | LLM call failed for vacancy #23: Error code: 429 - {'error': 'Rate limit exceeded', 'error_type': 'rate_limit_exceeded', 'message': 'Free model usage limit reached. Please try again later or upgrade to a paid model.'}
+2026-06-22 17:54:09.852 | 14:54:09: 191.37s ← 2e7566c9ca32488bb589679f98aff32e:analyze_vacancy ● 
+2026-06-22 17:54:10.358 | 14:54:10: 446.54s → 6d8b22949f2c4fd785205fb4d597a22a:analyze_vacancy(vacancy_id=34) delayed=446.54s
+2026-06-22 17:54:11.926 | 2026-06-22 14:54:11 | ERROR    | grindvac.analyzer.worker | LLM call failed for vacancy #24: Error code: 429 - {'error': 'Rate limit exceeded', 'error_type': 'rate_limit_exceeded', 'message': 'Free model usage limit reached. Please try again later or upgrade to a paid model.'}
+2026-06-22 17:54:11.939 | 14:54:11: 191.46s ← bde40a23a9b14619a6ba3d7c90423fc4:analyze_vacancy ● 
+2026-06-22 17:54:12.353 | 14:54:12: 447.25s → 0d4306ad0fee4af98f9580e17990a68d:analyze_vacancy(vacancy_id=35) delayed=447.25s
+2026-06-22 17:54:13.968 | 2026-06-22 14:54:13 | ERROR    | grindvac.analyzer.worker | LLM call failed for vacancy #25: Error code: 429 - {'error': 'Rate limit exceeded', 'error_type': 'rate_limit_exceeded', 'message': 'Free model usage limit reached. Please try again later or upgrade to a paid model.'}
+2026-06-22 17:54:13.981 | 14:54:13: 192.00s ← 0ca472a462c14fdfa952f69e1e53666f:analyze_vacancy ● 
+2026-06-22 17:54:14.362 | 14:54:14: 448.22s → 699697c5062a467591da190928217a83:analyze_vacancy(vacancy_id=36) delayed=448.22s
+2026-06-22 17:54:16.137 | 2026-06-22 14:54:16 | ERROR    | grindvac.analyzer.worker | LLM call failed for vacancy #26: Error code: 429 - {'error': 'Rate limit exceeded', 'error_type': 'rate_limit_exceeded', 'message': 'Free model usage limit reached. Please try again later or upgrade to a paid model.'}
+2026-06-22 17:54:16.149 | 14:54:16: 193.16s ← 25834c699c47424d84abd38f089ee340:analyze_vacancy ● 
+2026-06-22 17:54:16.366 | 14:54:16: 448.84s → 80c217337a644fb5bfe73150fde2209d:analyze_vacancy(vacancy_id=37) delayed=448.84s
+2026-06-22 17:54:18.143 | 2026-06-22 14:54:18 | ERROR    | grindvac.analyzer.worker | LLM call failed for vacancy #27: Error code: 429 - {'error': 'Rate limit exceeded', 'error_type': 'rate_limit_exceeded', 'message': 'Free model usage limit reached. Please try again later or upgrade to a paid model.'}
+2026-06-22 17:54:18.153 | 14:54:18: 193.67s ← fcbae504bcaa43ba86dd408bc3c763dd:analyze_vacancy ● 
+2026-06-22 17:54:18.358 | 14:54:18: 449.63s → 11b93284b0a046559cca294f4b809ec3:analyze_vacancy(vacancy_id=38) delayed=449.63s
+2026-06-22 17:54:20.253 | 2026-06-22 14:54:20 | ERROR    | grindvac.analyzer.worker | LLM call failed for vacancy #28: Error code: 429 - {'error': 'Rate limit exceeded', 'error_type': 'rate_limit_exceeded', 'message': 'Free model usage limit reached. Please try again later or upgrade to a paid model.'}
+2026-06-22 17:54:20.265 | 14:54:20: 193.77s ← 691bbb4f22f94ca295c02cd03a6092c2:analyze_vacancy ● 
+2026-06-22 17:54:20.414 | 14:54:20: 450.39s → e650c7aa50b94a66ac7d6cb284741843:analyze_vacancy(vacancy_id=39) delayed=450.39s
+2026-06-22 17:54:22.356 | 2026-06-22 14:54:22 | ERROR    | grindvac.analyzer.worker | LLM call failed for vacancy #29: Error code: 429 - {'error': 'Rate limit exceeded', 'error_type': 'rate_limit_exceeded', 'message': 'Free model usage limit reached. Please try again later or upgrade to a paid model.'}
+2026-06-22 17:54:22.372 | 14:54:22: 194.36s ← 4bc9bc36b7394a59a8ac9491e68aaa0f:analyze_vacancy ● 
+2026-06-22 17:54:22.882 | 14:54:22: 451.14s → 441d5cbe93a74e59aebcae943a24e8c1:analyze_vacancy(vacancy_id=40) delayed=451.14s
+2026-06-22 17:54:24.584 | 2026-06-22 14:54:24 | ERROR    | grindvac.analyzer.worker | LLM call failed for vacancy #30: Error code: 429 - {'error': 'Rate limit exceeded', 'error_type': 'rate_limit_exceeded', 'message': 'Free model usage limit reached. Please try again later or upgrade to a paid model.'}
+2026-06-22 17:54:24.611 | 14:54:24: 195.61s ← ebb40025946342b1a93cf5604eefaa27:analyze_vacancy ● 
+2026-06-22 17:54:24.871 | 14:54:24: 438.10s → f321de306193498e9ee92334678d4be0:analyze_vacancy(vacancy_id=41) delayed=438.10s
+2026-06-22 17:54:26.654 | 2026-06-22 14:54:26 | ERROR    | grindvac.analyzer.worker | LLM call failed for vacancy #31: Error code: 429 - {'error': 'Rate limit exceeded', 'error_type': 'rate_limit_exceeded', 'message': 'Free model usage limit reached. Please try again later or upgrade to a paid model.'}
+2026-06-22 17:54:26.666 | 14:54:26: 196.67s ← 560c7a6bda964a10ac731668cfc87bb9:analyze_vacancy ● 
+2026-06-22 17:54:26.893 | 14:54:26: 438.45s → d9b3bd18c46c47f9803858066373c6a0:analyze_vacancy(vacancy_id=42) delayed=438.45s
+2026-06-22 17:54:28.600 | 2026-06-22 14:54:28 | ERROR    | grindvac.analyzer.worker | LLM call failed for vacancy #32: Error code: 429 - {'error': 'Rate limit exceeded', 'error_type': 'rate_limit_exceeded', 'message': 'Free model usage limit reached. Please try again later or upgrade to a paid model.'}
+2026-06-22 17:54:28.611 | 14:54:28:  22.77s ← 05b528ae80e6490cbf779c665471fad8:analyze_vacancy ● 
+2026-06-22 17:54:28.894 | 14:54:28: 439.57s → f31fc4342e7a4f5f83199502f5d43361:analyze_vacancy(vacancy_id=43) delayed=439.57s
+2026-06-22 17:54:30.672 | 2026-06-22 14:54:30 | ERROR    | grindvac.analyzer.worker | LLM call failed for vacancy #33: Error code: 429 - {'error': 'Rate limit exceeded', 'error_type': 'rate_limit_exceeded', 'message': 'Free model usage limit reached. Please try again later or upgrade to a paid model.'}
+2026-06-22 17:54:30.755 | 2026-06-22 14:54:30 | INFO     | grindvac.analyzer.worker | Vacancy #20 analyzed: score=87, pros=9, cons=6
+2026-06-22 17:54:30.756 | 14:54:30: 221.80s ← b8ee1106e48d4250a99410e11adfadba:analyze_vacancy ● 
+2026-06-22 17:54:30.789 | 14:54:30:  22.91s ← bdeb424d776f42df9e5b8e3cb2a7fd5f:analyze_vacancy ● 
+2026-06-22 17:54:30.892 | 14:54:30: 440.92s → cc9caeace968472e942e7a08f29ddfe2:analyze_vacancy(vacancy_id=44) delayed=440.92s
+2026-06-22 17:54:30.898 | 14:54:30: 439.75s → c2257997c41b4bb2819d4e7669747c89:analyze_vacancy(vacancy_id=45) delayed=439.75s
+2026-06-22 17:54:32.877 | 2026-06-22 14:54:32 | ERROR    | grindvac.analyzer.worker | LLM call failed for vacancy #35: Error code: 429 - {'error': 'Rate limit exceeded', 'error_type': 'rate_limit_exceeded', 'message': 'Free model usage limit reached. Please try again later or upgrade to a paid model.'}
+2026-06-22 17:54:32.889 | 14:54:32:  20.54s ← 0d4306ad0fee4af98f9580e17990a68d:analyze_vacancy ● 
+2026-06-22 17:54:32.960 | 2026-06-22 14:54:32 | ERROR    | grindvac.analyzer.worker | LLM call failed for vacancy #34: Error code: 429 - {'error': 'Rate limit exceeded', 'error_type': 'rate_limit_exceeded', 'message': 'Free model usage limit reached. Please try again later or upgrade to a paid model.'}
+2026-06-22 17:54:32.971 | 14:54:32:  22.61s ← 6d8b22949f2c4fd785205fb4d597a22a:analyze_vacancy ● 
+2026-06-22 17:54:33.394 | 14:54:33: 441.12s → cf74fee2f97146c398c0cc211baf9cab:analyze_vacancy(vacancy_id=46) delayed=441.12s
+2026-06-22 17:54:33.399 | 14:54:33: 440.01s → 2b6caa704a0e40289e7f2abfa055d914:analyze_vacancy(vacancy_id=47) delayed=440.01s
+2026-06-22 17:54:35.013 | 2026-06-22 14:54:35 | ERROR    | grindvac.analyzer.worker | LLM call failed for vacancy #36: Error code: 429 - {'error': 'Rate limit exceeded', 'error_type': 'rate_limit_exceeded', 'message': 'Free model usage limit reached. Please try again later or upgrade to a paid model.'}
+2026-06-22 17:54:35.032 | 14:54:35:  20.67s ← 699697c5062a467591da190928217a83:analyze_vacancy ● 
+2026-06-22 17:54:35.053 | 2026-06-22 14:54:35 | ERROR    | grindvac.analyzer.worker | LLM call failed for vacancy #37: Error code: 429 - {'error': 'Rate limit exceeded', 'error_type': 'rate_limit_exceeded', 'message': 'Free model usage limit reached. Please try again later or upgrade to a paid model.'}
+2026-06-22 17:54:35.067 | 14:54:35:  18.70s ← 80c217337a644fb5bfe73150fde2209d:analyze_vacancy ● 
+2026-06-22 17:54:35.500 | 14:54:35: 441.20s → 57440ffd03c843a0b33ad0f87fcac562:analyze_vacancy(vacancy_id=48) delayed=441.20s
+2026-06-22 17:54:35.510 | 14:54:35: 440.16s → 1a289e99b30948ad857392db1508e92d:analyze_vacancy(vacancy_id=49) delayed=440.16s
+2026-06-22 17:54:37.163 | 2026-06-22 14:54:37 | ERROR    | grindvac.analyzer.worker | LLM call failed for vacancy #39: Error code: 429 - {'error': 'Rate limit exceeded', 'error_type': 'rate_limit_exceeded', 'message': 'Free model usage limit reached. Please try again later or upgrade to a paid model.'}
+2026-06-22 17:54:37.175 | 14:54:37:  16.76s ← e650c7aa50b94a66ac7d6cb284741843:analyze_vacancy ● 
+2026-06-22 17:54:37.198 | 2026-06-22 14:54:37 | ERROR    | grindvac.analyzer.worker | LLM call failed for vacancy #38: Error code: 429 - {'error': 'Rate limit exceeded', 'error_type': 'rate_limit_exceeded', 'message': 'Free model usage limit reached. Please try again later or upgrade to a paid model.'}
+2026-06-22 17:54:37.213 | 14:54:37:  18.86s ← 11b93284b0a046559cca294f4b809ec3:analyze_vacancy ● 
+2026-06-22 17:54:37.397 | 14:54:37: 440.77s → 43a47f42ae144bfa99cb2e0b6c6cdb9a:analyze_vacancy(vacancy_id=50) delayed=440.77s
+2026-06-22 17:54:37.400 | 14:54:37: 439.52s → 1c3b7a0e88b24bd1a2c25f91066ad924:analyze_vacancy(vacancy_id=51) delayed=439.52s
+2026-06-22 17:54:39.293 | 2026-06-22 14:54:39 | ERROR    | grindvac.analyzer.worker | LLM call failed for vacancy #40: Error code: 429 - {'error': 'Rate limit exceeded', 'error_type': 'rate_limit_exceeded', 'message': 'Free model usage limit reached. Please try again later or upgrade to a paid model.'}
+2026-06-22 17:54:39.308 | 14:54:39:  16.43s ← 441d5cbe93a74e59aebcae943a24e8c1:analyze_vacancy ● 
+2026-06-22 17:54:39.420 | 14:54:39: 440.51s → 18f3c0d80b7f47d9a26680cea361d6bd:analyze_vacancy(vacancy_id=52) delayed=440.51s
+2026-06-22 17:54:39.460 | 2026-06-22 14:54:39 | ERROR    | grindvac.analyzer.worker | LLM call failed for vacancy #41: Error code: 429 - {'error': 'Rate limit exceeded', 'error_type': 'rate_limit_exceeded', 'message': 'Free model usage limit reached. Please try again later or upgrade to a paid model.'}
+2026-06-22 17:54:39.472 | 14:54:39:  14.60s ← f321de306193498e9ee92334678d4be0:analyze_vacancy ● 
+2026-06-22 17:54:39.906 | 14:54:39: 440.00s → fee77392feaf4eed90f9eaead31d136c:analyze_vacancy(vacancy_id=53) delayed=440.00s
+2026-06-22 17:54:41.464 | 2026-06-22 14:54:41 | ERROR    | grindvac.analyzer.worker | LLM call failed for vacancy #42: Error code: 429 - {'error': 'Rate limit exceeded', 'error_type': 'rate_limit_exceeded', 'message': 'Free model usage limit reached. Please try again later or upgrade to a paid model.'}
+2026-06-22 17:54:41.477 | 14:54:41:  14.58s ← d9b3bd18c46c47f9803858066373c6a0:analyze_vacancy ● 
+2026-06-22 17:54:41.579 | 2026-06-22 14:54:41 | ERROR    | grindvac.analyzer.worker | LLM call failed for vacancy #43: Error code: 429 - {'error': 'Rate limit exceeded', 'error_type': 'rate_limit_exceeded', 'message': 'Free model usage limit reached. Please try again later or upgrade to a paid model.'}
+2026-06-22 17:54:41.593 | 14:54:41:  12.70s ← f31fc4342e7a4f5f83199502f5d43361:analyze_vacancy ● 
+2026-06-22 17:54:41.916 | 14:54:41: 440.60s → bd0980936ea7492e9901ca99c8cec3ed:analyze_vacancy(vacancy_id=54) delayed=440.60s
+2026-06-22 17:54:41.922 | 14:54:41: 439.31s → d6c3abb4151243a0ac95ec61a68d6bcf:analyze_vacancy(vacancy_id=55) delayed=439.31s
+2026-06-22 17:54:43.558 | 2026-06-22 14:54:43 | ERROR    | grindvac.analyzer.worker | LLM call failed for vacancy #44: Error code: 429 - {'error': 'Rate limit exceeded', 'error_type': 'rate_limit_exceeded', 'message': 'Free model usage limit reached. Please try again later or upgrade to a paid model.'}
+2026-06-22 17:54:43.575 | 14:54:43:  12.68s ← cc9caeace968472e942e7a08f29ddfe2:analyze_vacancy ● 
+2026-06-22 17:54:43.625 | 2026-06-22 14:54:43 | ERROR    | grindvac.analyzer.worker | LLM call failed for vacancy #45: Error code: 429 - {'error': 'Rate limit exceeded', 'error_type': 'rate_limit_exceeded', 'message': 'Free model usage limit reached. Please try again later or upgrade to a paid model.'}
+2026-06-22 17:54:43.637 | 14:54:43:  12.74s ← c2257997c41b4bb2819d4e7669747c89:analyze_vacancy ● 
+2026-06-22 17:54:43.920 | 14:54:43: 439.99s → b0da876edfbc465caf2101ef7d76e368:analyze_vacancy(vacancy_id=56) delayed=439.99s
+2026-06-22 17:54:43.923 | 14:54:43: 438.83s → 67252f085e9d4f9a9ee5de9e84ae20c3:analyze_vacancy(vacancy_id=57) delayed=438.83s
+2026-06-22 17:54:45.724 | 2026-06-22 14:54:45 | ERROR    | grindvac.analyzer.worker | LLM call failed for vacancy #47: Error code: 429 - {'error': 'Rate limit exceeded', 'error_type': 'rate_limit_exceeded', 'message': 'Free model usage limit reached. Please try again later or upgrade to a paid model.'}
+2026-06-22 17:54:45.728 | 2026-06-22 14:54:45 | ERROR    | grindvac.analyzer.worker | LLM call failed for vacancy #46: Error code: 429 - {'error': 'Rate limit exceeded', 'error_type': 'rate_limit_exceeded', 'message': 'Free model usage limit reached. Please try again later or upgrade to a paid model.'}
+2026-06-22 17:54:45.744 | 14:54:45:  12.35s ← 2b6caa704a0e40289e7f2abfa055d914:analyze_vacancy ● 
+2026-06-22 17:54:45.748 | 14:54:45:  12.35s ← cf74fee2f97146c398c0cc211baf9cab:analyze_vacancy ● 
+2026-06-22 17:54:45.936 | 14:54:45: 439.19s → d9434e163cfe4f0598e0460c361bcae5:analyze_vacancy(vacancy_id=58) delayed=439.19s
+2026-06-22 17:54:45.936 | 14:54:45: 437.16s → 693b7cc4c4a2431ea99f774a3f77fd5e:analyze_vacancy(vacancy_id=59) delayed=437.16s
+2026-06-22 17:54:47.848 | 2026-06-22 14:54:47 | ERROR    | grindvac.analyzer.worker | LLM call failed for vacancy #48: Error code: 429 - {'error': 'Rate limit exceeded', 'error_type': 'rate_limit_exceeded', 'message': 'Free model usage limit reached. Please try again later or upgrade to a paid model.'}
+2026-06-22 17:54:47.860 | 14:54:47:  12.36s ← 57440ffd03c843a0b33ad0f87fcac562:analyze_vacancy ● 
+2026-06-22 17:54:47.917 | 14:54:47: 422.51s → 509c5f676c7d4781a0f3913e3d4b7d68:analyze_vacancy(vacancy_id=64) delayed=422.51s
+2026-06-22 17:54:48.547 | 2026-06-22 14:54:48 | ERROR    | grindvac.analyzer.worker | LLM call failed for vacancy #49: Error code: 429 - {'error': 'Rate limit exceeded', 'error_type': 'rate_limit_exceeded', 'message': 'Free model usage limit reached. Please try again later or upgrade to a paid model.'}
+2026-06-22 17:54:48.562 | 14:54:48:  13.06s ← 1a289e99b30948ad857392db1508e92d:analyze_vacancy ● 
+2026-06-22 17:54:48.920 | 14:54:48: 420.99s → 41b5d18bc8744c55af05f5d16fb512c5:analyze_vacancy(vacancy_id=68) delayed=420.99s
+2026-06-22 17:54:49.956 | 2026-06-22 14:54:49 | ERROR    | grindvac.analyzer.worker | LLM call failed for vacancy #50: Error code: 429 - {'error': 'Rate limit exceeded', 'error_type': 'rate_limit_exceeded', 'message': 'Free model usage limit reached. Please try again later or upgrade to a paid model.'}
+2026-06-22 17:54:49.969 | 14:54:49:  12.57s ← 43a47f42ae144bfa99cb2e0b6c6cdb9a:analyze_vacancy ● 
+2026-06-22 17:54:50.428 | 14:54:50: 418.82s → 6439fcd9ccca4294a173111ed221b066:analyze_vacancy(vacancy_id=74) delayed=418.82s
+2026-06-22 17:54:50.618 | 2026-06-22 14:54:50 | ERROR    | grindvac.analyzer.worker | LLM call failed for vacancy #51: Error code: 429 - {'error': 'Rate limit exceeded', 'error_type': 'rate_limit_exceeded', 'message': 'Free model usage limit reached. Please try again later or upgrade to a paid model.'}
+2026-06-22 17:54:50.631 | 14:54:50:  13.23s ← 1c3b7a0e88b24bd1a2c25f91066ad924:analyze_vacancy ● 
+2026-06-22 17:54:50.931 | 14:54:50: 418.14s → c20fcf378ee046468d9043e79ca78179:analyze_vacancy(vacancy_id=75) delayed=418.14s
+2026-06-22 17:54:51.948 | 2026-06-22 14:54:51 | ERROR    | grindvac.analyzer.worker | LLM call failed for vacancy #52: Error code: 429 - {'error': 'Rate limit exceeded', 'error_type': 'rate_limit_exceeded', 'message': 'Free model usage limit reached. Please try again later or upgrade to a paid model.'}
+2026-06-22 17:54:51.969 | 14:54:51:  12.55s ← 18f3c0d80b7f47d9a26680cea361d6bd:analyze_vacancy ● 
+2026-06-22 17:54:52.424 | 14:54:52: 417.45s → 6b8e8830f9774f4eb9958392d8eeca65:analyze_vacancy(vacancy_id=77) delayed=417.45s
+2026-06-22 17:54:52.910 | 2026-06-22 14:54:52 | ERROR    | grindvac.analyzer.worker | LLM call failed for vacancy #53: Error code: 429 - {'error': 'Rate limit exceeded', 'error_type': 'rate_limit_exceeded', 'message': 'Free model usage limit reached. Please try again later or upgrade to a paid model.'}
+2026-06-22 17:54:52.926 | 14:54:52:  13.02s ← fee77392feaf4eed90f9eaead31d136c:analyze_vacancy ● 
+2026-06-22 17:54:53.433 | 14:54:53: 416.41s → ea4536c6765342b9b9fdee43ac8156e7:analyze_vacancy(vacancy_id=78) delayed=416.41s
+2026-06-22 17:54:54.078 | 2026-06-22 14:54:54 | ERROR    | grindvac.analyzer.worker | LLM call failed for vacancy #54: Error code: 429 - {'error': 'Rate limit exceeded', 'error_type': 'rate_limit_exceeded', 'message': 'Free model usage limit reached. Please try again later or upgrade to a paid model.'}
+2026-06-22 17:54:54.090 | 14:54:54:  12.17s ← bd0980936ea7492e9901ca99c8cec3ed:analyze_vacancy ● 
+2026-06-22 17:54:54.433 | 14:54:54: 392.32s → 8578d35017564bbc8e9abcc47e3b6468:analyze_vacancy(vacancy_id=81) delayed=392.32s
+2026-06-22 17:54:55.043 | 2026-06-22 14:54:55 | ERROR    | grindvac.analyzer.worker | LLM call failed for vacancy #55: Error code: 429 - {'error': 'Rate limit exceeded', 'error_type': 'rate_limit_exceeded', 'message': 'Free model usage limit reached. Please try again later or upgrade to a paid model.'}
+2026-06-22 17:54:55.060 | 14:54:55:  13.14s ← d6c3abb4151243a0ac95ec61a68d6bcf:analyze_vacancy ● 
+2026-06-22 17:54:55.444 | 14:54:55: 391.85s → 73dc235bed4943d895bd66f88d0bdfde:analyze_vacancy(vacancy_id=83) delayed=391.85s
+2026-06-22 17:54:56.578 | 2026-06-22 14:54:56 | ERROR    | grindvac.analyzer.worker | LLM call failed for vacancy #56: Error code: 429 - {'error': 'Rate limit exceeded', 'error_type': 'rate_limit_exceeded', 'message': 'Free model usage limit reached. Please try again later or upgrade to a paid model.'}
+2026-06-22 17:54:56.607 | 14:54:56:  12.69s ← b0da876edfbc465caf2101ef7d76e368:analyze_vacancy ● 
+2026-06-22 17:54:56.948 | 14:54:56: 390.05s → ca5215823a894a4e92815bccfea2eada:analyze_vacancy(vacancy_id=88) delayed=390.05s
+2026-06-22 17:54:57.115 | 2026-06-22 14:54:57 | ERROR    | grindvac.analyzer.worker | LLM call failed for vacancy #57: Error code: 429 - {'error': 'Rate limit exceeded', 'error_type': 'rate_limit_exceeded', 'message': 'Free model usage limit reached. Please try again later or upgrade to a paid model.'}
+2026-06-22 17:54:57.129 | 14:54:57:  13.21s ← 67252f085e9d4f9a9ee5de9e84ae20c3:analyze_vacancy ● 
+2026-06-22 17:54:57.465 | 14:54:57: 388.90s → ad2763730fe14c3b9b62e8a4c274d578:analyze_vacancy(vacancy_id=90) delayed=388.90s
+2026-06-22 17:54:59.257 | 2026-06-22 14:54:59 | ERROR    | grindvac.analyzer.worker | LLM call failed for vacancy #58: Error code: 429 - {'error': 'Rate limit exceeded', 'error_type': 'rate_limit_exceeded', 'message': 'Free model usage limit reached. Please try again later or upgrade to a paid model.'}
+2026-06-22 17:54:59.269 | 2026-06-22 14:54:59 | ERROR    | grindvac.analyzer.worker | LLM call failed for vacancy #59: Error code: 429 - {'error': 'Rate limit exceeded', 'error_type': 'rate_limit_exceeded', 'message': 'Free model usage limit reached. Please try again later or upgrade to a paid model.'}
+2026-06-22 17:54:59.277 | 14:54:59:  13.35s ← d9434e163cfe4f0598e0460c361bcae5:analyze_vacancy ● 
+2026-06-22 17:54:59.282 | 14:54:59:  13.35s ← 693b7cc4c4a2431ea99f774a3f77fd5e:analyze_vacancy ● 
+2026-06-22 17:54:59.438 | 14:54:59: 388.81s → 4d66e10758424d4c9eb71eb2486a4ba5:analyze_vacancy(vacancy_id=93) delayed=388.81s
+2026-06-22 17:54:59.443 | 14:54:59: 384.29s → abeb7b6ca7f94cd795a160a4fc0bace9:analyze_vacancy(vacancy_id=100) delayed=384.29s
+2026-06-22 17:55:01.373 | 2026-06-22 14:55:01 | ERROR    | grindvac.analyzer.worker | LLM call failed for vacancy #64: Error code: 429 - {'error': 'Rate limit exceeded', 'error_type': 'rate_limit_exceeded', 'message': 'Free model usage limit reached. Please try again later or upgrade to a paid model.'}
+2026-06-22 17:55:01.385 | 14:55:01:  13.47s ← 509c5f676c7d4781a0f3913e3d4b7d68:analyze_vacancy ● 
+2026-06-22 17:55:01.444 | 14:55:01: 363.87s → 617a7b0350f748fd8b688b5b0f787789:analyze_vacancy(vacancy_id=103) delayed=363.87s
+2026-06-22 17:55:01.855 | 2026-06-22 14:55:01 | ERROR    | grindvac.analyzer.worker | LLM call failed for vacancy #68: Error code: 429 - {'error': 'Rate limit exceeded', 'error_type': 'rate_limit_exceeded', 'message': 'Free model usage limit reached. Please try again later or upgrade to a paid model.'}
+2026-06-22 17:55:01.866 | 14:55:01:  12.95s ← 41b5d18bc8744c55af05f5d16fb512c5:analyze_vacancy ● 
+2026-06-22 17:55:01.994 | 14:55:01: 363.38s → d0c41a40c6474fd7988a8a9c046ba614:analyze_vacancy(vacancy_id=104) delayed=363.38s
+2026-06-22 17:55:03.502 | 2026-06-22 14:55:03 | ERROR    | grindvac.analyzer.worker | LLM call failed for vacancy #74: Error code: 429 - {'error': 'Rate limit exceeded', 'error_type': 'rate_limit_exceeded', 'message': 'Free model usage limit reached. Please try again later or upgrade to a paid model.'}
+2026-06-22 17:55:03.516 | 14:55:03:  13.09s ← 6439fcd9ccca4294a173111ed221b066:analyze_vacancy ● 
+2026-06-22 17:55:03.905 | 2026-06-22 14:55:03 | ERROR    | grindvac.analyzer.worker | LLM call failed for vacancy #75: Error code: 429 - {'error': 'Rate limit exceeded', 'error_type': 'rate_limit_exceeded', 'message': 'Free model usage limit reached. Please try again later or upgrade to a paid model.'}
+2026-06-22 17:55:03.920 | 14:55:03:  12.99s ← c20fcf378ee046468d9043e79ca78179:analyze_vacancy ● 
+2026-06-22 17:55:03.964 | 14:55:03: 361.42s → fbc207a96bdf4be59ffb719e0d55a17a:analyze_vacancy(vacancy_id=110) delayed=361.42s
+2026-06-22 17:55:03.967 | 14:55:03: 358.62s → c9236cfec0b447a6a0b2a9a164aa8a40:analyze_vacancy(vacancy_id=111) delayed=358.62s
+2026-06-22 17:55:05.968 | 2026-06-22 14:55:05 | ERROR    | grindvac.analyzer.worker | LLM call failed for vacancy #77: Error code: 429 - {'error': 'Rate limit exceeded', 'error_type': 'rate_limit_exceeded', 'message': 'Free model usage limit reached. Please try again later or upgrade to a paid model.'}
+2026-06-22 17:55:05.982 | 14:55:05:  13.56s ← 6b8e8830f9774f4eb9958392d8eeca65:analyze_vacancy ● 
+2026-06-22 17:55:06.127 | 2026-06-22 14:55:06 | ERROR    | grindvac.analyzer.worker | LLM call failed for vacancy #78: Error code: 429 - {'error': 'Rate limit exceeded', 'error_type': 'rate_limit_exceeded', 'message': 'Free model usage limit reached. Please try again later or upgrade to a paid model.'}
+2026-06-22 17:55:06.139 | 14:55:06:  12.71s ← ea4536c6765342b9b9fdee43ac8156e7:analyze_vacancy ● 
+2026-06-22 17:55:06.465 | 14:55:06: 358.67s → 3235ddcc1a6a42febf6bf6d50b0a75f3:analyze_vacancy(vacancy_id=112) delayed=358.67s
+2026-06-22 17:55:06.468 | 14:55:06: 357.00s → 37bb48c20e2d49fea01f1f210c871b67:analyze_vacancy(vacancy_id=113) delayed=357.00s
+2026-06-22 17:55:08.248 | 2026-06-22 14:55:08 | ERROR    | grindvac.analyzer.worker | LLM call failed for vacancy #81: Error code: 429 - {'error': 'Rate limit exceeded', 'error_type': 'rate_limit_exceeded', 'message': 'Free model usage limit reached. Please try again later or upgrade to a paid model.'}
+2026-06-22 17:55:08.260 | 14:55:08:  13.83s ← 8578d35017564bbc8e9abcc47e3b6468:analyze_vacancy ● 
+2026-06-22 17:55:08.434 | 2026-06-22 14:55:08 | ERROR    | grindvac.analyzer.worker | LLM call failed for vacancy #83: Error code: 429 - {'error': 'Rate limit exceeded', 'error_type': 'rate_limit_exceeded', 'message': 'Free model usage limit reached. Please try again later or upgrade to a paid model.'}
+2026-06-22 17:55:08.450 | 14:55:08:  13.01s ← 73dc235bed4943d895bd66f88d0bdfde:analyze_vacancy ● 
+2026-06-22 17:55:08.497 | 14:55:08: 357.81s → 67fd1970981148dfa709712db529f71e:analyze_vacancy(vacancy_id=114) delayed=357.81s
+2026-06-22 17:55:08.502 | 14:55:08: 356.78s → 3c3cd2532d4b41269b33a4be648025e6:analyze_vacancy(vacancy_id=115) delayed=356.78s
+2026-06-22 17:55:10.292 | 2026-06-22 14:55:10 | ERROR    | grindvac.analyzer.worker | LLM call failed for vacancy #88: Error code: 429 - {'error': 'Rate limit exceeded', 'error_type': 'rate_limit_exceeded', 'message': 'Free model usage limit reached. Please try again later or upgrade to a paid model.'}
+2026-06-22 17:55:10.302 | 2026-06-22 14:55:10 | INFO     | grindvac.analyzer.worker | Vacancy #21 analyzed: score=70, pros=8, cons=7
+2026-06-22 17:55:10.305 | 14:55:10: 255.84s ← b942e04abcd645c29cfc1cb173456e1a:analyze_vacancy ● 
+2026-06-22 17:55:10.312 | 14:55:10:  13.36s ← ca5215823a894a4e92815bccfea2eada:analyze_vacancy ● 
+2026-06-22 17:55:10.356 | 2026-06-22 14:55:10 | INFO     | grindvac.analyzer.worker | Vacancy #18 analyzed: score=87, pros=9, cons=4
+2026-06-22 17:55:10.357 | 14:55:10: 290.46s ← 70089b0514bf487ebdfacf9821b3fbd1:analyze_vacancy ● 
+2026-06-22 17:55:10.401 | 2026-06-22 14:55:10 | ERROR    | grindvac.analyzer.worker | LLM call failed for vacancy #90: Error code: 429 - {'error': 'Rate limit exceeded', 'error_type': 'rate_limit_exceeded', 'message': 'Free model usage limit reached. Please try again later or upgrade to a paid model.'}
+2026-06-22 17:55:10.417 | 14:55:10:  12.95s ← ad2763730fe14c3b9b62e8a4c274d578:analyze_vacancy ● 
+2026-06-22 17:55:10.462 | 14:55:10: 356.38s → 71ad66a0e6a34856b3e5a87656773a2c:analyze_vacancy(vacancy_id=118) delayed=356.38s
+2026-06-22 17:55:10.467 | 14:55:10: 355.27s → 84c75f10733748bb8dbd724040ccdae1:analyze_vacancy(vacancy_id=119) delayed=355.27s
+2026-06-22 17:55:12.323 | 2026-06-22 14:55:12 | ERROR    | grindvac.analyzer.worker | LLM call failed for vacancy #103: Error code: 429 - {'error': 'Rate limit exceeded', 'error_type': 'rate_limit_exceeded', 'message': 'Free model usage limit reached. Please try again later or upgrade to a paid model.'}
+2026-06-22 17:55:12.335 | 2026-06-22 14:55:12 | ERROR    | grindvac.analyzer.worker | LLM call failed for vacancy #93: Error code: 429 - {'error': 'Rate limit exceeded', 'error_type': 'rate_limit_exceeded', 'message': 'Free model usage limit reached. Please try again later or upgrade to a paid model.'}
+2026-06-22 17:55:12.343 | 14:55:12:  10.90s ← 617a7b0350f748fd8b688b5b0f787789:analyze_vacancy ● 
+2026-06-22 17:55:12.372 | 2026-06-22 14:55:12 | ERROR    | grindvac.analyzer.worker | LLM call failed for vacancy #100: Error code: 429 - {'error': 'Rate limit exceeded', 'error_type': 'rate_limit_exceeded', 'message': 'Free model usage limit reached. Please try again later or upgrade to a paid model.'}
+2026-06-22 17:55:12.376 | 14:55:12:  12.94s ← 4d66e10758424d4c9eb71eb2486a4ba5:analyze_vacancy ● 
+2026-06-22 17:55:12.404 | 14:55:12:  12.96s ← abeb7b6ca7f94cd795a160a4fc0bace9:analyze_vacancy ● 
+2026-06-22 17:55:12.672 | 2026-06-22 14:55:12 | ERROR    | grindvac.analyzer.worker | LLM call failed for vacancy #104: Error code: 429 - {'error': 'Rate limit exceeded', 'error_type': 'rate_limit_exceeded', 'message': 'Free model usage limit reached. Please try again later or upgrade to a paid model.'}
+2026-06-22 17:55:12.688 | 14:55:12:  10.69s ← d0c41a40c6474fd7988a8a9c046ba614:analyze_vacancy ● 
+2026-06-22 17:55:14.421 | 2026-06-22 14:55:14 | ERROR    | grindvac.analyzer.worker | LLM call failed for vacancy #112: Error code: 429 - {'error': 'Rate limit exceeded', 'error_type': 'rate_limit_exceeded', 'message': 'Free model usage limit reached. Please try again later or upgrade to a paid model.'}
+2026-06-22 17:55:14.432 | 14:55:14:   7.97s ← 3235ddcc1a6a42febf6bf6d50b0a75f3:analyze_vacancy ● 
+2026-06-22 17:55:14.479 | 2026-06-22 14:55:14 | ERROR    | grindvac.analyzer.worker | LLM call failed for vacancy #110: Error code: 429 - {'error': 'Rate limit exceeded', 'error_type': 'rate_limit_exceeded', 'message': 'Free model usage limit reached. Please try again later or upgrade to a paid model.'}
+2026-06-22 17:55:14.491 | 14:55:14:  10.53s ← fbc207a96bdf4be59ffb719e0d55a17a:analyze_vacancy ● 
+2026-06-22 17:55:14.546 | 2026-06-22 14:55:14 | ERROR    | grindvac.analyzer.worker | LLM call failed for vacancy #111: Error code: 429 - {'error': 'Rate limit exceeded', 'error_type': 'rate_limit_exceeded', 'message': 'Free model usage limit reached. Please try again later or upgrade to a paid model.'}
+2026-06-22 17:55:14.561 | 14:55:14:  10.59s ← c9236cfec0b447a6a0b2a9a164aa8a40:analyze_vacancy ● 
+2026-06-22 17:55:14.719 | 2026-06-22 14:55:14 | ERROR    | grindvac.analyzer.worker | LLM call failed for vacancy #113: Error code: 429 - {'error': 'Rate limit exceeded', 'error_type': 'rate_limit_exceeded', 'message': 'Free model usage limit reached. Please try again later or upgrade to a paid model.'}
+2026-06-22 17:55:14.741 | 14:55:14:   8.27s ← 37bb48c20e2d49fea01f1f210c871b67:analyze_vacancy ● 
+2026-06-22 17:55:16.423 | 2026-06-22 14:55:16 | ERROR    | grindvac.analyzer.worker | LLM call failed for vacancy #114: Error code: 429 - {'error': 'Rate limit exceeded', 'error_type': 'rate_limit_exceeded', 'message': 'Free model usage limit reached. Please try again later or upgrade to a paid model.'}
+2026-06-22 17:55:16.429 | 2026-06-22 14:55:16 | ERROR    | grindvac.analyzer.worker | LLM call failed for vacancy #115: Error code: 429 - {'error': 'Rate limit exceeded', 'error_type': 'rate_limit_exceeded', 'message': 'Free model usage limit reached. Please try again later or upgrade to a paid model.'}
+2026-06-22 17:55:16.441 | 14:55:16:   7.94s ← 67fd1970981148dfa709712db529f71e:analyze_vacancy ● 
+2026-06-22 17:55:16.444 | 14:55:16:   7.94s ← 3c3cd2532d4b41269b33a4be648025e6:analyze_vacancy ● 
+2026-06-22 17:55:16.573 | 2026-06-22 14:55:16 | ERROR    | grindvac.analyzer.worker | LLM call failed for vacancy #118: Error code: 429 - {'error': 'Rate limit exceeded', 'error_type': 'rate_limit_exceeded', 'message': 'Free model usage limit reached. Please try again later or upgrade to a paid model.'}
+2026-06-22 17:55:16.583 | 14:55:16:   6.12s ← 71ad66a0e6a34856b3e5a87656773a2c:analyze_vacancy ● 
+2026-06-22 17:55:16.806 | 2026-06-22 14:55:16 | ERROR    | grindvac.analyzer.worker | LLM call failed for vacancy #119: Error code: 429 - {'error': 'Rate limit exceeded', 'error_type': 'rate_limit_exceeded', 'message': 'Free model usage limit reached. Please try again later or upgrade to a paid model.'}
+2026-06-22 17:55:16.822 | 14:55:16:   6.36s ← 84c75f10733748bb8dbd724040ccdae1:analyze_vacancy ● 
+2026-06-22 17:55:28.389 | 14:55:28: 299.97s ! 0209fd9e4287410e8b603620251e0648:analyze_vacancy failed, TimeoutError: 
+2026-06-22 17:55:28.389 | Traceback (most recent call last):
+2026-06-22 17:55:28.389 |   File "/usr/local/lib/python3.12/asyncio/tasks.py", line 520, in wait_for
+2026-06-22 17:55:28.389 |     return await fut
+2026-06-22 17:55:28.389 |            ^^^^^^^^^
+2026-06-22 17:55:28.389 |   File "/app/src/worker.py", line 35, in analyze_vacancy
+2026-06-22 17:55:28.389 |     await _analyze_vacancy_impl(ctx, vacancy_id)
+2026-06-22 17:55:28.389 |   File "/app/src/worker.py", line 61, in _analyze_vacancy_impl
+2026-06-22 17:55:28.389 |     response = await _openai_client.chat.completions.create(
+2026-06-22 17:55:28.389 |                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-22 17:55:28.389 |   File "/usr/local/lib/python3.12/site-packages/openai/resources/chat/completions/completions.py", line 2028, in create
+2026-06-22 17:55:28.389 |     return await self._post(
+2026-06-22 17:55:28.389 |            ^^^^^^^^^^^^^^^^^
+2026-06-22 17:55:28.389 |   File "/usr/local/lib/python3.12/site-packages/openai/_base_client.py", line 1742, in post
+2026-06-22 17:55:28.389 |     return await self.request(cast_to, opts, stream=stream, stream_cls=stream_cls)
+2026-06-22 17:55:28.389 |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-22 17:55:28.389 |   File "/usr/local/lib/python3.12/site-packages/openai/_base_client.py", line 1484, in request
+2026-06-22 17:55:28.389 |     response = await self._client.send(
+2026-06-22 17:55:28.389 |                ^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-22 17:55:28.389 |   File "/usr/local/lib/python3.12/site-packages/httpx/_client.py", line 1643, in send
+2026-06-22 17:55:28.389 |     raise exc
+2026-06-22 17:55:28.389 |   File "/usr/local/lib/python3.12/site-packages/httpx/_client.py", line 1637, in send
+2026-06-22 17:55:28.389 |     await response.aread()
+2026-06-22 17:55:28.389 |   File "/usr/local/lib/python3.12/site-packages/httpx/_models.py", line 979, in aread
+2026-06-22 17:55:28.389 |     self._content = b"".join([part async for part in self.aiter_bytes()])
+2026-06-22 17:55:28.389 |                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-22 17:55:28.389 |   File "/usr/local/lib/python3.12/site-packages/httpx/_models.py", line 997, in aiter_bytes
+2026-06-22 17:55:28.389 |     async for raw_bytes in self.aiter_raw():
+2026-06-22 17:55:28.389 |   File "/usr/local/lib/python3.12/site-packages/httpx/_models.py", line 1055, in aiter_raw
+2026-06-22 17:55:28.389 |     async for raw_stream_bytes in self.stream:
+2026-06-22 17:55:28.389 |   File "/usr/local/lib/python3.12/site-packages/httpx/_client.py", line 176, in __aiter__
+2026-06-22 17:55:28.389 |     async for chunk in self._stream:
+2026-06-22 17:55:28.389 |   File "/usr/local/lib/python3.12/site-packages/httpx/_transports/default.py", line 271, in __aiter__
+2026-06-22 17:55:28.389 |     async for part in self._httpcore_stream:
+2026-06-22 17:55:28.389 |   File "/usr/local/lib/python3.12/site-packages/httpcore/_async/connection_pool.py", line 407, in __aiter__
+2026-06-22 17:55:28.389 |     raise exc from None
+2026-06-22 17:55:28.389 |   File "/usr/local/lib/python3.12/site-packages/httpcore/_async/connection_pool.py", line 403, in __aiter__
+2026-06-22 17:55:28.389 |     async for part in self._stream:
+2026-06-22 17:55:28.389 |   File "/usr/local/lib/python3.12/site-packages/httpcore/_async/http11.py", line 342, in __aiter__
+2026-06-22 17:55:28.389 |     raise exc
+2026-06-22 17:55:28.389 |   File "/usr/local/lib/python3.12/site-packages/httpcore/_async/http11.py", line 334, in __aiter__
+2026-06-22 17:55:28.389 |     async for chunk in self._connection._receive_response_body(**kwargs):
+2026-06-22 17:55:28.389 |   File "/usr/local/lib/python3.12/site-packages/httpcore/_async/http11.py", line 203, in _receive_response_body
+2026-06-22 17:55:28.389 |     event = await self._receive_event(timeout=timeout)
+2026-06-22 17:55:28.389 |             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-22 17:55:28.389 |   File "/usr/local/lib/python3.12/site-packages/httpcore/_async/http11.py", line 217, in _receive_event
+2026-06-22 17:55:28.389 |     data = await self._network_stream.read(
+2026-06-22 17:55:28.389 |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-22 17:55:28.389 |   File "/usr/local/lib/python3.12/site-packages/httpcore/_backends/anyio.py", line 35, in read
+2026-06-22 17:55:28.389 |     return await self._stream.receive(max_bytes=max_bytes)
+2026-06-22 17:55:28.389 |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-22 17:55:28.389 |   File "/usr/local/lib/python3.12/site-packages/anyio/streams/tls.py", line 239, in receive
+2026-06-22 17:55:28.389 |     data = await self._call_sslobject_method(self._ssl_object.read, max_bytes)
+2026-06-22 17:55:28.389 |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-22 17:55:28.389 |   File "/usr/local/lib/python3.12/site-packages/anyio/streams/tls.py", line 182, in _call_sslobject_method
+2026-06-22 17:55:28.389 |     data = await self.transport_stream.receive()
+2026-06-22 17:55:28.389 |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-22 17:55:28.389 |   File "/usr/local/lib/python3.12/site-packages/anyio/_backends/_asyncio.py", line 1314, in receive
+2026-06-22 17:55:28.389 |     await self._protocol.read_event.wait()
+2026-06-22 17:55:28.389 |   File "/usr/local/lib/python3.12/asyncio/locks.py", line 212, in wait
+2026-06-22 17:55:28.389 |     await fut
+2026-06-22 17:55:28.389 | asyncio.exceptions.CancelledError
+2026-06-22 17:55:28.389 | 
+2026-06-22 17:55:28.389 | The above exception was the direct cause of the following exception:
+2026-06-22 17:55:28.389 | 
+2026-06-22 17:55:28.389 | Traceback (most recent call last):
+2026-06-22 17:55:28.389 |   File "/usr/local/lib/python3.12/site-packages/arq/worker.py", line 594, in run_job
+2026-06-22 17:55:28.389 |     result = await asyncio.wait_for(task, timeout_s)
+2026-06-22 17:55:28.389 |              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-22 17:55:28.389 |   File "/usr/local/lib/python3.12/asyncio/tasks.py", line 519, in wait_for
+2026-06-22 17:55:28.389 |     async with timeouts.timeout(timeout):
+2026-06-22 17:55:28.389 |                ^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-06-22 17:55:28.389 |   File "/usr/local/lib/python3.12/asyncio/timeouts.py", line 115, in __aexit__
+2026-06-22 17:55:28.389 |     raise TimeoutError from exc_val
+2026-06-22 17:55:28.389 | TimeoutError

@@ -23,7 +23,7 @@ from shared.src.utils.logger import get_logger
 logger = get_logger("scraper.pipeline")
 
 _SELECTORS_PATH = "/app/selectors.json"
-_BATCH_SIZE = 50
+_BATCH_SIZE = 20
 _MAX_RETRIES = 3
 
 
@@ -133,6 +133,10 @@ async def _process_batch(
     """Download, parse, and save a batch of vacancies. Returns count of saved."""
     maker = get_session_maker()
     saved = 0
+    # Collect (vacancy_id, link_id, title) for enqueue after commit to avoid
+    # a race condition where transformer picks up the task before the row is
+    # visible in the database (uncommitted transaction).
+    to_enqueue: list[tuple[int, int, str]] = []
 
     async with maker() as session:
         for link in links:
@@ -165,18 +169,23 @@ async def _process_batch(
                 .values(vacancy_id=vacancy.id, status="parsed")
             )
 
-            # Enqueue to arq html_queue for transformer
-            try:
-                await _enqueue_transform(arq_pool, vacancy.id)
-            except Exception as exc:
-                logger.error("Failed to enqueue vacancy #%d: %s", vacancy.id, exc)
-                await _mark_link_status(session, link.id, "failed")
-                continue
-
+            to_enqueue.append((vacancy.id, link.id, parsed["title"]))
             saved += 1
             logger.info("Saved vacancy #%d: %s", link.id, parsed["title"])
 
         await session.commit()
+
+    # Enqueue to arq only after the transaction is committed, so transformer
+    # can actually find the vacancy row when it picks up the task.
+    for vacancy_id, link_id, title in to_enqueue:
+        try:
+            await _enqueue_transform(arq_pool, vacancy_id)
+        except Exception as exc:
+            logger.error("Failed to enqueue vacancy #%d: %s", vacancy_id, exc)
+            # Mark link as failed since transformer will never process it
+            async with maker() as session:
+                await _mark_link_status(session, link_id, "failed")
+                await session.commit()
 
     return saved
 
