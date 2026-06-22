@@ -110,6 +110,7 @@ async def _analyze_vacancy_impl(ctx: dict[str, Any], vacancy_id: int) -> None:
                     ),
                 },
             ],
+            response_format={"type": "json_object"},
             max_tokens=1024,
             temperature=0,
         )

@@ -14,6 +14,7 @@ from shared.src.models import VacancyLink
 from shared.src.security import validate_url
 from shared.src.selectors import (
     load_selectors,
+    normalize_url,
     resolve_platform_slug,
 )
 from shared.src.utils.logger import get_logger
@@ -122,12 +123,19 @@ async def _fetch_search_page(
 
 
 async def _save_links(urls: list[str], selectors: dict) -> int:
-    """Bulk-insert vacancy links, skipping duplicates (DB-level)."""
+    """Bulk-insert vacancy links, skipping duplicates (DB-level).
+
+    URLs are normalized (query params stripped) before dedup and storage
+    so that the same vacancy appearing in different search queries
+    does not create duplicate rows. The caller still receives the full
+    URLs for fetching.
+    """
     if not urls:
         return 0
 
     maker = get_session_maker()
     rows: list[dict[str, str]] = []
+    seen: set[str] = set()
 
     for url in urls:
         try:
@@ -135,7 +143,13 @@ async def _save_links(urls: list[str], selectors: dict) -> int:
         except ValueError as exc:
             logger.warning("Skipping unsupported URL: %s (%s)", url, exc)
             continue
-        rows.append({"url": url, "platform": platform, "status": "new"})
+
+        canonical = normalize_url(url)
+        if canonical in seen:
+            continue
+        seen.add(canonical)
+
+        rows.append({"url": canonical, "platform": platform, "status": "new"})
 
     if not rows:
         return 0
