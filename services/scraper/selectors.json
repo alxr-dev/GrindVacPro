@@ -9,16 +9,5 @@
       "company_name": "span.vacancy-company-name span",
       "description": "div[data-qa='vacancy-description']"
     }
-  },
-  "career.habr.com": {
-    "searcher": {
-      "vacancy_link": "a.vacancy-card__title-link"
-    },
-    "parser": {
-      "title": "h1.page-title",
-      "salary": "div.agent-salary, div.salary", 
-      "company_name": "div.company_name a, a.company",
-      "description": "div.vacancy-description, div.style-html"
-    }
   }
 }
