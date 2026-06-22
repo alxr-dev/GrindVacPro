@@ -21,6 +21,23 @@ from src.prompts import SYSTEM_PROMPT
 
 logger = get_logger("analyzer.worker")
 
+
+def _try_fix_json(raw: str) -> dict[str, Any] | None:
+    """Attempt to fix a truncated JSON string from LLM response.
+
+    Tries adding missing closing braces/brackets and parsing again.
+    Returns the parsed dict on success, None on failure.
+    """
+    # Try adding closing braces/brackets
+    for suffix in ["}", "}]", "}]}"]:
+        try:
+            candidate = raw.rstrip() + suffix
+            return json.loads(candidate)
+        except json.JSONDecodeError:
+            continue
+    return None
+
+
 # ── Module-level state ───────────────────────────────────────────
 _openai_client: AsyncOpenAI | None = None
 _resume_text: str = ""
@@ -73,10 +90,15 @@ async def _analyze_vacancy_impl(ctx: dict[str, Any], vacancy_id: int) -> None:
                     ),
                 },
             ],
-            response_format={"type": "json_object"},
-            max_tokens=2048,
+            max_tokens=1024,
+            temperature=0,
         )
-        raw_content = response.choices[0].message.content
+        # Some reasoning models return content in the "reasoning" field
+        # instead of "content". Try both.
+        message = response.choices[0].message
+        raw_content = message.content
+        if raw_content is None and hasattr(message, "reasoning") and message.reasoning:
+            raw_content = message.reasoning
         if raw_content is None:
             raise ValueError("Empty response from LLM")
     except Exception as exc:
@@ -98,22 +120,49 @@ async def _analyze_vacancy_impl(ctx: dict[str, Any], vacancy_id: int) -> None:
         cons = list(analysis["cons"])
         cover_letter = str(analysis["cover_letter"])
     except (json.JSONDecodeError, KeyError, TypeError, ValueError) as exc:
-        # Sanitize: replace control chars to prevent log injection
-        safe_raw = raw_content[:200].replace("\n", " ").replace("\r", " ")
-        logger.error(
-            "Failed to parse LLM response for vacancy #%d: %s\nRaw: %s",
-            vacancy_id,
-            exc,
-            safe_raw,
-        )
-        async with maker() as session:
-            await session.execute(
-                update(VacancyLink)
-                .where(VacancyLink.vacancy_id == vacancy_id)
-                .values(status="failed")
+        # Attempt to fix truncated JSON (missing closing brace)
+        fixed = _try_fix_json(raw_content)
+        if fixed is not None:
+            try:
+                analysis = fixed
+                score = max(0, min(100, int(analysis["score"])))
+                pros = list(analysis["pros"])
+                cons = list(analysis["cons"])
+                cover_letter = str(analysis["cover_letter"])
+                logger.info("Fixed truncated JSON for vacancy #%d", vacancy_id)
+            except (json.JSONDecodeError, KeyError, TypeError, ValueError) as exc2:
+                safe_raw = raw_content[:200].replace("\n", " ").replace("\r", " ")
+                logger.error(
+                    "Failed to parse LLM response for vacancy #%d (fix attempt failed): %s\nRaw: %s",
+                    vacancy_id,
+                    exc2,
+                    safe_raw,
+                )
+                async with maker() as session:
+                    await session.execute(
+                        update(VacancyLink)
+                        .where(VacancyLink.vacancy_id == vacancy_id)
+                        .values(status="failed")
+                    )
+                    await session.commit()
+                return
+        else:
+            # Sanitize: replace control chars to prevent log injection
+            safe_raw = raw_content[:200].replace("\n", " ").replace("\r", " ")
+            logger.error(
+                "Failed to parse LLM response for vacancy #%d: %s\nRaw: %s",
+                vacancy_id,
+                exc,
+                safe_raw,
             )
-            await session.commit()
-        return
+            async with maker() as session:
+                await session.execute(
+                    update(VacancyLink)
+                    .where(VacancyLink.vacancy_id == vacancy_id)
+                    .values(status="failed")
+                )
+                await session.commit()
+            return
 
     # ── Store results ─────────────────────────────────────────────
     ai_analysis = {
@@ -151,6 +200,7 @@ async def on_startup(ctx: dict[str, Any]) -> None:
     _openai_client = AsyncOpenAI(
         api_key=settings.openai_api_key,
         base_url=settings.openai_base_url,
+        timeout=120.0,  # 2 minutes max per LLM call
     )
     # Load resume text for LLM prompts
     try:
@@ -185,7 +235,7 @@ class WorkerSettings:
     functions = [analyze_vacancy]
     on_startup = on_startup
     on_shutdown = on_shutdown
-    max_jobs = 15  # Network I/O: high concurrency
+    max_jobs = 10  # Network I/O: moderate concurrency to avoid rate limits
     max_retries = 3
     retry_delay = 10  # seconds
     redis_settings = RedisSettings.from_dsn(settings.redis_url)
