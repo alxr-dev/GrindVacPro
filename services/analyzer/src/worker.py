@@ -22,6 +22,26 @@ from src.prompts import SYSTEM_PROMPT
 logger = get_logger("analyzer.worker")
 
 
+def _clean_llm_json(raw: str) -> str:
+    """Strip markdown code fences and whitespace from LLM JSON response.
+
+    LLM models sometimes wrap their JSON in ```json ... ``` blocks.
+    This function extracts the raw JSON string.
+    """
+    text = raw.strip()
+    # Strip ```json ... ``` fences
+    if text.startswith("```"):
+        # Remove first line (```json or ```)
+        lines = text.split("\n")
+        # Remove first and last lines if they are fences
+        if lines[0].strip().startswith("```"):
+            lines = lines[1:]
+        if lines and lines[-1].strip() == "```":
+            lines = lines[:-1]
+        text = "\n".join(lines).strip()
+    return text
+
+
 def _try_fix_json(raw: str) -> dict[str, Any] | None:
     """Attempt to fix a truncated JSON string from LLM response.
 
@@ -114,14 +134,15 @@ async def _analyze_vacancy_impl(ctx: dict[str, Any], vacancy_id: int) -> None:
 
     # ── Parse JSON response ───────────────────────────────────────
     try:
-        analysis: dict[str, Any] = json.loads(raw_content)
+        cleaned = _clean_llm_json(raw_content)
+        analysis: dict[str, Any] = json.loads(cleaned)
         score = max(0, min(100, int(analysis["score"])))
         pros = list(analysis["pros"])
         cons = list(analysis["cons"])
         cover_letter = str(analysis["cover_letter"])
     except (json.JSONDecodeError, KeyError, TypeError, ValueError) as exc:
         # Attempt to fix truncated JSON (missing closing brace)
-        fixed = _try_fix_json(raw_content)
+        fixed = _try_fix_json(_clean_llm_json(raw_content))
         if fixed is not None:
             try:
                 analysis = fixed
