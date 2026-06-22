@@ -73,7 +73,8 @@ services:
     environment:
       DATABASE_URL: ${DATABASE_URL:?DATABASE_URL is required}
       REDIS_URL: ${REDIS_URL:?REDIS_URL is required}
-      TARGET_RESUME: ${TARGET_RESUME:?TARGET_RESUME is required}
+    volumes:
+      - ./services/transformer/resume.txt:/app/resume.txt:ro
     deploy:
       resources:
         limits:

@@ -22,11 +22,16 @@ logger = get_logger("scraper.search")
 
 _SEARCH_QUERIES_PATH = Path("/app/search_queries.json")
 
+# When use_pages_limiter is False, stop dynamic pagination after this many
+# consecutive empty pages to avoid infinite loops.
+_MAX_CONSECUTIVE_EMPTY_PAGES = 3
+
 
 def _load_search_queries() -> dict:
     """Load search query configurations from external JSON file.
 
-    Returns a dict keyed by domain with ``base_url``, ``params``, and ``pages``.
+    Returns a dict keyed by domain with ``base_url``, ``params`` (list of
+    param strings), ``use_pages_limiter`` (bool), and optional ``pages`` (int).
     """
     if not _SEARCH_QUERIES_PATH.exists():
         raise FileNotFoundError(f"Search queries file not found: {_SEARCH_QUERIES_PATH}")
@@ -40,9 +45,18 @@ def _load_search_queries() -> dict:
     for domain, cfg in data.items():
         if not isinstance(cfg, dict):
             raise ValueError(f"Domain '{domain}' must be a JSON object")
-        for key in ("base_url", "params", "pages"):
-            if key not in cfg:
-                raise ValueError(f"Domain '{domain}' missing required key '{key}'")
+        if "base_url" not in cfg:
+            raise ValueError(f"Domain '{domain}' missing required key 'base_url'")
+        if "params" not in cfg:
+            raise ValueError(f"Domain '{domain}' missing required key 'params'")
+        if not isinstance(cfg["params"], list):
+            raise ValueError(f"Domain '{domain}'.params must be a list of strings")
+        if not all(isinstance(p, str) for p in cfg["params"]):
+            raise ValueError(f"Domain '{domain}'.params must contain only strings")
+        if cfg.get("use_pages_limiter", True) and "pages" not in cfg:
+            raise ValueError(
+                f"Domain '{domain}' has use_pages_limiter=True but missing 'pages' key"
+            )
 
     return data
 
@@ -67,8 +81,14 @@ async def _fetch_search_page(
     selectors: dict,
     domain: str,
     allowed_domains: list[str],
-) -> list[str]:
-    """Fetch a search results page and extract vacancy URLs."""
+) -> tuple[list[str], bool]:
+    """Fetch a search results page and extract vacancy URLs.
+
+    Returns:
+        A tuple of (urls, ok) where ``ok`` indicates the fetch itself
+        succeeded (HTTP 200). ``urls`` may be empty on a successful fetch
+        (no more results) or on a failure (network/HTTP error).
+    """
     await asyncio.sleep(random.uniform(1.0, 1.5))
 
     try:
@@ -76,7 +96,7 @@ async def _fetch_search_page(
         response.raise_for_status()
     except Exception as exc:
         logger.warning("Failed to fetch %s: %s", url, exc)
-        return []
+        return [], False
 
     from bs4 import BeautifulSoup
 
@@ -98,7 +118,7 @@ async def _fetch_search_page(
                 continue
             urls.append(href)
 
-    return urls
+    return urls, True
 
 
 async def _save_links(urls: list[str], selectors: dict) -> int:
@@ -132,19 +152,79 @@ async def _save_links(urls: list[str], selectors: dict) -> int:
         return len(result.scalars().all())
 
 
+async def _scrape_params_set(
+    http: AsyncSession,
+    base_url: str,
+    params: str,
+    domain: str,
+    selectors: dict,
+    allowed_domains: list[str],
+    use_pages_limiter: bool,
+    pages: int,
+) -> None:
+    """Scrape all pages for a single parameter set.
+
+    When *use_pages_limiter* is True, scrape exactly *pages* pages.
+    When False, use dynamic pagination: keep incrementing the page number
+    until ``_MAX_CONSECUTIVE_EMPTY_PAGES`` consecutive pages return no links.
+    """
+    consecutive_empty = 0
+    page = 0
+
+    while True:
+        url = _build_search_url(base_url, params, page)
+        logger.info("Searching: %s", url)
+        found, ok = await _fetch_search_page(http, url, selectors, domain, allowed_domains)
+
+        if ok and found:
+            count = await _save_links(found, selectors)
+            logger.info("Found %d links, saved %d new", len(found), count)
+        elif ok:
+            logger.info("Page returned 0 links (end of results)")
+        else:
+            logger.warning("Page fetch failed, skipping")
+
+        if use_pages_limiter:
+            page += 1
+            if page >= pages:
+                break
+        else:
+            if ok and len(found) == 0:
+                consecutive_empty += 1
+                if consecutive_empty >= _MAX_CONSECUTIVE_EMPTY_PAGES:
+                    logger.info(
+                        "Dynamic pagination for %s: %d consecutive empty pages, stopping",
+                        domain, consecutive_empty,
+                    )
+                    break
+            elif ok:
+                consecutive_empty = 0
+            # On fetch failure, don't increment consecutive_empty —
+            # transient errors shouldn't count toward the stop condition.
+            page += 1
+
+
 async def run_search() -> None:
     """Collect vacancy URLs from search engine results and store them.
 
     Search queries are loaded from ``search_queries.json`` — an external
     configuration file that supports multiple platforms and parameter sets.
-    Each platform can specify its own base URL, query parameters, and
-    number of pages to scrape.
+
+    Each platform can specify:
+    - ``base_url``: the search endpoint URL.
+    - ``params``: a list of query-parameter strings. Each string is a complete
+      set of search parameters (e.g. different search terms). The scraper
+      iterates over every params entry for every platform.
+    - ``use_pages_limiter``: if True, use the ``pages`` key to limit pagination.
+      If False, use dynamic pagination — keep scraping until several consecutive
+      pages return no results.
+    - ``pages``: number of pages to scrape when ``use_pages_limiter`` is True.
     """
     selectors = load_selectors()
     queries = _load_search_queries()
 
-    # Build search URLs from external configuration
-    search_urls: list[tuple[str, str]] = []
+    # Build the full list of (domain, params_string) tuples to scrape
+    scrape_tasks: list[tuple[str, str, bool, int]] = []
     for domain, cfg in queries.items():
         if domain not in selectors:
             logger.warning("Domain '%s' in search_queries.json not found in selectors.json, skipping", domain)
@@ -153,26 +233,27 @@ async def run_search() -> None:
             logger.warning("Domain '%s' has no searcher config in selectors.json, skipping", domain)
             continue
 
-        base_url = cfg["base_url"]
-        params = cfg["params"]
-        pages = cfg["pages"]
+        params_list = cfg["params"]
+        use_pages_limiter = cfg.get("use_pages_limiter", True)
+        pages = cfg.get("pages", 1)
 
-        for page in range(pages):
-            url = _build_search_url(base_url, params, page)
-            search_urls.append((domain, url))
+        for params in params_list:
+            scrape_tasks.append((domain, params, use_pages_limiter, pages))
 
-    if not search_urls:
+    if not scrape_tasks:
         logger.warning("No search URLs configured")
         return
 
-    # Shuffle to distribute load across platforms
-    random.shuffle(search_urls)
+    # Shuffle to distribute load across platforms and param sets
+    random.shuffle(scrape_tasks)
 
     allowed_domains = list(selectors.keys())
 
     async with AsyncSession() as http:
-        for domain, url in search_urls:
-            logger.info("Searching: %s", url)
-            found = await _fetch_search_page(http, url, selectors, domain, allowed_domains)
-            count = await _save_links(found, selectors)
-            logger.info("Found %d links, saved %d new", len(found), count)
+        for domain, params, use_pages_limiter, pages in scrape_tasks:
+            await _scrape_params_set(
+                http, base_url=queries[domain]["base_url"],
+                params=params, domain=domain, selectors=selectors,
+                allowed_domains=allowed_domains,
+                use_pages_limiter=use_pages_limiter, pages=pages,
+            )

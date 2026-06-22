@@ -30,6 +30,9 @@ RUN pip install --no-cache-dir -r /app/requirements.txt
 ENV HF_HOME=/app/.cache/huggingface
 RUN python -c "from sentence_transformers import SentenceTransformer; SentenceTransformer('cointegrated/rubert-tiny2')"
 
+# Smoke test: verify cached model loads correctly in offline mode
+    RUN HF_HUB_OFFLINE=1 python -c "from sentence_transformers import SentenceTransformer; m = SentenceTransformer('cointegrated/rubert-tiny2'); print('Model loaded OK, dim=', m.get_embedding_dimension())"
+
 # ── Stage 2: Runtime — slim image without build tools ────────────
 FROM python:3.12-slim
 

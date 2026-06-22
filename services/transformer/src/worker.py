@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import io
 from typing import Any
 
 import numpy as np
@@ -11,7 +12,7 @@ from sentence_transformers import SentenceTransformer
 from sqlalchemy import select, text, update
 from sqlalchemy.exc import IntegrityError
 
-from shared.src.config import settings
+from shared.src.config import load_resume, settings
 from shared.src.database import get_session_maker
 from shared.src.models import Vacancy, VacancyLink
 from shared.src.utils.crypto import sha256_hex
@@ -24,7 +25,6 @@ EMBEDDING_MODEL_NAME = "cointegrated/rubert-tiny2"
 MAX_CHUNK_LENGTH = 1200
 OVERLAP_LINES = 2
 SIMILARITY_THRESHOLD = 0.70
-EMBEDDING_DIM = 312
 
 # ── Module-level state (populated in on_startup) ─────────────────
 _model: SentenceTransformer | None = None
@@ -123,7 +123,9 @@ async def transform_vacancy(ctx: dict[str, Any], vacancy_id: int) -> None:
 
         # ── Step 1: HTML → Markdown ──────────────────────────────
         try:
-            md_result = _markitdown.convert(vacancy.description_html)
+            md_result = _markitdown.convert_stream(
+                io.BytesIO(vacancy.description_html.encode("utf-8"))
+            )
             markdown_text = md_result.text_content
         except Exception as exc:
             logger.error("MarkItDown failed for vacancy #%d: %s", vacancy_id, exc)
@@ -204,11 +206,12 @@ async def transform_vacancy(ctx: dict[str, Any], vacancy_id: int) -> None:
 
         # pgvector expects format: [0.123,-0.456,...] (no spaces)
         embedding_str = "[" + ",".join(f"{x:.6f}" for x in embedding_list) + "]"
+        embedding_dim = _model.get_embedding_dimension()
 
         try:
             await session.execute(
                 text(
-                    "UPDATE vacancies SET embedding = :emb::vector(312) WHERE id = :vid"
+                    f"UPDATE vacancies SET embedding = :emb::vector({embedding_dim}) WHERE id = :vid"
                 ),
                 {"emb": embedding_str, "vid": vacancy_id},
             )
@@ -236,18 +239,26 @@ async def on_startup(ctx: dict[str, Any]) -> None:
 
     logger.info("Loading SentenceTransformer model: %s", EMBEDDING_MODEL_NAME)
     _model = SentenceTransformer(EMBEDDING_MODEL_NAME)
-    logger.info("Model loaded. Embedding dimension: %d", _model.get_sentence_embedding_dimension())
+    logger.info("Model loaded. Embedding dimension: %d", _model.get_embedding_dimension())
 
     _markitdown = MarkItDown()
 
-    if settings.target_resume:
-        logger.info("Encoding target resume")
-        _resume_vector = _model.encode([settings.target_resume])[0]
+    try:
+        resume_text = load_resume()
+    except FileNotFoundError as exc:
+        raise ValueError(
+            f"Resume file not found — transformer cannot function without a resume. "
+            f"Ensure the resume file exists at the configured path. Details: {exc}"
+        ) from exc
+
+    if resume_text.strip():
+        logger.info("Encoding target resume (%d chars)", len(resume_text))
+        _resume_vector = _model.encode([resume_text])[0]
         logger.info("Resume vector ready (dim=%d)", len(_resume_vector))
     else:
         raise ValueError(
-            "TARGET_RESUME is empty — transformer cannot function without a resume. "
-            "Set TARGET_RESUME in your .env file."
+            "Resume file is empty — transformer cannot function without a resume. "
+            "Populate the resume file with your professional summary."
         )
 
 

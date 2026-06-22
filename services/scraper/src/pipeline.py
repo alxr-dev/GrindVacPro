@@ -87,7 +87,7 @@ def _parse_vacancy(html: str, url: str, selectors: dict) -> dict | None:
 async def _fetch_html(session: AsyncSession, url: str, selectors: dict) -> str | None:
     """Download a page with rate limiting and retries. Returns HTML text or None."""
     try:
-        await validate_url(url, selectors)
+        await validate_url(url, list(selectors.keys()))
     except ValueError as exc:
         logger.warning("URL validation failed: %s", exc)
         return None
