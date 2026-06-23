@@ -13,6 +13,7 @@ from shared.src.database import get_session_maker
 from shared.src.models import Vacancy, VacancyLink
 from shared.src.utils.logger import get_logger
 
+from .keyboards import build_card_kb
 from .messages import format_card
 
 logger = get_logger("telegram_bot.worker")
@@ -93,6 +94,7 @@ async def send_vacancy_notification(ctx: dict[str, Any], vacancy_data: dict[str,
             text=text,
             parse_mode="HTML",
             disable_web_page_preview=True,
+            reply_markup=build_card_kb(vacancy_id).as_markup(),
         )
         async with maker() as session:
             await session.execute(
@@ -104,7 +106,7 @@ async def send_vacancy_notification(ctx: dict[str, Any], vacancy_data: dict[str,
         logger.info("Notification sent for vacancy %d", vacancy_id)
     except Exception as exc:
         logger.error("Failed to send notification for vacancy %d: %s", vacancy_id, exc)
-        raise
+        return
 
 
 class WorkerSettings:

@@ -40,5 +40,16 @@ def format_confirm(action: str) -> str:
     return f"Подтвердить <b>{verb}</b>?"
 
 
+def format_header(title: str, company: str, url: str, score: int) -> str:
+    """Short header to keep context when showing reason buttons."""
+    safe_title = html.escape(title)
+    safe_company = html.escape(company)
+    return (
+        f"<b>🎯 Score: {score}/100</b>\n"
+        f"🏢 <b>{safe_company}</b>\n"
+        f"💼 <a href='{url}'>{safe_title}</a>\n\n"
+    )
+
+
 def format_thanks(reason: str) -> str:
     return f"Сохранено: <b>{html.escape(reason)}</b>"

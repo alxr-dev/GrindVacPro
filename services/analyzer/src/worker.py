@@ -238,7 +238,7 @@ async def _analyze_vacancy_impl(ctx: dict[str, Any], vacancy_id: int) -> None:
             {"vacancy_id": vacancy_id},
             _queue_name="telegram_queue",
         )
-        await arq_pool.close()
+        await arq_pool.aclose()
     except Exception as exc:
         logger.error(
             "Failed to enqueue telegram notification for vacancy #%d: %s",

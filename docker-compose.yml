@@ -115,8 +115,8 @@ services:
     environment:
       DATABASE_URL: ${DATABASE_URL:?DATABASE_URL is required}
       REDIS_URL: ${REDIS_URL:?REDIS_URL is required}
-      TELEGRAM_BOT_TOKEN: ${TELEGRAM_BOT_TOKEN:-}
-      TELEGRAM_USER_ID: ${TELEGRAM_USER_ID:-0}
+      TELEGRAM_BOT_TOKEN: ${TELEGRAM_BOT_TOKEN:?TELEGRAM_BOT_TOKEN is required}
+      TELEGRAM_USER_ID: ${TELEGRAM_USER_ID:?TELEGRAM_USER_ID is required}
     restart: unless-stopped
 
 volumes:
