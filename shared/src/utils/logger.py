@@ -2,6 +2,7 @@
 
 import logging
 import sys
+import time
 
 _LOGGER_NAME = "grindvac"
 
@@ -17,6 +18,7 @@ def get_logger(name: str | None = None) -> logging.Logger:
             fmt="%(asctime)s | %(levelname)-8s | %(name)s | %(message)s",
             datefmt="%Y-%m-%d %H:%M:%S",
         )
+        formatter.converter = time.localtime
         handler.setFormatter(formatter)
         logger.addHandler(handler)
         logger.setLevel(logging.DEBUG)

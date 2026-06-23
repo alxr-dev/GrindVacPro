@@ -25,6 +25,8 @@ class Settings(BaseSettings):
     resume_path: str = str(_DEFAULT_RESUME_PATH)
     telegram_bot_token: str = ""
     telegram_user_id: int = 0
+    ai_score_threshold: int = 50
+    similarity_threshold: float = 0.70
 
 
 def load_resume(path: str | None = None) -> str:

@@ -24,7 +24,6 @@ logger = get_logger("transformer.worker")
 EMBEDDING_MODEL_NAME = "cointegrated/rubert-tiny2"
 MAX_CHUNK_LENGTH = 1200
 OVERLAP_LINES = 2
-SIMILARITY_THRESHOLD = 0.70
 
 # ── Module-level state (populated in on_startup) ─────────────────
 _model: SentenceTransformer | None = None
@@ -189,9 +188,12 @@ async def transform_vacancy(ctx: dict[str, Any], vacancy_id: int) -> None:
             max_sim,
         )
 
-        if max_sim < SIMILARITY_THRESHOLD:
+        if max_sim < settings.similarity_threshold:
             logger.info(
-                "Vacancy #%d rejected (%.4f < %.2f)", vacancy_id, max_sim, SIMILARITY_THRESHOLD
+                "Vacancy #%d rejected (%.4f < %.2f)",
+                vacancy_id,
+                max_sim,
+                settings.similarity_threshold,
             )
             await session.execute(
                 update(VacancyLink)

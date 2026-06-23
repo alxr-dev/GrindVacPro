@@ -230,7 +230,16 @@ async def _analyze_vacancy_impl(ctx: dict[str, Any], vacancy_id: int) -> None:
         )
         await session.commit()
 
-    # Enqueue to telegram bot notification queue
+    # ── Enqueue to telegram bot notification queue ────────────────
+    if score < settings.ai_score_threshold:
+        logger.info(
+            "Vacancy #%d skipped for Telegram: score=%d < threshold=%d",
+            vacancy_id,
+            score,
+            settings.ai_score_threshold,
+        )
+        return
+
     try:
         arq_pool = await create_pool(RedisSettings.from_dsn(settings.redis_url))
         await arq_pool.enqueue_job(
