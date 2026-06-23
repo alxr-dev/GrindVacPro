@@ -12,6 +12,7 @@ from sqlalchemy import (
     Integer,
     String,
     Text,
+    Boolean,
     text,
 )
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
@@ -37,6 +38,7 @@ class Vacancy(Base):
     # embedding is managed raw via SQL (pgvector); not mapped to keep model simple
     ai_score: Mapped[int | None] = mapped_column(Integer, nullable=True)
     ai_analysis: Mapped[dict | None] = mapped_column(JSON, nullable=True)
+    notes: Mapped[str | None] = mapped_column(Text, nullable=True)
     created_at: Mapped[datetime] = mapped_column(
         DateTime, server_default=text("CURRENT_TIMESTAMP")
     )
@@ -58,6 +60,7 @@ class VacancyLink(Base):
     url: Mapped[str] = mapped_column(Text, unique=True, nullable=False)
     platform: Mapped[str] = mapped_column(String(50), nullable=False)
     status: Mapped[str] = mapped_column(String(20), server_default="new")
+    telegram_notified: Mapped[bool] = mapped_column(Boolean, server_default="0", nullable=False)
     created_at: Mapped[datetime] = mapped_column(
         DateTime, server_default=text("CURRENT_TIMESTAMP")
     )

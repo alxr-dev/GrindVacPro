@@ -8,6 +8,7 @@ from typing import Any
 
 from urllib.parse import urlparse
 
+from arq import create_pool
 from arq.connections import RedisSettings
 from openai import AsyncOpenAI
 from sqlalchemy import select, update
@@ -228,6 +229,22 @@ async def _analyze_vacancy_impl(ctx: dict[str, Any], vacancy_id: int) -> None:
             .values(status="processed")
         )
         await session.commit()
+
+    # Enqueue to telegram bot notification queue
+    try:
+        arq_pool = await create_pool(RedisSettings.from_dsn(settings.redis_url))
+        await arq_pool.enqueue_job(
+            "send_vacancy_notification",
+            {"vacancy_id": vacancy_id},
+            _queue_name="telegram_queue",
+        )
+        await arq_pool.close()
+    except Exception as exc:
+        logger.error(
+            "Failed to enqueue telegram notification for vacancy #%d: %s",
+            vacancy_id,
+            exc,
+        )
 
     logger.info(
         "Vacancy #%d analyzed: score=%d, pros=%d, cons=%d",

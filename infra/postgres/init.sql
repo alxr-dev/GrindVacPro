@@ -17,6 +17,7 @@ CREATE TABLE IF NOT EXISTS vacancies (
     embedding     vector(312),
     ai_score      INT,
     ai_analysis   JSONB,
+    notes         TEXT,
     created_at    TIMESTAMP    DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -27,7 +28,8 @@ CREATE TABLE IF NOT EXISTS vacancy_links (
     url        TEXT         UNIQUE NOT NULL,
     platform   VARCHAR(50)  NOT NULL,
     status     VARCHAR(20)  DEFAULT 'new'
-                 CHECK (status IN ('new', 'parsed', 'rejected', 'processed', 'failed')),
+                 CHECK (status IN ('new', 'parsed', 'rejected', 'processed', 'failed', 'accepted', 'declined')),
+    telegram_notified BOOLEAN DEFAULT FALSE,
     created_at TIMESTAMP    DEFAULT CURRENT_TIMESTAMP
 );
 

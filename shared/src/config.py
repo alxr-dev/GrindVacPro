@@ -23,6 +23,8 @@ class Settings(BaseSettings):
     openai_base_url: str = "https://api.openai.com/v1"
     openai_model_name: str = "gpt-4o-mini"
     resume_path: str = str(_DEFAULT_RESUME_PATH)
+    telegram_bot_token: str = ""
+    telegram_user_id: int = 0
 
 
 def load_resume(path: str | None = None) -> str:
