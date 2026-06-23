@@ -14,9 +14,9 @@ from shared.src.models import VacancyLink
 from shared.src.security import validate_url
 from shared.src.selectors import (
     load_selectors,
-    normalize_url,
     resolve_platform_slug,
 )
+from shared.src.utils.url import normalize_url
 from shared.src.utils.logger import get_logger
 
 logger = get_logger("scraper.search")

@@ -6,6 +6,8 @@ import asyncio
 import ipaddress
 from urllib.parse import urlparse
 
+from shared.src.utils.url import _strip_www, _domain_matches
+
 # Schemes allowed for outbound HTTP requests
 _ALLOWED_SCHEMES = {"https", "http"}
 
@@ -25,13 +27,6 @@ _PRIVATE_NETWORKS = [
 
 # DNS resolution timeout in seconds
 _DNS_TIMEOUT = 5
-
-
-def _strip_www(hostname: str) -> str:
-    """Remove 'www.' prefix from hostname (character-safe)."""
-    if hostname.startswith("www."):
-        return hostname[4:]
-    return hostname
 
 
 def _is_private_ip(addr: ipaddress.IPv4Address | ipaddress.IPv6Address) -> bool:
@@ -71,14 +66,6 @@ async def _is_private_host(hostname: str) -> bool:
     except (asyncio.TimeoutError, OSError):
         # DNS resolution failed or timed out → block to be safe
         return True
-
-
-def _domain_matches(hostname: str, domain: str) -> bool:
-    """Check if *hostname* matches *domain* with proper boundary.
-
-    Prevents substring spoofing: ``hh.ru.evil.com`` does NOT match ``hh.ru``.
-    """
-    return hostname == domain or hostname.endswith("." + domain)
 
 
 async def validate_url(url: str, allowed_domains: list[str]) -> None:

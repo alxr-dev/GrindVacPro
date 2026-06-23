@@ -4,9 +4,9 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
-from urllib.parse import urlparse, urlunparse
+from urllib.parse import urlparse
 
-from shared.src.security import _strip_www, _domain_matches
+from shared.src.utils.url import _strip_www, _domain_matches
 
 _SELECTORS_PATH = Path("/app/selectors.json")
 
@@ -76,22 +76,3 @@ def resolve_domain(url: str, selectors: dict) -> str:
         if _domain_matches(hostname, domain):
             return domain
     raise ValueError(f"Unsupported domain for URL: {url}")
-
-
-def normalize_url(url: str) -> str:
-    """Return a canonical URL for deduplication.
-
-    Strips query parameters, fragment, and trailing slash so that
-    different search-result URLs pointing to the same vacancy
-    (e.g. differing only by ``?query=...&hhtmFrom=...``) collapse
-    to a single canonical form.
-
-    The full URL (with query params) should still be used when
-    fetching the page — this function is **only** for identity
-    comparison and DB storage.
-    """
-    parsed = urlparse(url)
-    # Rebuild URL without query string or fragment
-    clean = urlunparse((parsed.scheme, parsed.netloc, parsed.path, "", "", ""))
-    # Strip trailing slash for consistency (except when path is just "/")
-    return clean.rstrip("/") or clean

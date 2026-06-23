@@ -1,1 +1,0 @@
-"""GrindVacPro — Utility modules."""

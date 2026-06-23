@@ -93,45 +93,67 @@ async def _analyze_vacancy_impl(ctx: dict[str, Any], vacancy_id: int) -> None:
             logger.warning("Vacancy #%d has no content to analyze", vacancy_id)
             return
 
-    # ── Call LLM ─────────────────────────────────────────────────
-    try:
-        response = await _openai_client.chat.completions.create(
-            model=settings.openai_model_name,
-            messages=[
-                {"role": "system", "content": SYSTEM_PROMPT},
-                {
-                    "role": "user",
-                    "content": (
-                        f"Резюме кандидата:\n{_resume_text}\n\n"
-                        f"---\n\n"
-                        f"Вакансия: {vacancy.title}\n"
-                        f"Компания: {vacancy.company_name}\n"
-                        f"Описание:\n{markdown}"
-                    ),
-                },
-            ],
-            response_format={"type": "json_object"},
-            max_tokens=1024,
-            temperature=0,
-        )
-        # Some reasoning models return content in the "reasoning" field
-        # instead of "content". Try both.
-        message = response.choices[0].message
-        raw_content = message.content
-        if raw_content is None and hasattr(message, "reasoning") and message.reasoning:
-            raw_content = message.reasoning
-        if raw_content is None:
-            raise ValueError("Empty response from LLM")
-    except Exception as exc:
-        logger.error("LLM call failed for vacancy #%d: %s", vacancy_id, exc)
-        async with maker() as session:
-            await session.execute(
-                update(VacancyLink)
-                .where(VacancyLink.vacancy_id == vacancy_id)
-                .values(status="failed")
+    # ── Call LLM (with retry) ──────────────────────────────────────
+    raw_content: str | None = None
+    for attempt in range(3):
+        try:
+            response = await _openai_client.chat.completions.create(
+                model=settings.openai_model_name,
+                messages=[
+                    {"role": "system", "content": SYSTEM_PROMPT},
+                    {
+                        "role": "user",
+                        "content": (
+                            f"Резюме кандидата:\n{_resume_text}\n\n"
+                            f"---\n\n"
+                            f"Вакансия: {vacancy.title}\n"
+                            f"Компания: {vacancy.company_name}\n"
+                            f"Описание:\n{markdown}"
+                        ),
+                    },
+                ],
+                response_format={"type": "json_object"},
+                max_tokens=1024,
+                temperature=0,
             )
-            await session.commit()
-        return
+            # Validate response structure before accessing
+            if not response.choices:
+                raise ValueError("Empty choices in LLM response")
+            message = response.choices[0].message
+            if message is None:
+                raise ValueError("Empty message in LLM response")
+            # Some reasoning models return content in the "reasoning" field
+            # instead of "content". Try both.
+            raw_content = message.content
+            if raw_content is None and hasattr(message, "reasoning") and message.reasoning:
+                raw_content = message.reasoning
+            if raw_content is None:
+                raise ValueError("Empty content from LLM")
+            # Success — break retry loop
+            break
+        except Exception as exc:
+            logger.warning(
+                "LLM call attempt %d/3 failed for vacancy #%d: %s",
+                attempt + 1,
+                vacancy_id,
+                exc,
+            )
+            if attempt < 2:
+                await asyncio.sleep(5 * (attempt + 1))
+            else:
+                logger.error(
+                    "LLM call failed after 3 attempts for vacancy #%d: %s",
+                    vacancy_id,
+                    exc,
+                )
+                async with maker() as session:
+                    await session.execute(
+                        update(VacancyLink)
+                        .where(VacancyLink.vacancy_id == vacancy_id)
+                        .values(status="failed")
+                    )
+                    await session.commit()
+                return
 
     # ── Parse JSON response ───────────────────────────────────────
     try:
