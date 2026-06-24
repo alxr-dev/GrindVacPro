@@ -8,9 +8,9 @@ FROM python:3.12-slim AS builder
 WORKDIR /app
 
 # Install build essentials for compiling wheel packages
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    build-essential \
-    && rm -rf /var/lib/apt/lists/*
+# RUN apt-get update && apt-get install -y --no-install-recommends \
+#     build-essential \
+#     && rm -rf /var/lib/apt/lists/*
 
 # Install shared dependencies first (cached layer)
 COPY shared /app/shared
