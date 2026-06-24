@@ -74,7 +74,7 @@ services:
       DATABASE_URL: ${DATABASE_URL:?DATABASE_URL is required}
       REDIS_URL: ${REDIS_URL:?REDIS_URL is required}
     volumes:
-      - ./services/transformer/resume.txt:/app/resume.txt:ro
+      - ./shared/resume.txt:/app/resume.txt:ro
     deploy:
       resources:
         limits:
@@ -99,7 +99,7 @@ services:
       OPENAI_BASE_URL: ${OPENAI_BASE_URL:-https://api.openai.com/v1}
       OPENAI_MODEL_NAME: ${OPENAI_MODEL_NAME:-gpt-4o-mini}
     volumes:
-      - ./services/transformer/resume.txt:/app/resume.txt:ro
+      - ./shared/resume.txt:/app/resume.txt:ro
 
   # ── Telegram Bot — уведомления и inline-кнопки ──────────────────
   telegram_bot:

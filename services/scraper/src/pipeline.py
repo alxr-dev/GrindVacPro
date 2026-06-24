@@ -22,7 +22,6 @@ from shared.src.utils.logger import get_logger
 
 logger = get_logger("scraper.pipeline")
 
-_SELECTORS_PATH = "/app/selectors.json"
 _BATCH_SIZE = 20
 _MAX_RETRIES = 3
 
