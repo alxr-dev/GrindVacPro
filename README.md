@@ -31,26 +31,26 @@
 1. **Scraper** → собирает URL из поисковой выдачи (`search_queries.json`), скачивает HTML-страницы, парсит через CSS-селекторы из `selectors.json`, сохраняет в `vacancies` + `vacancy_links`, ставит задачу в `html_queue`. Rate limit: ≤5 запросов за 6 секунд.
 2. **Transformer** (arq, `max_jobs=1`) → HTML→Markdown (MarkItDown), SHA-256 дедупликация, чанкинг (1200 символов, overlap=2), cosine similarity с резюме через rubert-tiny2, порог настраивается через `SIMILARITY_THRESHOLD` (по умолчанию 0.70), сохраняет вектор лучшего чанка в `vacancies.embedding`, ставит задачу в `ai_queue`.
 3. **Analyzer** (arq, `max_jobs=10`) → отправляет Markdown в LLM (AsyncOpenAI), получает структурированный JSON (`score`, `pros`, `cons`, `cover_letter`), сохраняет в `vacancies.ai_analysis`. Если `score >= AI_SCORE_THRESHOLD` (по умолчанию 50), ставит задачу в `telegram_queue`; иначе пропускает уведомление.
-4. **Telegram Bot** → единый процесс: `aiogram 3` (polling) + `arq` (воркер). Статeless inline-кнопки, двухэтапное подтверждение (карточка → действие → причина). По завершении сохраняет `status` (`accepted`/`declined`) и `notes` (причина) в БД.
+4. **Telegram Bot** → единый процесс: `aiogram 3` (polling) + `arq` (воркер). Stateless inline-кнопки, двухэтапное подтверждение (карточка → действие → причина). По завершении сохраняет `status` (`accepted`/`declined`) и `notes` (причина) в БД.
 
 ### Статусы ссылок (`vacancy_links.status`)
 
-| Значение       | Описание                                                                 |
-|----------------|--------------------------------------------------------------------------|
-| `new`          | Ссылка собрана, ожидает обработки                                        |
-| `parsed`       | HTML скачан и разобран, задача в transformer                             |
-| `processed`    | LLM-анализ завершён; уведомление в Telegram отправлено, если score ≥ порог |
-| `rejected`     | Не прошёл фильтр similarity (`< SIMILARITY_THRESHOLD`)                   |
-| `accepted`     | Пользователь принял вакансию через Telegram                              |
+| Значение       | Описание                                                                      |
+|----------------|-------------------------------------------------------------------------------|
+| `new`          | Ссылка собрана, ожидает обработки                                             |
+| `parsed`       | HTML скачан и разобран, задача в transformer                                  |
+| `processed`    | LLM-анализ завершён; уведомление в Telegram отправлено, если score ≥ порог    |
+| `rejected`     | Не прошёл фильтр similarity (`< SIMILARITY_THRESHOLD`)                        |
+| `accepted`     | Пользователь принял вакансию через Telegram                                   |
 | `declined`     | Пользователь отказался от вакансии через Telegram (причина в `Vacancy.notes`) |
-| `failed`       | Ошибка при скачивании, парсинге или LLM-анализе                          |
+| `failed`       | Ошибка при скачивании, парсинге или LLM-анализе                               |
 
 ## Стек
 
 | Компонент       | Технология                              |
 |-----------------|-----------------------------------------|
 | Язык            | Python 3.12 (строгая асинхронность)     |
-| HTTP-клиент     | `curl_cffi` (TLS/JA3 bypass)           |
+| HTTP-клиент     | `curl_cffi` (TLS/JA3 bypass)            |
 | БД              | PostgreSQL 18 + pgvector                |
 | Очереди         | Redis 7 + arq                           |
 | ML (embedding)  | `SentenceTransformer('rubert-tiny2')`   |
@@ -67,8 +67,6 @@ GrindVacPro/
 ├── docker-compose.yml
 ├── .env.example
 ├── .gitignore
-├── AGENTS.md                        # Глобальные стандарты кодинга
-├── CONTEXT.md                       # Архитектурный контекст
 ├── README.md                        # Этот файл
 │
 ├── infra/postgres/init.sql          # Инициализация БД (pgvector, таблицы, индексы)
@@ -101,13 +99,13 @@ GrindVacPro/
     ├── transformer/                 # Фильтрация (CPU-bound)
     │   ├── Dockerfile
     │   ├── requirements.txt
-    │   ├── resume.txt               # Сymлicky копия резюме для контейнера
+    │   ├── resume.txt               # Символическая копия резюме для контейнера
     │   └── src/worker.py            # arq-воркер (max_jobs=1)
     │
     ├── analyzer/                    # LLM-анализ (Network I/O)
     │   ├── Dockerfile
     │   ├── requirements.txt
-    │   ├── resume.txt               # Сymлicky копия резюме для контейнера
+    │   ├── resume.txt               # Символическая копия резюме для контейнера
     │   └── src/
     │       ├── worker.py            # arq-воркер (max_jobs=10)
     │       └── prompts.py           # Системный промпт
@@ -132,7 +130,7 @@ cp .env.example .env
 # Отредактируйте .env — укажите OPENAI_API_KEY, TELEGRAM_BOT_TOKEN и т.д.
 ```
 
-Резюме хранится в файле `shared/resume.txt` и монтируется в контейнеры `transformer` и `analyzer` как read-only volume. Переменная окружения `TARGET_RESUME` не используется.
+Резюме хранится в файле `shared/resume.txt` и монтируется в контейнеры `transformer` и `analyzer` как read-only volume.
 
 ### 2. Запуск через Docker Compose
 
@@ -231,3 +229,14 @@ Scraper ограничен **5 запросов за 6 секунд**: `await as
 ```
 3. При необходимости добавьте slug-маппинг в `services/scraper/src/search.py` и `services/scraper/src/pipeline.py`: `_PLATFORM_SLUGS["example.com"] = "example"`
 4. Пересоберите и запустите: `docker compose up -d --build`
+
+## Идеи для улучшения
+
+- **Миграции БД**: добавить Alembic для версионного управления схемой (сейчас `init.sql` отрабатывает только при первом создании базы)
+- **Векторный поиск**: вынести семантический поиск по `vacancies.embedding` в отдельный сервис/задачу, чтобы искать похожие вакансии среди уже обработанных
+- **Планировщик**: добавить периодический запуск scraper через `cron` / `arq` scheduler вместо ручного `docker compose up`
+- **Мониторинг**: метрики (количество обработанных/отклонённых вакансий, латенси LLM, ошибки) в Prometheus + Grafana или простой текстовый дашборд в Telegram
+- **Ретраи и Dead Letter Queue**: для задач, которые упали с ошибкой 3+ раз — вынесение в отдельную очередь для ручной обработки
+- **Тесты**: интеграционные pytest для каждого сервиса с моками (PostgreSQL в `testcontainers`, Redis в `pytest-asyncio`)
+- **Линтинг**: добавить `ruff` / `mypy` в pre-commit и CI
+- **Горячее обновление конфига**: перезапуск воркеров без пересборки контейнера при изменении `.env`
