@@ -5,6 +5,9 @@
 # ── Stage 1: Builder — install deps + bake model into image ──────
 FROM python:3.12-slim AS builder
 
+ARG HF_TOKEN
+ENV HF_TOKEN=$HF_TOKEN
+
 WORKDIR /app
 
 # Install build essentials for compiling wheel packages
