@@ -124,6 +124,21 @@ services:
       TELEGRAM_USER_ID: ${TELEGRAM_USER_ID:?TELEGRAM_USER_ID is required}
     restart: unless-stopped
 
+  # ── Dashboard — визуализация (Streamlit) ────────────────────────
+  dashboard:
+    build:
+      context: .
+      dockerfile: services/dashboard/Dockerfile
+    container_name: grindvac-dashboard
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: ${DATABASE_URL:?DATABASE_URL is required}
+      REDIS_URL: ${REDIS_URL:?REDIS_URL is required}
+    ports:
+      - "127.0.0.1:8501:8501"
+
 volumes:
   postgres_data:
   redis_data:

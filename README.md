@@ -51,25 +51,25 @@
 ## 🏗️ Архитектура
 
 ```
-┌─────────────┐     ┌──────────────┐     ┌────────────┐     ┌──────────────────┐
-│   Scraper   │────>│  Transformer │────>│  Analyzer  │────>│  Telegram Bot    │
-│ (curl_cffi) │     │ (arq, CPU×1) │     │(arq, IO×10)│     │(aiogram 3 + arq) │
-└──────┬──────┘     └──────┬───────┘     └─────┬──────┘     └──────────────────┘
+┌─────────────┐     ┌──────────────┐     ┌────────────┐     ┌──────────────────┐     ┌──────────────────┐
+│   Scraper   │────>│  Transformer │────>│  Analyzer  │────>│  Telegram Bot    │     │     Dashboard    │
+│ (curl_cffi) │     │ (arq, CPU×1) │     │(arq, IO×10)│     │(aiogram 3 + arq) │     │  (Streamlit)     │
+└──────┬──────┘     └──────┬───────┘     └─────┬──────┘     └──────────────────┘     └──────────────────┘
        │                   │                   │
        ▼                   ▼                   ▼
 ┌──────────────────────────────────────────────────────┐
 │              PostgreSQL 18 + pgvector                │
 │    vacancies │ vacancy_links │ HNSW-индекс (312-dim) │
 └──────────────────────────────────────────────────────┘
-                          ▲
-                          │
-                   ┌──────┴───────┐
-                   │   Redis 7    │
-                   │   (arq)      │
-                   │  html_queue  │
-                   │  ai_queue    │
-                   │telegram_queue│
-                   └──────────────┘
+                           ▲
+                           │
+                    ┌──────┴───────┐
+                    │   Redis 7    │
+                    │   (arq)      │
+                    │  html_queue  │
+                    │  ai_queue    │
+                    │telegram_queue│
+                    └──────────────┘
 ```
 
 ### Пайплайн обработки
@@ -78,6 +78,7 @@
 2. **Transformer** (arq, `max_jobs=1`) → HTML→Markdown (MarkItDown), SHA-256 дедупликация, чанкинг (1200 символов, overlap=2), cosine similarity с резюме через rubert-tiny2, порог настраивается через `SIMILARITY_THRESHOLD` (по умолчанию 0.70), сохраняет вектор лучшего чанка в `vacancies.embedding`, ставит задачу в `ai_queue`.
 3. **Analyzer** (arq, `max_jobs=10`) → отправляет Markdown в LLM (AsyncOpenAI), получает структурированный JSON (`score`, `pros`, `cons`, `cover_letter`), сохраняет в `vacancies.ai_analysis`. Если `score >= AI_SCORE_THRESHOLD` (по умолчанию 50), ставит задачу в `telegram_queue`; иначе пропускает уведомление.
 4. **Telegram Bot** → единый процесс: `aiogram 3` (polling) + `arq` (воркер). Stateless inline-кнопки, двухэтапное подтверждение (карточка → действие → причина). По завершении сохраняет `status` (`accepted`/`declined`) и `notes` (причина) в БД.
+5. **Dashboard** → Streamlit-приложение в контейнере. Читает данные из PostgreSQL (vacancies, vacancy_links), отображает KPI, графики и таблицы. Read-only, без изменения данных.
 
 ### Статусы ссылок (`vacancy_links.status`)
 
@@ -165,6 +166,16 @@ GrindVacPro/
             ├── callbacks.py         # Stateless callback router
             ├── keyboards.py         # Inline keyboard builders
             └── messages.py          # Форматирование карточек
+
+    └── dashboard/                   # Визуализация (Streamlit)
+        ├── Dockerfile
+        ├── requirements.txt
+        └── src/
+            ├── app.py               # Entrypoint, multipage navigation
+            └── pages/
+                ├── 01_overview.py   # KPI, воронка, активность по дням
+                ├── 02_analytics.py  # Score-гистограмма, платформы, топ вакансий
+                └── 03_responses.py  # Причины принятия/отказа
 ```
 
 ## 🚀 Запуск
@@ -191,6 +202,7 @@ docker compose up -d --build
 - `grindvac-transformer` — CPU-bound фильтрация
 - `grindvac-analyzer` — LLM-анализ
 - `grindvac-telegram-bot` — Telegram-уведомления и inline-кнопки
+- `grindvac-dashboard` — веб-дашборд (`http://localhost:8501`)
 
 ### 3. Проверка состояния
 
@@ -200,6 +212,7 @@ docker compose logs -f scraper
 docker compose logs -f transformer
 docker compose logs -f analyzer
 docker compose logs -f telegram_bot
+docker compose logs -f dashboard
 
 # Статус контейнеров
 docker compose ps
@@ -281,7 +294,7 @@ Scraper ограничен **5 запросов за 6 секунд**: `await as
 - **Миграции БД**: добавить Alembic для версионного управления схемой (сейчас `init.sql` отрабатывает только при первом создании базы)
 - **Векторный поиск**: вынести семантический поиск по `vacancies.embedding` в отдельный сервис/задачу, чтобы искать похожие вакансии среди уже обработанных
 - **Планировщик**: добавить периодический запуск scraper через `cron` / `arq` scheduler вместо ручного `docker compose up`
-- **Мониторинг**: метрики (количество обработанных/отклонённых вакансий, латенси LLM, ошибки) в Prometheus + Grafana или простой текстовый дашборд в Telegram
 - **Ретраи и Dead Letter Queue**: для задач, которые упали с ошибкой 3+ раз — вынесение в отдельную очередь для ручной обработки
 - **Тесты**: интеграционные pytest для каждого сервиса с моками (PostgreSQL в `testcontainers`, Redis в `pytest-asyncio`)
+- **Линтинг**: добавить `ruff` / `mypy` в pre-commit и CI
 - **Горячее обновление конфига**: перезапуск воркеров без пересборки контейнера при изменении `.env`
