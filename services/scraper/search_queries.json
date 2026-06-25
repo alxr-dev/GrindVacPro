@@ -2,8 +2,12 @@
   "hh.ru": {
     "base_url": "https://hh.ru/search/vacancy",
     "params": [
-      "area=113&enable_snippets=true&excluded_text=django&experience=noExperience&experience=between1And3&experience=between3And6&ored_clusters=true&professional_role=160&professional_role=96&text=Python+OR+%D0%B0%D0%B2%D1%82%D0%BE%D0%BC%D0%B0%D1%82%D0%B8%D0%B7%D0%B0%D1%86%D0%B8%D1%8F&work_format=REMOTE&search_period=7&items_on_page=20",
-      "area=113&enable_snippets=true&excluded_text=django&experience=noExperience&experience=between1And3&experience=between3And6&ored_clusters=true&professional_role=160&professional_role=96&text=Python+%D1%80%D0%B0%D0%B7%D1%80%D0%B0%D0%B1%D0%BE%D1%82%D1%87%D0%B8%D0%BA&work_format=REMOTE&search_period=7&items_on_page=20"
+      "text=NAME%3A%28%28AI+OR+ИИ%29+AND+%28Automation+OR+Developer+OR+Engineer+OR+Specialist+OR+Manager+OR+автоматизац*+OR+разработчик+OR+инженер+OR+специалист%29%29&enable_snippets=true&excluded_text=django&items_on_page=20&ored_clusters=true&search_period=10&work_format=REMOTE",
+      "text=NAME%3A%28Python+OR+разработчик+OR+инженер+OR+интегратор+OR+automation+OR+специалист%29+AND+%28n8n+OR+Make+OR+LangChain+OR+LangGraph+OR+CrewAI+OR+%22AI-агент%22+OR+vibecoding+OR+Cursor%29&salary=&ored_clusters=true&items_on_page=20&enable_snippets=true&search_period=10&excluded_text=django&work_format=REMOTE",
+      "text=NAME%3A%28%28AI+OR+ИИ+OR+автоматизац*%29+NOT+%28Senior+OR+Lead+OR+ведущий+OR+главный%29%29+AND+%28n8n+OR+Make+OR+LangChain+OR+%22AI-агент%22+OR+%22LLM+API%22%29&salary=&ored_clusters=true&items_on_page=20&enable_snippets=true&search_period=10&excluded_text=django&work_format=REMOTE",
+      "text=NAME%3A%28%28AI+OR+ИИ%29+AND+%28Automation+OR+Developer+OR+Engineer+OR+Specialist+OR+Manager+OR+автоматизац*+OR+разработчик+OR+инженер+OR+специалист%29%29&enable_snippets=true&excluded_text=django&items_on_page=20&ored_clusters=true&search_period=10&work_format=REMOTE&work_format=HYBRID&work_format=ON_SITE&area=53",
+      "text=NAME%3A%28Python+OR+разработчик+OR+инженер+OR+интегратор+OR+automation+OR+специалист%29+AND+%28n8n+OR+Make+OR+LangChain+OR+LangGraph+OR+CrewAI+OR+%22AI-агент%22+OR+vibecoding+OR+Cursor%29&salary=&ored_clusters=true&items_on_page=20&enable_snippets=true&search_period=10&excluded_text=django&work_format=REMOTE&work_format=HYBRID&work_format=ON_SITE&area=53",
+      "text=NAME%3A%28%28AI+OR+ИИ+OR+автоматизац*%29+NOT+%28Senior+OR+Lead+OR+ведущий+OR+главный%29%29+AND+%28n8n+OR+Make+OR+LangChain+OR+%22AI-агент%22+OR+%22LLM+API%22%29&salary=&ored_clusters=true&items_on_page=20&enable_snippets=true&search_period=10&excluded_text=django&work_format=REMOTE&work_format=HYBRID&work_format=ON_SITE&area=53"
     ],
     "use_pages_limiter": false,
     "pages": 1
