@@ -22,6 +22,7 @@ logger = get_logger("transformer.worker")
 
 # ── Constants ────────────────────────────────────────────────────
 EMBEDDING_MODEL_NAME = "cointegrated/rubert-tiny2"
+SEQ_LENGTH = 2028
 MAX_CHUNK_LENGTH = 1200
 OVERLAP_LINES = 2
 
@@ -241,6 +242,8 @@ async def on_startup(ctx: dict[str, Any]) -> None:
 
     logger.info("Loading SentenceTransformer model: %s", EMBEDDING_MODEL_NAME)
     _model = SentenceTransformer(EMBEDDING_MODEL_NAME)
+    _model.max_seq_length = SEQ_LENGTH
+    _model.tokenizer.model_max_length = SEQ_LENGTH
     logger.info("Model loaded. Embedding dimension: %d", _model.get_embedding_dimension())
 
     _markitdown = MarkItDown()
