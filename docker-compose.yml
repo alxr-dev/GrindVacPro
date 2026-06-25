@@ -101,6 +101,8 @@ services:
       OPENAI_API_KEY: ${OPENAI_API_KEY:?OPENAI_API_KEY is required}
       OPENAI_BASE_URL: ${OPENAI_BASE_URL:-https://api.openai.com/v1}
       OPENAI_MODEL_NAME: ${OPENAI_MODEL_NAME:-gpt-4o-mini}
+      AI_SCORE_THRESHOLD: ${AI_SCORE_THRESHOLD:?AI_SCORE_THRESHOLD is required}
+      SIMILARITY_THRESHOLD: ${SIMILARITY_THRESHOLD:?SIMILARITY_THRESHOLD is required}
     volumes:
       - ./shared/resume.txt:/app/resume.txt:ro
 
