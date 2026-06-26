@@ -42,6 +42,7 @@ services:
 
   # ── Scraper — сбор данных (Network I/O-bound) ──────────────────
   scraper:
+    profiles: ["app"]
     build:
       context: .
       dockerfile: services/scraper/Dockerfile
@@ -61,6 +62,7 @@ services:
 
   # ── Transformer — фильтрация и эмбеддинги (CPU-bound) ──────────
   transformer:
+    profiles: ["app"]
     build:
       context: .
       dockerfile: services/transformer/Dockerfile
@@ -76,6 +78,8 @@ services:
       DATABASE_URL: ${DATABASE_URL:?DATABASE_URL is required}
       REDIS_URL: ${REDIS_URL:?REDIS_URL is required}
       HF_TOKEN: ${HF_TOKEN:-}
+      SIMILARITY_THRESHOLD: ${SIMILARITY_THRESHOLD:?SIMILARITY_THRESHOLD is required}
+      RESUME_PATH: ${RESUME_PATH:-/app/resume.txt}
     volumes:
       - ./shared/resume.txt:/app/resume.txt:ro
     deploy:
@@ -86,6 +90,7 @@ services:
 
   # ── Analyzer — ИИ-анализ (Network I/O-bound) ───────────────────
   analyzer:
+    profiles: ["app"]
     build:
       context: .
       dockerfile: services/analyzer/Dockerfile
@@ -102,12 +107,13 @@ services:
       OPENAI_BASE_URL: ${OPENAI_BASE_URL:-https://api.openai.com/v1}
       OPENAI_MODEL_NAME: ${OPENAI_MODEL_NAME:-gpt-4o-mini}
       AI_SCORE_THRESHOLD: ${AI_SCORE_THRESHOLD:?AI_SCORE_THRESHOLD is required}
-      SIMILARITY_THRESHOLD: ${SIMILARITY_THRESHOLD:?SIMILARITY_THRESHOLD is required}
+      RESUME_PATH: ${RESUME_PATH:-/app/resume.txt}
     volumes:
       - ./shared/resume.txt:/app/resume.txt:ro
 
   # ── Telegram Bot — уведомления и inline-кнопки ──────────────────
   telegram_bot:
+    profiles: ["app"]
     build:
       context: .
       dockerfile: services/telegram_bot/Dockerfile
@@ -126,6 +132,7 @@ services:
 
   # ── Dashboard — визуализация (Streamlit) ────────────────────────
   dashboard:
+    profiles: ["app"]
     build:
       context: .
       dockerfile: services/dashboard/Dockerfile

@@ -4,9 +4,6 @@ from pathlib import Path
 
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
-# Default path to the resume file inside the transformer container.
-_DEFAULT_RESUME_PATH = Path("/app/resume.txt")
-
 
 class Settings(BaseSettings):
     """Validated application settings loaded from environment / .env."""
@@ -22,7 +19,7 @@ class Settings(BaseSettings):
     openai_api_key: str = ""
     openai_base_url: str = "https://api.openai.com/v1"
     openai_model_name: str = "gpt-4o-mini"
-    resume_path: str = str(_DEFAULT_RESUME_PATH)
+    resume_path: str = "./shared/resume.txt"
     telegram_bot_token: str = ""
     telegram_user_id: int = 0
     ai_score_threshold: int = 50
