@@ -29,7 +29,10 @@ router = Router()
 async def _get_link_and_vacancy(session, vacancy_id: int):
     """Return (VacancyLink, Vacancy | None) or None if link missing."""
     result = await session.execute(
-        select(VacancyLink).where(VacancyLink.vacancy_id == vacancy_id)
+        select(VacancyLink)
+        .where(VacancyLink.vacancy_id == vacancy_id)
+        .order_by(VacancyLink.id.desc())
+        .limit(1)
     )
     link = result.scalar_one_or_none()
     if link is None:

@@ -59,7 +59,10 @@ async def send_vacancy_notification(ctx: dict[str, Any], vacancy_data: dict[str,
     maker = get_session_maker()
     async with maker() as session:
         result = await session.execute(
-            select(VacancyLink).where(VacancyLink.vacancy_id == vacancy_id)
+            select(VacancyLink)
+            .where(VacancyLink.vacancy_id == vacancy_id)
+            .order_by(VacancyLink.id.desc())
+            .limit(1)
         )
         link = result.scalar_one_or_none()
         if link is None:
@@ -88,25 +91,25 @@ async def send_vacancy_notification(ctx: dict[str, Any], vacancy_data: dict[str,
             cover_letter=analysis.get("cover_letter", ""),
         )
 
-    try:
-        await bot.send_message(
-            chat_id=settings.telegram_user_id,
-            text=text,
-            parse_mode="HTML",
-            disable_web_page_preview=True,
-            reply_markup=build_card_kb(vacancy_id).as_markup(),
-        )
-        async with maker() as session:
-            await session.execute(
-                update(VacancyLink)
-                .where(VacancyLink.vacancy_id == vacancy_id)
-                .values(telegram_notified=True)
+        try:
+            await bot.send_message(
+                chat_id=settings.telegram_user_id,
+                text=text,
+                parse_mode="HTML",
+                disable_web_page_preview=True,
+                reply_markup=build_card_kb(vacancy_id).as_markup(),
             )
-            await session.commit()
-        logger.info("Notification sent for vacancy %d", vacancy_id)
-    except Exception as exc:
-        logger.error("Failed to send notification for vacancy %d: %s", vacancy_id, exc)
-        return
+            async with maker() as session:
+                await session.execute(
+                    update(VacancyLink)
+                    .where(VacancyLink.id == link.id)
+                    .values(telegram_notified=True)
+                )
+                await session.commit()
+            logger.info("Notification sent for vacancy %d", vacancy_id)
+        except Exception as exc:
+            logger.error("Failed to send notification for vacancy %d: %s", vacancy_id, exc)
+            return
 
 
 class WorkerSettings:
