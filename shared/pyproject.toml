@@ -1,0 +1,20 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "grindvac-shared"
+version = "0.1.0"
+description = "GrindVacPro shared utilities"
+requires-python = ">=3.12"
+dependencies = [
+    "sqlalchemy[asyncio]==2.0.40",
+    "asyncpg==0.30.0",
+    "pydantic-settings==2.9.1",
+    "arq==0.26.3",
+    "python-dotenv==1.1.0",
+]
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["src*"]
