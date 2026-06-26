@@ -11,7 +11,6 @@ If TELEGRAM_BOT_TOKEN is not configured, only the arq worker starts
 from __future__ import annotations
 
 import asyncio
-import logging
 
 from aiogram import Bot, Dispatcher
 from aiogram.enums import ParseMode
