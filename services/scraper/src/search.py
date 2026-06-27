@@ -12,54 +12,19 @@ from sqlalchemy.dialects.postgresql import insert
 from shared.src.database import get_session_maker
 from shared.src.models import VacancyLink
 from shared.src.security import validate_url
-from shared.src.selectors import (
-    load_selectors,
-    resolve_platform_slug,
-)
 from shared.src.utils.url import normalize_url
 from shared.src.utils.logger import get_logger
+from .selectors import (
+    load_selectors,
+    load_search_queries,
+    resolve_platform_slug,
+)
 
 logger = get_logger("scraper.search")
-
-_SEARCH_QUERIES_PATH = Path("/app/search_queries.json")
 
 # When use_pages_limiter is False, stop dynamic pagination after this many
 # consecutive empty pages to avoid infinite loops.
 _MAX_CONSECUTIVE_EMPTY_PAGES = 3
-
-
-def _load_search_queries() -> dict:
-    """Load search query configurations from external JSON file.
-
-    Returns a dict keyed by domain with ``base_url``, ``params`` (list of
-    param strings), ``use_pages_limiter`` (bool), and optional ``pages`` (int).
-    """
-    if not _SEARCH_QUERIES_PATH.exists():
-        raise FileNotFoundError(f"Search queries file not found: {_SEARCH_QUERIES_PATH}")
-
-    with _SEARCH_QUERIES_PATH.open("r", encoding="utf-8") as fh:
-        data = json.load(fh)
-
-    if not isinstance(data, dict):
-        raise ValueError(f"search_queries.json must be a JSON object, got {type(data).__name__}")
-
-    for domain, cfg in data.items():
-        if not isinstance(cfg, dict):
-            raise ValueError(f"Domain '{domain}' must be a JSON object")
-        if "base_url" not in cfg:
-            raise ValueError(f"Domain '{domain}' missing required key 'base_url'")
-        if "params" not in cfg:
-            raise ValueError(f"Domain '{domain}' missing required key 'params'")
-        if not isinstance(cfg["params"], list):
-            raise ValueError(f"Domain '{domain}'.params must be a list of strings")
-        if not all(isinstance(p, str) for p in cfg["params"]):
-            raise ValueError(f"Domain '{domain}'.params must contain only strings")
-        if cfg.get("use_pages_limiter", True) and "pages" not in cfg:
-            raise ValueError(
-                f"Domain '{domain}' has use_pages_limiter=True but missing 'pages' key"
-            )
-
-    return data
 
 
 def _build_search_url(base_url: str, params: str, page: int) -> str:
@@ -235,7 +200,7 @@ async def run_search() -> None:
     - ``pages``: number of pages to scrape when ``use_pages_limiter`` is True.
     """
     selectors = load_selectors()
-    queries = _load_search_queries()
+    queries = load_search_queries()
 
     # Build the full list of (domain, params_string) tuples to scrape
     scrape_tasks: list[tuple[str, str, bool, int]] = []

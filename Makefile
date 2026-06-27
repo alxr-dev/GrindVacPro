@@ -16,14 +16,14 @@ help:
 
 install-dev:
 	python -m venv .venv
-	.venv\Scripts\pip install -r shared\requirements.txt
-	.venv\Scripts\pip install -e shared
-	.venv\Scripts\pip install -r services\scraper\requirements.txt
-	.venv\Scripts\pip install torch --index-url https://download.pytorch.org/whl/cpu
-	.venv\Scripts\pip install -r services\transformer\requirements.txt
-	.venv\Scripts\pip install -r services\analyzer\requirements.txt
-	.venv\Scripts\pip install -r services\telegram_bot\requirements.txt
-	.venv\Scripts\pip install -r services\dashboard\requirements.txt
+	.venv/Scripts/python -m pip install --upgrade pip
+	.venv/Scripts/pip install torch --index-url https://download.pytorch.org/whl/cpu
+	.venv/Scripts/pip install -r services/transformer/requirements.txt
+	.venv/Scripts/pip install -r services/analyzer/requirements.txt
+	.venv/Scripts/pip install -r services/telegram_bot/requirements.txt
+	.venv/Scripts/pip install -r services/dashboard/requirements.txt
+	.venv/Scripts/pip install -r services/scraper/requirements.txt
+	.venv/Scripts/pip install -r shared/requirements.txt
 
 infra-up:
 	docker compose up -d postgres redis
@@ -32,16 +32,16 @@ infra-down:
 	docker compose down postgres redis
 
 scraper:
-	set PYTHONPATH=. && .venv\Scripts\python services\scraper\src\main.py
+	PYTHONPATH=. && .venv/Scripts/python -m services.scraper.src.main
 
 transformer:
-	set PYTHONPATH=. && .venv\Scripts\arq services.transformer.src.worker.WorkerSettings
+	PYTHONPATH=. && .venv/Scripts/arq services.transformer.src.worker.WorkerSettings
 
 analyzer:
-	set PYTHONPATH=. && .venv\Scripts\arq services.analyzer.src.worker.WorkerSettings
+	PYTHONPATH=. && .venv/Scripts/arq services.analyzer.src.worker.WorkerSettings
 
 telegram:
-	set PYTHONPATH=. && .venv\Scripts\python services\telegram_bot\src\main.py
+	PYTHONPATH=. && .venv/Scripts/python -m services.telegram_bot.src.main
 
 dashboard:
-	set PYTHONPATH=. && .venv\Scripts\streamlit run services\dashboard\src\app.py --server.headless=true
+	.venv/Scripts/streamlit run services/dashboard/src/app.py --server.headless=true

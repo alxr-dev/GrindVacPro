@@ -8,7 +8,8 @@ from urllib.parse import urlparse
 
 from shared.src.utils.url import _strip_www, _domain_matches
 
-_SELECTORS_PATH = Path("/app/selectors.json")
+_SELECTORS_PATH = Path(__file__).resolve().parent.parent / "selectors.json"
+_SEARCH_QUERIES_PATH = Path(__file__).resolve().parent.parent / "search_queries.json"
 
 # Mapping: domain key in selectors.json → canonical platform slug
 PLATFORM_SLUGS: dict[str, str] = {
@@ -43,6 +44,40 @@ def load_selectors() -> dict:
                 raise ValueError(f"Domain '{domain}.{section}' must be a JSON object")
         if "vacancy_link" not in cfg.get("searcher", {}):
             raise ValueError(f"Domain '{domain}.searcher' missing 'vacancy_link' selector")
+
+    return data
+
+
+def load_search_queries() -> dict:
+    """Load search query configurations from external JSON file.
+
+    Returns a dict keyed by domain with ``base_url``, ``params`` (list of
+    param strings), ``use_pages_limiter`` (bool), and optional ``pages`` (int).
+    """
+    if not _SEARCH_QUERIES_PATH.exists():
+        raise FileNotFoundError(f"Search queries file not found: {_SEARCH_QUERIES_PATH}")
+
+    with _SEARCH_QUERIES_PATH.open("r", encoding="utf-8") as fh:
+        data = json.load(fh)
+
+    if not isinstance(data, dict):
+        raise ValueError(f"search_queries.json must be a JSON object, got {type(data).__name__}")
+
+    for domain, cfg in data.items():
+        if not isinstance(cfg, dict):
+            raise ValueError(f"Domain '{domain}' must be a JSON object")
+        if "base_url" not in cfg:
+            raise ValueError(f"Domain '{domain}' missing required key 'base_url'")
+        if "params" not in cfg:
+            raise ValueError(f"Domain '{domain}' missing required key 'params'")
+        if not isinstance(cfg["params"], list):
+            raise ValueError(f"Domain '{domain}'.params must be a list of strings")
+        if not all(isinstance(p, str) for p in cfg["params"]):
+            raise ValueError(f"Domain '{domain}'.params must contain only strings")
+        if cfg.get("use_pages_limiter", True) and "pages" not in cfg:
+            raise ValueError(
+                f"Domain '{domain}' has use_pages_limiter=True but missing 'pages' key"
+            )
 
     return data
 

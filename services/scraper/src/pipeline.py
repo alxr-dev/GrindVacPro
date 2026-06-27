@@ -13,12 +13,12 @@ from shared.src.config import settings
 from shared.src.database import get_session_maker
 from shared.src.models import Vacancy, VacancyLink
 from shared.src.security import validate_url
-from shared.src.selectors import (
+from shared.src.utils.logger import get_logger
+from .selectors import (
     load_selectors,
     resolve_domain,
     resolve_platform_slug,
 )
-from shared.src.utils.logger import get_logger
 
 logger = get_logger("scraper.pipeline")
 

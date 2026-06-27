@@ -4,8 +4,8 @@ import asyncio
 
 from shared.src.utils.logger import get_logger
 
-from src.pipeline import run_pipeline
-from src.search import run_search
+from .pipeline import run_pipeline
+from .search import run_search
 
 logger = get_logger("scraper.main")
 

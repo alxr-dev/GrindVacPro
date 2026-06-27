@@ -22,7 +22,7 @@ from shared.src.config import settings
 from shared.src.utils.logger import get_logger
 
 from .callbacks import router
-from .worker import WorkerSettings, get_bot, set_bot
+from .worker import WorkerSettings, set_bot
 
 logger = get_logger("telegram_bot.main")
 

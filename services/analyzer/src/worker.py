@@ -18,7 +18,7 @@ from shared.src.database import get_session_maker
 from shared.src.models import Vacancy, VacancyLink
 from shared.src.utils.logger import get_logger
 
-from src.prompts import SYSTEM_PROMPT
+from .prompts import SYSTEM_PROMPT
 
 logger = get_logger("analyzer.worker")
 
