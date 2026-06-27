@@ -2,12 +2,63 @@
   "hh.ru": {
     "base_url": "https://hh.ru/search/vacancy",
     "params": [
-      "text=NAME%3A%28%28AI+OR+ИИ%29+AND+%28Automation+OR+Developer+OR+Engineer+OR+Specialist+OR+Manager+OR+автоматизац*+OR+разработчик+OR+инженер+OR+специалист%29%29&enable_snippets=true&excluded_text=django&items_on_page=20&ored_clusters=true&search_period=10&work_format=REMOTE",
-      "text=NAME%3A%28Python+OR+разработчик+OR+инженер+OR+интегратор+OR+automation+OR+специалист%29+AND+%28n8n+OR+Make+OR+LangChain+OR+LangGraph+OR+CrewAI+OR+%22AI-агент%22+OR+vibecoding+OR+Cursor%29&salary=&ored_clusters=true&items_on_page=20&enable_snippets=true&search_period=10&excluded_text=django&work_format=REMOTE",
-      "text=NAME%3A%28%28AI+OR+ИИ+OR+автоматизац*%29+NOT+%28Senior+OR+Lead+OR+ведущий+OR+главный%29%29+AND+%28n8n+OR+Make+OR+LangChain+OR+%22AI-агент%22+OR+%22LLM+API%22%29&salary=&ored_clusters=true&items_on_page=20&enable_snippets=true&search_period=10&excluded_text=django&work_format=REMOTE",
-      "text=NAME%3A%28%28AI+OR+ИИ%29+AND+%28Automation+OR+Developer+OR+Engineer+OR+Specialist+OR+Manager+OR+автоматизац*+OR+разработчик+OR+инженер+OR+специалист%29%29&enable_snippets=true&excluded_text=django&items_on_page=20&ored_clusters=true&search_period=10&work_format=REMOTE&work_format=HYBRID&work_format=ON_SITE&area=53",
-      "text=NAME%3A%28Python+OR+разработчик+OR+инженер+OR+интегратор+OR+automation+OR+специалист%29+AND+%28n8n+OR+Make+OR+LangChain+OR+LangGraph+OR+CrewAI+OR+%22AI-агент%22+OR+vibecoding+OR+Cursor%29&salary=&ored_clusters=true&items_on_page=20&enable_snippets=true&search_period=10&excluded_text=django&work_format=REMOTE&work_format=HYBRID&work_format=ON_SITE&area=53",
-      "text=NAME%3A%28%28AI+OR+ИИ+OR+автоматизац*%29+NOT+%28Senior+OR+Lead+OR+ведущий+OR+главный%29%29+AND+%28n8n+OR+Make+OR+LangChain+OR+%22AI-агент%22+OR+%22LLM+API%22%29&salary=&ored_clusters=true&items_on_page=20&enable_snippets=true&search_period=10&excluded_text=django&work_format=REMOTE&work_format=HYBRID&work_format=ON_SITE&area=53"
+      {
+        "text": "NAME:((AI OR ИИ) AND (Automation OR Developer OR Engineer OR Specialist OR Manager OR автоматизац* OR разработчик OR инженер OR специалист))",
+        "enable_snippets": true,
+        "excluded_text": "django",
+        "items_on_page": 20,
+        "ored_clusters": true,
+        "search_period": 10,
+        "work_format": ["REMOTE"]
+      },
+      {
+        "text": "NAME:(Python OR разработчик OR инженер OR интегратор OR automation OR специалист) AND (n8n OR Make OR LangChain OR LangGraph OR CrewAI OR \"AI-агент\" OR vibecoding OR Cursor)",
+        "ored_clusters": true,
+        "items_on_page": 20,
+        "enable_snippets": true,
+        "search_period": 10,
+        "excluded_text": "django",
+        "work_format": ["REMOTE"]
+      },
+      {
+        "text": "NAME:((AI OR ИИ OR автоматизац*) NOT (Senior OR Lead OR ведущий OR главный)) AND (n8n OR Make OR LangChain OR \"AI-агент\" OR \"LLM API\")",
+        "ored_clusters": true,
+        "items_on_page": 20,
+        "enable_snippets": true,
+        "search_period": 10,
+        "excluded_text": "django",
+        "work_format": ["REMOTE"]
+      },
+      {
+        "text": "NAME:((AI OR ИИ) AND (Automation OR Developer OR Engineer OR Specialist OR Manager OR автоматизац* OR разработчик OR инженер OR специалист))",
+        "enable_snippets": true,
+        "excluded_text": "django",
+        "items_on_page": 20,
+        "ored_clusters": true,
+        "search_period": 10,
+        "area": 53,
+        "work_format": ["REMOTE", "HYBRID", "ON_SITE"]
+      },
+      {
+        "text": "NAME:(Python OR разработчик OR инженер OR интегратор OR automation OR специалист) AND (n8n OR Make OR LangChain OR LangGraph OR CrewAI OR \"AI-агент\" OR vibecoding OR Cursor)",
+        "ored_clusters": true,
+        "items_on_page": 20,
+        "enable_snippets": true,
+        "search_period": 10,
+        "excluded_text": "django",
+        "area": 53,
+        "work_format": ["REMOTE", "HYBRID", "ON_SITE"]
+      },
+      {
+        "text": "NAME:((AI OR ИИ OR автоматизац*) NOT (Senior OR Lead OR ведущий OR главный)) AND (n8n OR Make OR LangChain OR \"AI-агент\" OR \"LLM API\")",
+        "ored_clusters": true,
+        "items_on_page": 20,
+        "enable_snippets": true,
+        "search_period": 10,
+        "excluded_text": "django",
+        "area": 53,
+        "work_format": ["REMOTE", "HYBRID", "ON_SITE"]
+      }
     ],
     "use_pages_limiter": false,
     "pages": 1

@@ -1,9 +1,7 @@
 """GrindVacPro — Vacancy URL collector (search results scraper)."""
 
 import asyncio
-import json
 import random
-from pathlib import Path
 from urllib.parse import urlparse
 
 from curl_cffi.requests import AsyncSession
@@ -27,23 +25,10 @@ logger = get_logger("scraper.search")
 _MAX_CONSECUTIVE_EMPTY_PAGES = 3
 
 
-def _build_search_url(base_url: str, params: str, page: int) -> str:
-    """Build a search URL with query parameters and page number.
-
-    Args:
-        base_url: The base search URL (e.g. ``https://hh.ru/search/vacancy``).
-        params: URL-encoded query parameters string.
-        page: Zero-based page number.
-
-    Returns:
-        Complete search URL with all parameters.
-    """
-    return f"{base_url}?{params}&page={page}"
-
-
 async def _fetch_search_page(
     session: AsyncSession,
     url: str,
+    params: dict,
     selectors: dict,
     domain: str,
     allowed_domains: list[str],
@@ -58,7 +43,9 @@ async def _fetch_search_page(
     await asyncio.sleep(random.uniform(1.0, 1.5))
 
     try:
-        response = await session.get(url, impersonate="chrome", timeout=30)
+        response = await session.get(
+            url, params=params, impersonate="chrome", timeout=30,
+        )
         response.raise_for_status()
     except Exception as exc:
         logger.warning("Failed to fetch %s: %s", url, exc)
@@ -134,7 +121,7 @@ async def _save_links(urls: list[str], selectors: dict) -> int:
 async def _scrape_params_set(
     http: AsyncSession,
     base_url: str,
-    params: str,
+    params: dict,
     domain: str,
     selectors: dict,
     allowed_domains: list[str],
@@ -151,9 +138,11 @@ async def _scrape_params_set(
     page = 0
 
     while True:
-        url = _build_search_url(base_url, params, page)
-        logger.info("Searching: %s", url)
-        found, ok = await _fetch_search_page(http, url, selectors, domain, allowed_domains)
+        query_params = {**params, "page": page}
+        logger.info("Searching: %s page=%d", base_url, page)
+        found, ok = await _fetch_search_page(
+            http, base_url, query_params, selectors, domain, allowed_domains,
+        )
 
         if ok and found:
             count = await _save_links(found, selectors)
@@ -191,7 +180,7 @@ async def run_search() -> None:
 
     Each platform can specify:
     - ``base_url``: the search endpoint URL.
-    - ``params``: a list of query-parameter strings. Each string is a complete
+    - ``params``: a list of query-parameter dicts. Each dict is a complete
       set of search parameters (e.g. different search terms). The scraper
       iterates over every params entry for every platform.
     - ``use_pages_limiter``: if True, use the ``pages`` key to limit pagination.
@@ -202,8 +191,8 @@ async def run_search() -> None:
     selectors = load_selectors()
     queries = load_search_queries()
 
-    # Build the full list of (domain, params_string) tuples to scrape
-    scrape_tasks: list[tuple[str, str, bool, int]] = []
+    # Build the full list of (domain, params_dict, use_pages_limiter, pages)
+    scrape_tasks: list[tuple[str, dict, bool, int]] = []
     for domain, cfg in queries.items():
         if domain not in selectors:
             logger.warning("Domain '%s' in search_queries.json not found in selectors.json, skipping", domain)
@@ -212,7 +201,7 @@ async def run_search() -> None:
             logger.warning("Domain '%s' has no searcher config in selectors.json, skipping", domain)
             continue
 
-        params_list = cfg["params"]
+        params_list: list[dict] = cfg["params"]
         use_pages_limiter = cfg.get("use_pages_limiter", True)
         pages = cfg.get("pages", 1)
 

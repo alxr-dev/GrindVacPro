@@ -48,11 +48,12 @@ def load_selectors() -> dict:
     return data
 
 
-def load_search_queries() -> dict:
+def load_search_queries() -> dict[str, dict]:
     """Load search query configurations from external JSON file.
 
-    Returns a dict keyed by domain with ``base_url``, ``params`` (list of
-    param strings), ``use_pages_limiter`` (bool), and optional ``pages`` (int).
+    Returns a dict keyed by domain whose values contain ``base_url``,
+    ``params`` (a list of dicts — each dict is a set of query parameters),
+    ``use_pages_limiter`` (bool), and optional ``pages`` (int).
     """
     if not _SEARCH_QUERIES_PATH.exists():
         raise FileNotFoundError(f"Search queries file not found: {_SEARCH_QUERIES_PATH}")
@@ -71,9 +72,11 @@ def load_search_queries() -> dict:
         if "params" not in cfg:
             raise ValueError(f"Domain '{domain}' missing required key 'params'")
         if not isinstance(cfg["params"], list):
-            raise ValueError(f"Domain '{domain}'.params must be a list of strings")
-        if not all(isinstance(p, str) for p in cfg["params"]):
-            raise ValueError(f"Domain '{domain}'.params must contain only strings")
+            raise ValueError(f"Domain '{domain}'.params must be a list of dicts")
+        if not all(isinstance(p, dict) for p in cfg["params"]):
+            raise ValueError(
+                f"Domain '{domain}'.params must contain only dicts (query param sets)"
+            )
         if cfg.get("use_pages_limiter", True) and "pages" not in cfg:
             raise ValueError(
                 f"Domain '{domain}' has use_pages_limiter=True but missing 'pages' key"
