@@ -3,7 +3,7 @@
     "base_url": "https://hh.ru/search/vacancy",
     "default_params": {
       "enable_snippets": true,
-      "excluded_text": "django",
+      "excluded_text": "Django, Go, Java, PHP, C#, .NET, Unity, Flutter",
       "items_on_page": 20,
       "ored_clusters": true,
       "search_period": 10,
@@ -11,30 +11,50 @@
     },
     "params": [
       {
-        "text": "NAME:((AI OR ИИ) AND (Automation OR Developer OR Engineer OR Specialist OR Manager OR автоматизац* OR разработчик OR инженер OR специалист))"
+        "text": "NAME:((AI OR ИИ) AND (Automation OR Developer OR Engineer OR Specialist OR Manager OR автоматизац* OR разработчик OR инженер OR специалист) NOT (Senior OR Сеньор OR Lead OR Лид OR Тимлид OR QA OR Тестировщик OR DevOps OR Девопс OR ML OR Game OR Gameplay))"
+      },
+            {
+        "text": "NAME:((Python OR разработчик OR инженер OR интегратор OR automation OR специалист) NOT (Senior OR Сеньор OR Lead OR Лид OR Тимлид OR QA OR Тестировщик OR DevOps OR Девопс OR ML OR Game OR Gameplay)) AND (n8n OR Make OR LangChain OR LangGraph OR \"AI-агент\" OR vibecoding OR Cursor)"
       },
       {
-        "text": "NAME:(Python OR разработчик OR инженер OR интегратор OR automation OR специалист) AND (n8n OR Make OR LangChain OR LangGraph OR CrewAI OR \"AI-агент\" OR vibecoding OR Cursor)",
-        "salary": ""
+        "text": "NAME:((AI OR ИИ OR автоматизац*) NOT (Senior OR Сеньор OR Lead OR Лид OR Тимлид OR QA OR Тестировщик OR DevOps OR Девопс OR ML OR Game OR Gameplay)) AND (n8n OR Make OR LangChain OR \"AI-агент\" OR \"LLM API\")"
       },
       {
-        "text": "NAME:((AI OR ИИ OR автоматизац*) NOT (Senior OR Lead OR ведущий OR главный)) AND (n8n OR Make OR LangChain OR \"AI-агент\" OR \"LLM API\")",
-        "salary": ""
+        "text": "NAME:((Python OR Backend OR FastAPI OR Asyncio) NOT (Senior OR Сеньор OR Lead OR Лид OR Тимлид OR QA OR Тестировщик OR DevOps OR Девопс OR ML OR Game OR Gameplay))"
       },
       {
-        "text": "NAME:((AI OR ИИ) AND (Automation OR Developer OR Engineer OR Specialist OR Manager OR автоматизац* OR разработчик OR инженер OR специалист))",
+        "text": "NAME:((Automation OR Автоматизация OR LLM OR RAG OR Парсер OR Scraping OR Bot OR Бот) NOT (Senior OR Сеньор OR Lead OR Лид OR Тимлид OR QA OR Тестировщик OR DevOps OR Девопс OR ML OR Game OR Gameplay))"
+      },
+      {
+        "text": "(Python OR Backend OR FastAPI) AND (LLM OR RAG OR pgvector OR \"микросервисов\" OR Парсер) NOT NAME:(Senior OR Сеньор OR Lead OR Лид OR Тимлид OR QA OR Тестировщик OR DevOps OR Девопс OR ML OR Game OR Gameplay)"
+      },
+      {
+        "text": "NAME:((AI OR ИИ) AND (Automation OR Developer OR Engineer OR Specialist OR Manager OR автоматизац* OR разработчик OR инженер OR специалист) NOT (Senior OR Сеньор OR Lead OR Лид OR Тимлид OR QA OR Тестировщик OR DevOps OR Девопс OR ML OR Game OR Gameplay))",
         "area": 53,
         "work_format": ["REMOTE", "HYBRID", "ON_SITE"]
       },
       {
-        "text": "NAME:(Python OR разработчик OR инженер OR интегратор OR automation OR специалист) AND (n8n OR Make OR LangChain OR LangGraph OR CrewAI OR \"AI-агент\" OR vibecoding OR Cursor)",
-        "salary": "",
+        "text": "NAME:((Python OR разработчик OR инженер OR интегратор OR automation OR специалист) NOT (Senior OR Сеньор OR Lead OR Лид OR Тимлид OR QA OR Тестировщик OR DevOps OR Девопс OR ML OR Game OR Gameplay)) AND (n8n OR Make OR LangChain OR LangGraph OR \"AI-агент\" OR vibecoding OR Cursor)",
         "area": 53,
         "work_format": ["REMOTE", "HYBRID", "ON_SITE"]
       },
       {
-        "text": "NAME:((AI OR ИИ OR автоматизац*) NOT (Senior OR Lead OR ведущий OR главный)) AND (n8n OR Make OR LangChain OR \"AI-агент\" OR \"LLM API\")",
-        "salary": "",
+        "text": "NAME:((AI OR ИИ OR автоматизац*) NOT (Senior OR Сеньор OR Lead OR Лид OR Тимлид OR QA OR Тестировщик OR DevOps OR Девопс OR ML OR Game OR Gameplay)) AND (n8n OR Make OR LangChain OR \"AI-агент\" OR \"LLM API\")",
+        "area": 53,
+        "work_format": ["REMOTE", "HYBRID", "ON_SITE"]
+      },
+      {
+        "text": "NAME:((Python OR Backend OR FastAPI OR Asyncio) NOT (Senior OR Сеньор OR Lead OR Лид OR Тимлид OR QA OR Тестировщик OR DevOps OR Девопс OR ML OR Game OR Gameplay))",
+        "area": 53,
+        "work_format": ["REMOTE", "HYBRID", "ON_SITE"]
+      },
+      {
+        "text": "NAME:((Automation OR Автоматизация OR LLM OR RAG OR Парсер OR Scraping OR Bot OR Бот) NOT (Senior OR Сеньор OR Lead OR Лид OR Тимлид OR QA OR Тестировщик OR DevOps OR Девопс OR ML OR Game OR Gameplay))",
+        "area": 53,
+        "work_format": ["REMOTE", "HYBRID", "ON_SITE"]
+      },
+      {
+        "text": "(Python OR Backend OR FastAPI) AND (LLM OR RAG OR pgvector OR \"микросервисов\" OR Парсер) NOT NAME:(Senior OR Сеньор OR Lead OR Лид OR Тимлид OR QA OR Тестировщик OR DevOps OR Девопс OR ML OR Game OR Gameplay)",
         "area": 53,
         "work_format": ["REMOTE", "HYBRID", "ON_SITE"]
       }

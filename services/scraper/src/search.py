@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import asyncio
 import random
-from urllib.parse import urlparse
+from urllib.parse import urlparse, urlencode
 
 from curl_cffi.requests import AsyncSession
 from sqlalchemy.dialects.postgresql import insert
@@ -30,7 +30,6 @@ _MAX_CONSECUTIVE_EMPTY_PAGES = 3
 async def _fetch_search_page(
     session: AsyncSession,
     url: str,
-    params: dict,
     selectors: dict,
     domain: str,
     allowed_domains: list[str],
@@ -46,7 +45,7 @@ async def _fetch_search_page(
 
     try:
         response = await session.get(
-            url, params=params, impersonate="chrome", timeout=30,
+            url, impersonate="chrome", timeout=30,
         )
         response.raise_for_status()
     except Exception as exc:
@@ -141,9 +140,13 @@ async def _scrape_params_set(
 
     while True:
         query_params = {**params, "page": page}
-        logger.info("Searching: %s page=%d", base_url, page)
+
+        sep = "&" if urlparse(base_url).query else "?"
+        full_url = f"{base_url}{sep}{urlencode(query_params, doseq=True)}"
+        
+        logger.info("Searching: %s page=%d", full_url, page)
         found, ok = await _fetch_search_page(
-            http, base_url, query_params, selectors, domain, allowed_domains,
+            http, full_url, selectors, domain, allowed_domains,
         )
 
         if ok and found:
