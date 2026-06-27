@@ -77,6 +77,12 @@ def load_search_queries() -> dict[str, dict]:
             raise ValueError(
                 f"Domain '{domain}'.params must contain only dicts (query param sets)"
             )
+        default_params = cfg.get("default_params")
+        if default_params is not None:
+            if not isinstance(default_params, dict):
+                raise ValueError(
+                    f"Domain '{domain}'.default_params must be a dict if present"
+                )
         if cfg.get("use_pages_limiter", True) and "pages" not in cfg:
             raise ValueError(
                 f"Domain '{domain}' has use_pages_limiter=True but missing 'pages' key"

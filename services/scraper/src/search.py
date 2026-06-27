@@ -1,5 +1,7 @@
 """GrindVacPro — Vacancy URL collector (search results scraper)."""
 
+from __future__ import annotations
+
 import asyncio
 import random
 from urllib.parse import urlparse
@@ -191,7 +193,8 @@ async def run_search() -> None:
     selectors = load_selectors()
     queries = load_search_queries()
 
-    # Build the full list of (domain, params_dict, use_pages_limiter, pages)
+    # Build the full list of (domain, merged_params, use_pages_limiter, pages)
+    # by shallow-merging each query's overrides with the domain's default_params.
     scrape_tasks: list[tuple[str, dict, bool, int]] = []
     for domain, cfg in queries.items():
         if domain not in selectors:
@@ -201,7 +204,10 @@ async def run_search() -> None:
             logger.warning("Domain '%s' has no searcher config in selectors.json, skipping", domain)
             continue
 
-        params_list: list[dict] = cfg["params"]
+        default_params: dict = cfg.get("default_params", {})
+        params_list: list[dict] = [
+            {**default_params, **p} for p in cfg["params"]
+        ]
         use_pages_limiter = cfg.get("use_pages_limiter", True)
         pages = cfg.get("pages", 1)
 
