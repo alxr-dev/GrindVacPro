@@ -74,7 +74,7 @@
     "base_url": "https://career.habr.com/vacancies",
     "default_params": {
       "remote": true,
-      "skills": 446,
+      "skills[]": 446,
       "type": "all"
     },
     "params":[
@@ -89,17 +89,17 @@
       },
       {
         "qid": 1,
-        "locations": "c_707",
+        "locations[]": "c_707",
         "remote": ""
       },
       {
         "qid": 3,
-        "locations": "c_707",
+        "locations[]": "c_707",
         "remote": ""
       },
       {
         "qid": 4,
-        "locations": "c_707",
+        "locations[]": "c_707",
         "remote": ""
       }
     ],

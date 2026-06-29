@@ -116,7 +116,7 @@ async def _analyze_vacancy_impl(ctx: dict[str, Any], vacancy_id: int) -> None:
                     },
                 ],
                 response_format={"type": "json_object"},
-                max_tokens=1024,
+                # max_tokens=1024,
                 temperature=0,
             )
             # Validate response structure before accessing
@@ -302,7 +302,7 @@ async def _reenqueue_failed_vacancies() -> int:
                 select(VacancyLink, Vacancy)
                 .join(Vacancy, VacancyLink.vacancy_id == Vacancy.id)
                 .where(
-                    VacancyLink.status == "failed",
+                    VacancyLink.status.in_(["failed", "parsed"]),
                     Vacancy.description_markdown.is_not(None),
                     Vacancy.description_markdown != "",
                 )
