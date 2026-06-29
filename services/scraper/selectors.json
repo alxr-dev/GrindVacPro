@@ -9,5 +9,16 @@
       "company_name": "span.vacancy-company-name span",
       "description": "div[data-qa='vacancy-description']"
     }
+  },
+  "career.habr.com": {
+    "searcher": {
+      "vacancy_link": ".vacancy-card__title-link"
+    },
+    "parser": {
+      "title": "h1.page-title__title",
+      "salary": "div.vacancy-header__salary",
+      "company_name": "div.company_name",
+      "description": "div.vacancy-description__text"
+    }
   }
 }

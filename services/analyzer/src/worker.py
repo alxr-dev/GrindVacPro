@@ -10,6 +10,7 @@ from urllib.parse import urlparse
 
 from arq import create_pool
 from arq.connections import RedisSettings
+from arq.worker import Retry
 from openai import AsyncOpenAI
 from sqlalchemy import select, update
 
@@ -96,6 +97,7 @@ async def _analyze_vacancy_impl(ctx: dict[str, Any], vacancy_id: int) -> None:
 
     # ── Call LLM (with retry) ──────────────────────────────────────
     raw_content: str | None = None
+    last_exc: Exception | None = None
     for attempt in range(3):
         try:
             response = await _openai_client.chat.completions.create(
@@ -133,6 +135,7 @@ async def _analyze_vacancy_impl(ctx: dict[str, Any], vacancy_id: int) -> None:
             # Success — break retry loop
             break
         except Exception as exc:
+            last_exc = exc
             logger.warning(
                 "LLM call attempt %d/3 failed for vacancy #%d: %s",
                 attempt + 1,
@@ -141,20 +144,17 @@ async def _analyze_vacancy_impl(ctx: dict[str, Any], vacancy_id: int) -> None:
             )
             if attempt < 2:
                 await asyncio.sleep(5 * (attempt + 1))
-            else:
-                logger.error(
-                    "LLM call failed after 3 attempts for vacancy #%d: %s",
-                    vacancy_id,
-                    exc,
-                )
-                async with maker() as session:
-                    await session.execute(
-                        update(VacancyLink)
-                        .where(VacancyLink.vacancy_id == vacancy_id)
-                        .values(status="failed")
-                    )
-                    await session.commit()
-                return
+
+    if raw_content is None:
+        assert last_exc is not None
+        logger.error(
+            "LLM call failed after 3 attempts for vacancy #%d: %s",
+            vacancy_id,
+            last_exc,
+        )
+        # Retry via arq instead of marking as failed — we might get a valid
+        # response on the next attempt.
+        raise Retry(defer=30 * (ctx.get("job_try", 1)))
 
     # ── Parse JSON response ───────────────────────────────────────
     try:
@@ -163,7 +163,7 @@ async def _analyze_vacancy_impl(ctx: dict[str, Any], vacancy_id: int) -> None:
         score = max(0, min(100, int(analysis["score"])))
         pros = list(analysis["pros"])
         cons = list(analysis["cons"])
-        cover_letter = str(analysis["cover_letter"])
+        # cover_letter = str(analysis["cover_letter"])
     except (json.JSONDecodeError, KeyError, TypeError, ValueError) as exc:
         # Attempt to fix truncated JSON (missing closing brace)
         fixed = _try_fix_json(_clean_llm_json(raw_content))
@@ -173,7 +173,7 @@ async def _analyze_vacancy_impl(ctx: dict[str, Any], vacancy_id: int) -> None:
                 score = max(0, min(100, int(analysis["score"])))
                 pros = list(analysis["pros"])
                 cons = list(analysis["cons"])
-                cover_letter = str(analysis["cover_letter"])
+                # cover_letter = str(analysis["cover_letter"])
                 logger.info("Fixed truncated JSON for vacancy #%d", vacancy_id)
             except (json.JSONDecodeError, KeyError, TypeError, ValueError) as exc2:
                 safe_raw = raw_content[:200].replace("\n", " ").replace("\r", " ")
@@ -183,14 +183,9 @@ async def _analyze_vacancy_impl(ctx: dict[str, Any], vacancy_id: int) -> None:
                     exc2,
                     safe_raw,
                 )
-                async with maker() as session:
-                    await session.execute(
-                        update(VacancyLink)
-                        .where(VacancyLink.vacancy_id == vacancy_id)
-                        .values(status="failed")
-                    )
-                    await session.commit()
-                return
+                # Retry via arq instead of marking as failed — the model may
+                # produce valid JSON on the next attempt.
+                raise Retry(defer=30 * (ctx.get("job_try", 1)))
         else:
             # Sanitize: replace control chars to prevent log injection
             safe_raw = raw_content[:200].replace("\n", " ").replace("\r", " ")
@@ -200,21 +195,16 @@ async def _analyze_vacancy_impl(ctx: dict[str, Any], vacancy_id: int) -> None:
                 exc,
                 safe_raw,
             )
-            async with maker() as session:
-                await session.execute(
-                    update(VacancyLink)
-                    .where(VacancyLink.vacancy_id == vacancy_id)
-                    .values(status="failed")
-                )
-                await session.commit()
-            return
+            # Retry via arq instead of marking as failed — the model may
+            # produce valid JSON on the next attempt.
+            raise Retry(defer=30 * (ctx.get("job_try", 1)))
 
     # ── Store results ─────────────────────────────────────────────
     ai_analysis = {
         "score": score,
         "pros": pros,
         "cons": cons,
-        "cover_letter": cover_letter,
+        # "cover_letter": cover_letter,
     }
 
     async with maker() as session:
@@ -289,6 +279,64 @@ async def on_startup(ctx: dict[str, Any]) -> None:
         settings.openai_model_name,
         safe_base,
     )
+    # Re-enqueue previously failed vacancies that have content to analyze
+    await _reenqueue_failed_vacancies()
+
+
+async def _reenqueue_failed_vacancies() -> int:
+    """Re-enqueue vacancies that previously failed analysis but have content.
+
+    Finds ``VacancyLink`` rows with ``status='failed'`` whose linked
+    ``Vacancy`` has a non-empty ``description_markdown`` and enqueues them
+    back into the AI queue for re-analysis.
+
+    Returns:
+        The number of vacancies re-enqueued.
+    """
+    maker = get_session_maker()
+    arq_pool = await create_pool(RedisSettings.from_dsn(settings.redis_url))
+
+    try:
+        async with maker() as session:
+            result = await session.execute(
+                select(VacancyLink, Vacancy)
+                .join(Vacancy, VacancyLink.vacancy_id == Vacancy.id)
+                .where(
+                    VacancyLink.status == "failed",
+                    Vacancy.description_markdown.is_not(None),
+                    Vacancy.description_markdown != "",
+                )
+            )
+            rows = result.all()
+
+        if not rows:
+            logger.info("No failed vacancies with content to re-enqueue")
+            return 0
+
+        reenqueued = 0
+        for link, _vacancy in rows:
+            try:
+                await arq_pool.enqueue_job(
+                    "analyze_vacancy",
+                    link.vacancy_id,
+                    _queue_name="ai_queue",
+                )
+                reenqueued += 1
+            except Exception as exc:
+                logger.error(
+                    "Failed to re-enqueue vacancy #%d: %s",
+                    link.vacancy_id,
+                    exc,
+                )
+
+        logger.info(
+            "Re-enqueued %d/%d failed vacancies for re-analysis",
+            reenqueued,
+            len(rows),
+        )
+        return reenqueued
+    finally:
+        await arq_pool.aclose()
 
 
 async def on_shutdown(ctx: dict[str, Any]) -> None:

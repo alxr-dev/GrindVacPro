@@ -6,57 +6,101 @@
       "excluded_text": "Django, Go, Java, PHP, C#, .NET, Unity, Flutter",
       "items_on_page": 20,
       "ored_clusters": true,
-      "search_period": 10,
+      "search_period": 14,
       "work_format": ["REMOTE"]
     },
     "params": [
       {
-        "text": "NAME:((AI OR ИИ) AND (Automation OR Developer OR Engineer OR Specialist OR Manager OR автоматизац* OR разработчик OR инженер OR специалист) NOT (Senior OR Сеньор OR Lead OR Лид OR Тимлид OR QA OR Тестировщик OR DevOps OR Девопс OR ML OR Game OR Gameplay))"
-      },
-            {
-        "text": "NAME:((Python OR разработчик OR инженер OR интегратор OR automation OR специалист) NOT (Senior OR Сеньор OR Lead OR Лид OR Тимлид OR QA OR Тестировщик OR DevOps OR Девопс OR ML OR Game OR Gameplay)) AND (n8n OR Make OR LangChain OR LangGraph OR \"AI-агент\" OR vibecoding OR Cursor)"
+        "text": "NAME:((Junior OR Джуниор) AND (Python OR Phyton) NOT (Senior OR Сеньор OR Lead OR Лид OR Тимлид OR QA OR Тестировщик OR DevOps OR Девопс OR ML OR Game OR Gameplay OR CTO OR Data Engineer OR 1С OR Стажер))"
       },
       {
-        "text": "NAME:((AI OR ИИ OR автоматизац*) NOT (Senior OR Сеньор OR Lead OR Лид OR Тимлид OR QA OR Тестировщик OR DevOps OR Девопс OR ML OR Game OR Gameplay)) AND (n8n OR Make OR LangChain OR \"AI-агент\" OR \"LLM API\")"
+        "text": "NAME:((Python OR автоматизац*) NOT (Senior OR Сеньор OR Lead OR Лид OR Тимлид OR QA OR Тестировщик OR DevOps OR Девопс OR ML OR Game OR Gameplay OR CTO OR Data Engineer OR 1С OR Стажер))"
       },
       {
-        "text": "NAME:((Python OR Backend OR FastAPI OR Asyncio) NOT (Senior OR Сеньор OR Lead OR Лид OR Тимлид OR QA OR Тестировщик OR DevOps OR Девопс OR ML OR Game OR Gameplay))"
+        "text": "NAME:((AI OR ИИ) AND (Automation OR Developer OR Engineer OR Specialist OR Manager OR автоматизац* OR разработчик OR инженер OR специалист) NOT (Senior OR Сеньор OR Lead OR Лид OR Тимлид OR QA OR Тестировщик OR DevOps OR Девопс OR ML OR Game OR Gameplay OR CTO OR Data Engineer OR 1С OR Стажер))"
       },
       {
-        "text": "NAME:((Automation OR Автоматизация OR LLM OR RAG OR Парсер OR Scraping OR Bot OR Бот) NOT (Senior OR Сеньор OR Lead OR Лид OR Тимлид OR QA OR Тестировщик OR DevOps OR Девопс OR ML OR Game OR Gameplay))"
+        "text": "NAME:((Python OR разработчик OR инженер OR интегратор OR automation OR специалист) NOT (Senior OR Сеньор OR Lead OR Лид OR Тимлид OR QA OR Тестировщик OR DevOps OR Девопс OR ML OR Game OR Gameplay OR CTO OR Data Engineer OR 1С OR Стажер)) AND (n8n OR Make OR LangChain OR \"AI-агент\" OR vibecoding OR Cursor)"
       },
       {
-        "text": "(Python OR Backend OR FastAPI) AND (LLM OR RAG OR pgvector OR \"микросервисов\" OR Парсер) NOT NAME:(Senior OR Сеньор OR Lead OR Лид OR Тимлид OR QA OR Тестировщик OR DevOps OR Девопс OR ML OR Game OR Gameplay)"
+        "text": "NAME:((AI OR ИИ OR автоматизац*) NOT (Senior OR Сеньор OR Lead OR Лид OR Тимлид OR QA OR Тестировщик OR DevOps OR Девопс OR ML OR Game OR Gameplay OR CTO OR Data Engineer OR 1С OR Стажер)) AND (n8n OR Make OR LangChain OR \"AI-агент\" OR \"LLM API\")"
       },
       {
-        "text": "NAME:((AI OR ИИ) AND (Automation OR Developer OR Engineer OR Specialist OR Manager OR автоматизац* OR разработчик OR инженер OR специалист) NOT (Senior OR Сеньор OR Lead OR Лид OR Тимлид OR QA OR Тестировщик OR DevOps OR Девопс OR ML OR Game OR Gameplay))",
+        "text": "NAME:((Python OR Backend OR FastAPI OR Asyncio) NOT (Senior OR Сеньор OR Lead OR Лид OR Тимлид OR QA OR Тестировщик OR DevOps OR Девопс OR ML OR Game OR Gameplay OR CTO OR Data Engineer OR 1С OR Стажер))"
+      },
+      {
+        "text": "(Python OR Backend OR FastAPI) AND (LLM OR RAG OR pgvector OR \"микросервисов\" OR Парсер) NOT NAME:(Senior OR Сеньор OR Lead OR Лид OR Тимлид OR QA OR Тестировщик OR DevOps OR Девопс OR ML OR Game OR Gameplay OR CTO OR Data Engineer OR 1С OR Стажер)"
+      },
+      {
+        "text": "NAME:((Python OR автоматизац*) NOT (Senior OR Сеньор OR Lead OR Лид OR Тимлид OR QA OR Тестировщик OR DevOps OR Девопс OR ML OR Game OR Gameplay OR CTO OR Data Engineer OR 1С OR Стажер))",
         "area": 53,
         "work_format": ["REMOTE", "HYBRID", "ON_SITE"]
       },
       {
-        "text": "NAME:((Python OR разработчик OR инженер OR интегратор OR automation OR специалист) NOT (Senior OR Сеньор OR Lead OR Лид OR Тимлид OR QA OR Тестировщик OR DevOps OR Девопс OR ML OR Game OR Gameplay)) AND (n8n OR Make OR LangChain OR LangGraph OR \"AI-агент\" OR vibecoding OR Cursor)",
+        "text": "NAME:((AI OR ИИ) AND (Automation OR Developer OR Engineer OR Specialist OR Manager OR автоматизац* OR разработчик OR инженер OR специалист) NOT (Senior OR Сеньор OR Lead OR Лид OR Тимлид OR QA OR Тестировщик OR DevOps OR Девопс OR ML OR Game OR Gameplay OR CTO OR Data Engineer OR 1С OR Стажер))",
         "area": 53,
         "work_format": ["REMOTE", "HYBRID", "ON_SITE"]
       },
       {
-        "text": "NAME:((AI OR ИИ OR автоматизац*) NOT (Senior OR Сеньор OR Lead OR Лид OR Тимлид OR QA OR Тестировщик OR DevOps OR Девопс OR ML OR Game OR Gameplay)) AND (n8n OR Make OR LangChain OR \"AI-агент\" OR \"LLM API\")",
+        "text": "NAME:((Python OR разработчик OR инженер OR интегратор OR automation OR специалист) NOT (Senior OR Сеньор OR Lead OR Лид OR Тимлид OR QA OR Тестировщик OR DevOps OR Девопс OR ML OR Game OR Gameplay OR CTO OR Data Engineer OR 1С OR Стажер)) AND (n8n OR Make OR LangChain OR \"AI-агент\" OR vibecoding OR Cursor)",
         "area": 53,
         "work_format": ["REMOTE", "HYBRID", "ON_SITE"]
       },
       {
-        "text": "NAME:((Python OR Backend OR FastAPI OR Asyncio) NOT (Senior OR Сеньор OR Lead OR Лид OR Тимлид OR QA OR Тестировщик OR DevOps OR Девопс OR ML OR Game OR Gameplay))",
+        "text": "NAME:((AI OR ИИ OR автоматизац*) NOT (Senior OR Сеньор OR Lead OR Лид OR Тимлид OR QA OR Тестировщик OR DevOps OR Девопс OR ML OR Game OR Gameplay OR CTO OR Data Engineer OR 1С OR Стажер)) AND (n8n OR Make OR LangChain OR \"AI-агент\" OR \"LLM API\")",
         "area": 53,
         "work_format": ["REMOTE", "HYBRID", "ON_SITE"]
       },
       {
-        "text": "NAME:((Automation OR Автоматизация OR LLM OR RAG OR Парсер OR Scraping OR Bot OR Бот) NOT (Senior OR Сеньор OR Lead OR Лид OR Тимлид OR QA OR Тестировщик OR DevOps OR Девопс OR ML OR Game OR Gameplay))",
+        "text": "NAME:((Python OR Backend OR FastAPI OR Asyncio) NOT (Senior OR Сеньор OR Lead OR Лид OR Тимлид OR QA OR Тестировщик OR DevOps OR Девопс OR ML OR Game OR Gameplay OR CTO OR Data Engineer OR 1С OR Стажер))",
         "area": 53,
         "work_format": ["REMOTE", "HYBRID", "ON_SITE"]
       },
       {
-        "text": "(Python OR Backend OR FastAPI) AND (LLM OR RAG OR pgvector OR \"микросервисов\" OR Парсер) NOT NAME:(Senior OR Сеньор OR Lead OR Лид OR Тимлид OR QA OR Тестировщик OR DevOps OR Девопс OR ML OR Game OR Gameplay)",
+        "text": "NAME:((Automation OR Автоматизация OR LLM OR RAG OR Парсер OR Scraping OR Bot OR Бот) NOT (Senior OR Сеньор OR Lead OR Лид OR Тимлид OR QA OR Тестировщик OR DevOps OR Девопс OR ML OR Game OR Gameplay OR CTO OR Data Engineer OR 1С OR Стажер))",
         "area": 53,
         "work_format": ["REMOTE", "HYBRID", "ON_SITE"]
+      },
+      {
+        "text": "(Python OR Backend OR FastAPI) AND (LLM OR RAG OR pgvector OR \"микросервисов\" OR Парсер) NOT NAME:(Senior OR Сеньор OR Lead OR Лид OR Тимлид OR QA OR Тестировщик OR DevOps OR Девопс OR ML OR Game OR Gameplay OR CTO OR Data Engineer OR 1С OR Стажер)",
+        "area": 53,
+        "work_format": ["REMOTE", "HYBRID", "ON_SITE"]
+      }
+    ],
+    "use_pages_limiter": false,
+    "pages": 1
+  },
+  "career.habr.com": {
+    "base_url": "https://career.habr.com/vacancies",
+    "default_params": {
+      "remote": true,
+      "skills": 446,
+      "type": "all"
+    },
+    "params":[
+      {
+        "qid": 1
+      },
+      {
+        "qid": 3
+      },
+      {
+        "qid": 4
+      },
+      {
+        "qid": 1,
+        "locations": "c_707",
+        "remote": ""
+      },
+      {
+        "qid": 3,
+        "locations": "c_707",
+        "remote": ""
+      },
+      {
+        "qid": 4,
+        "locations": "c_707",
+        "remote": ""
       }
     ],
     "use_pages_limiter": false,
