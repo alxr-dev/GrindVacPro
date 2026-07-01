@@ -1,0 +1,25 @@
+# Telegram Vacancy Monitor - Keywords
+# Positive keywords: vacancies will be parsed if message contains any of these
+# Negative keywords: start with '!' - vacancies will be REJECTED if message contains
+
+python
+automation
+автоматизац
+парсинг
+парсить
+
+!django
+!senior
+!сеньор
+!lead
+!team lead
+!teamlead
+!тимлид
+!тим лид
+!qa
+!tester
+!devops
+!java
+!php
+!c#
+!.net

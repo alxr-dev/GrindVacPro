@@ -1,0 +1,17 @@
+# Telegram Vacancy Monitor - Target Channels/Chats
+# One target per line: username (with or without @) or integer ID
+
+# Example public channels:
+@python_jobs
+@pydevjob
+@workayte
+@vakansii_it
+@p_rabota
+@devs_it
+@jobGeeks
+@easy_python_job
+@job_python
+
+# Example private channels (use numeric ID):
+# -1001234567890
+# -1009876543210

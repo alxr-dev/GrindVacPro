@@ -1,18 +1,19 @@
 # GrindVacPro — Development helper commands
 
-.PHONY: help install-dev infra-up infra-down scraper transformer analyzer telegram dashboard
+.PHONY: help install-dev infra-up infra-down scraper transformer analyzer telegram-monitor telegram dashboard
 
 help:
 	@echo "GrindVacPro Development Commands"
 	@echo "=============================="
-	@echo "  make install-dev   - Create .venv and install all dependencies"
-	@echo "  make infra-up      - Start Docker infrastructure (postgres + redis)"
-	@echo "  make infra-down    - Stop Docker infrastructure"
-	@echo "  make scraper       - Run scraper service (PowerShell required)"
-	@echo "  make transformer   - Run transformer arq worker (PowerShell required)"
-	@echo "  make analyzer      - Run analyzer arq worker (PowerShell required)"
-	@echo "  make telegram      - Run telegram bot (PowerShell required)"
-	@echo "  make dashboard     - Run Streamlit dashboard (PowerShell required)"
+	@echo "  make install-dev       - Create .venv and install all dependencies"
+	@echo "  make infra-up          - Start Docker infrastructure (postgres + redis)"
+	@echo "  make infra-down        - Stop Docker infrastructure"
+	@echo "  make scraper           - Run scraper service (PowerShell required)"
+	@echo "  make transformer       - Run transformer arq worker (PowerShell required)"
+	@echo "  make analyzer          - Run analyzer arq worker (PowerShell required)"
+	@echo "  make telegram-monitor  - Run telegram monitor service (PowerShell required)"
+	@echo "  make telegram          - Run telegram bot (PowerShell required)"
+	@echo "  make dashboard         - Run Streamlit dashboard (PowerShell required)"
 
 install-dev:
 	python -m venv .venv
@@ -21,6 +22,7 @@ install-dev:
 	.venv/Scripts/pip install -r services/transformer/requirements.txt
 	.venv/Scripts/pip install -r services/analyzer/requirements.txt
 	.venv/Scripts/pip install -r services/telegram_bot/requirements.txt
+	.venv/Scripts/pip install -r services/telegram_monitor/requirements.txt
 	.venv/Scripts/pip install -r services/dashboard/requirements.txt
 	.venv/Scripts/pip install -r services/scraper/requirements.txt
 	.venv/Scripts/pip install -r shared/requirements.txt
@@ -39,6 +41,9 @@ transformer:
 
 analyzer:
 	PYTHONPATH=. && .venv/Scripts/arq services.analyzer.src.worker.WorkerSettings
+
+telegram-monitor:
+	PYTHONPATH=. && .venv/Scripts/python -m services.telegram_monitor.src.main
 
 telegram:
 	PYTHONPATH=. && .venv/Scripts/python -m services.telegram_bot.src.main

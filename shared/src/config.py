@@ -29,6 +29,9 @@ class Settings(BaseSettings):
     telegram_user_id: int = 0
     ai_score_threshold: int = 50
     similarity_threshold: float = 0.70
+    telethon_api_id: int = 0
+    telethon_api_hash: str = ""
+    telethon_session: str = "services/telegram_monitor/data/session.session"
 
 
 def load_resume(path: str | None = None) -> str:

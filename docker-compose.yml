@@ -130,6 +130,28 @@ services:
       TELEGRAM_USER_ID: ${TELEGRAM_USER_ID:?TELEGRAM_USER_ID is required}
     restart: unless-stopped
 
+  # ── Telegram Monitor — мониторинг каналов с вакансиями ──────────
+  telegram_monitor:
+    profiles: ["app"]
+    build:
+      context: .
+      dockerfile: services/telegram_monitor/Dockerfile
+    container_name: grindvac-telegram-monitor
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: ${DATABASE_URL:?DATABASE_URL is required}
+      REDIS_URL: ${REDIS_URL:?REDIS_URL is required}
+      TELETHON_API_ID: ${TELETHON_API_ID:?TELETHON_API_ID is required}
+      TELETHON_API_HASH: ${TELETHON_API_HASH:?TELETHON_API_HASH is required}
+      TELETHON_SESSION: /app/data/session
+    volumes:
+      - ./services/telegram_monitor/data:/app/data:rw
+    restart: unless-stopped
+
   # ── Dashboard — визуализация (Streamlit) ────────────────────────
   dashboard:
     profiles: ["app"]

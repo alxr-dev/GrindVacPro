@@ -49,7 +49,11 @@ htmlcov/
 .coverage
 coverage.xml
 
-
 # ── Технические MD ──────────────────────────────────────────────
 AGENTS.md
 CONTEXT.md
+
+# ── Секреты ─────────────────────────────────────────────────────
+*.session
+*.session-journal
+*.session_journal
