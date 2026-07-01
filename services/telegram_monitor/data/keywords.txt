@@ -8,6 +8,8 @@ automation
 парсинг
 парсить
 
+!#resume
+!#cv
 !django
 !senior
 !сеньор

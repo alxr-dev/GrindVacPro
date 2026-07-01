@@ -116,7 +116,10 @@ async def _analyze_vacancy_impl(ctx: dict[str, Any], vacancy_id: int) -> None:
                     },
                 ],
                 response_format={"type": "json_object"},
-                # max_tokens=1024,
+                extra_body={
+                    "include_reasoning": False,
+                    "reasoning": {"type": "none"} 
+                },
                 temperature=0,
             )
             # Validate response structure before accessing
