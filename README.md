@@ -22,7 +22,7 @@
 
 * **Бизнес-эффект:** Система работает автономно в режиме 24/7 и легко расширяется. Если потребуется подключить новый источник данных, это делается за пару часов без остановки и пересборки остальных модулей.
 * **Как реализовано технически:** 
-  * Проект разделен на 4 независимых асинхронных микросервиса (Scraper, Transformer, Analyzer, Telegram Bot), изолированных в Docker-контейнерах.
+  * Проект разделен на 5 независимых асинхронных микросервисов (Telegram Monitor, Scraper, Transformer, Analyzer, Telegram Bot), изолированных в Docker-контейнерах.
   * Обмен данными и управление распределенными задачами организованы через очереди в Redis 7 с помощью легковесного воркера `arq`. 
   * Нагрузка четко разграничена: CPU-bound задачи (эмбеддинги) изолированы в одном воркере, а Network I/O (запросы к API и парсинг) параллельно обрабатываются в других.
 </details>
@@ -52,33 +52,34 @@
 
 ```
 ┌─────────────┐     ┌──────────────┐     ┌────────────┐     ┌──────────────────┐     ┌──────────────────┐
-│   Scraper   │────>│  Transformer │────>│  Analyzer  │────>│  Telegram Bot    │     │     Dashboard    │
-│ (curl_cffi) │     │ (arq, CPU×1) │     │(arq, IO×10)│     │(aiogram 3 + arq) │     │  (Streamlit)     │
-└──────┬──────┘     └──────┬───────┘     └─────┬──────┘     └──────────────────┘     └──────────────────┘
-       │                   │                   │
-       ▼                   ▼                   ▼
-┌──────────────────────────────────────────────────────┐
-│              PostgreSQL 18 + pgvector                │
-│    vacancies │ vacancy_links │ HNSW-индекс (312-dim) │
-└──────────────────────────────────────────────────────┘
-                           ▲
-                           │
-                    ┌──────┴───────┐
-                    │   Redis 7    │
-                    │   (arq)      │
-                    │  html_queue  │
-                    │  ai_queue    │
-                    │telegram_queue│
-                    └──────────────┘
+│ Telegram    │────>│   Scraper    │────>│ Transformer│────>│    Analyzer      │────>│   Telegram Bot   │
+│ Monitor     │     │ (curl_cffi)  │     │(arq, CPU×1)│     │ (arq, IO×10)     │     │ (aiogram 3 + arq)│
+│(Telethon)   │     └──────┬───────┘     └─────┬──────┘     └──────────────────┘     └──────────────────┘
+└─────────────┘            │                   │
+                           ▼                   ▼
+                  ┌──────────────────────────────────────────────────────┐
+                  │              PostgreSQL 18 + pgvector                │
+                  │    vacancies │ vacancy_links │ HNSW-индекс (312-dim) │
+                  └──────────────────────────────────────────────────────┘
+                                         ▲
+                                         │
+                                  ┌──────┴───────┐
+                                  │   Redis 7    │
+                                  │   (arq)      │
+                                  │  html_queue  │
+                                  │  ai_queue    │
+                                  │telegram_queue│
+                                  └──────────────┘
 ```
 
 ### Пайплайн обработки
 
-1. **Scraper** → собирает URL из поисковой выдачи (`search_queries.json`), скачивает HTML-страницы, парсит через CSS-селекторы из `selectors.json`, сохраняет в `vacancies` + `vacancy_links`, ставит задачу в `html_queue`. Rate limit: ≤5 запросов за 6 секунд.
-2. **Transformer** (arq, `max_jobs=1`) → HTML→Markdown (MarkItDown), SHA-256 дедупликация, чанкинг (1200 символов, overlap=2), cosine similarity с резюме через rubert-tiny2, порог настраивается через `SIMILARITY_THRESHOLD` (по умолчанию 0.70), сохраняет вектор лучшего чанка в `vacancies.embedding`, ставит задачу в `ai_queue`.
-3. **Analyzer** (arq, `max_jobs=10`) → отправляет Markdown в LLM (AsyncOpenAI), получает структурированный JSON (`score`, `pros`, `cons`, `cover_letter`), сохраняет в `vacancies.ai_analysis`. Если `score >= AI_SCORE_THRESHOLD` (по умолчанию 50), ставит задачу в `telegram_queue`; иначе пропускает уведомление.
-4. **Telegram Bot** → единый процесс: `aiogram 3` (polling) + `arq` (воркер). Stateless inline-кнопки, двухэтапное подтверждение (карточка → действие → причина). По завершении сохраняет `status` (`accepted`/`declined`) и `notes` (причина) в БД.
-5. **Dashboard** → Streamlit-приложение в контейнере. Читает данные из PostgreSQL (vacancies, vacancy_links), отображает KPI, графики и таблицы. Read-only, без изменения данных.
+1. **Telegram Monitor** (Telethon) → парсит сообщения из TG каналов/чатов за последние 2 дня + онлайн, создаёт `vacancy_links` (`platform='tg'`, `status='new'`), создаёт `vacancies` с `company_name=chat_title`, ставит задачу в `html_queue`.
+2. **Scraper** → собирает URL из поисковой выдачи (`search_queries.json`), скачивает HTML-страницы, парсит через CSS-селекторы из `selectors.json`, сохраняет в `vacancies` + `vacancy_links`, ставит задачу в `html_queue`. Rate limit: ≤5 запросов за 6 секунд.
+3. **Transformer** (arq, `max_jobs=1`) → HTML→Markdown (MarkItDown), SHA-256 дедупликация, чанкинг (1200 символов, overlap=2), cosine similarity с резюме через rubert-tiny2, порог настраивается через `SIMILARITY_THRESHOLD` (по умолчанию 0.70), сохраняет вектор лучшего чанка в `vacancies.embedding`, ставит задачу в `ai_queue`.
+4. **Analyzer** (arq, `max_jobs=10`) → отправляет Markdown в LLM (AsyncOpenAI), получает структурированный JSON (`score`, `pros`, `cons`, `cover_letter`), сохраняет в `vacancies.ai_analysis`. Если `score >= AI_SCORE_THRESHOLD` (по умолчанию 50), ставит задачу в `telegram_queue`; иначе пропускает уведомление.
+5. **Telegram Bot** → единый процесс: `aiogram 3` (polling) + `arq` (воркер). Stateless inline-кнопки, двухэтапное подтверждение (карточка → действие → причина). По завершении сохраняет `status` (`accepted`/`declined`) и `notes` (причина) в БД.
+6. **Dashboard** → Streamlit-приложение в контейнере. Читает данные из PostgreSQL (vacancies, vacancy_links), отображает KPI, графики и таблицы. Read-only, без изменения данных.
 
 ### Статусы ссылок (`vacancy_links.status`)
 
@@ -94,18 +95,19 @@
 
 ## 🛠️ Стек
 
-| Компонент       | Технология                              |
-|-----------------|-----------------------------------------|
-| Язык            | Python 3.12 (строгая асинхронность)     |
-| HTTP-клиент     | `curl_cffi` (TLS/JA3 bypass)            |
-| БД              | PostgreSQL 18 + pgvector                |
-| Очереди         | Redis 7 + arq                           |
-| ML (embedding)  | `SentenceTransformer('rubert-tiny2')`   |
-| HTML→Markdown   | Microsoft MarkItDown                    |
-| LLM             | OpenAI API (AsyncOpenAI)                |
-| Telegram        | `aiogram 3.x`                           |
-| Конфигурация    | pydantic-settings v2                    |
-| Containerize    | Docker Compose                          |
+| Компонент              | Технология                              |
+|------------------------|-----------------------------------------|
+| Язык                   | Python 3.12 (строгая асинхронность)     |
+| Telegram Monitor       | `telethon` (мониторинг каналов)          |
+| HTTP-клиент            | `curl_cffi` (TLS/JA3 bypass)            |
+| БД                     | PostgreSQL 18 + pgvector                |
+| Очереди                | Redis 7 + arq                           |
+| ML (embedding)         | `SentenceTransformer('rubert-tiny2')`   |
+| HTML→Markdown          | Microsoft MarkItDown                    |
+| LLM                    | OpenAI API (AsyncOpenAI)                |
+| Telegram               | `aiogram 3.x`                           |
+| Конфигурация           | pydantic-settings v2                    |
+| Containerize           | Docker Compose                          |
 
 ## 📂 Структура проекта
 
@@ -143,6 +145,20 @@ GrindVacPro/
     │       ├── search.py            # Сбор URL
     │       └── pipeline.py          # Скачивание + парсинг
     │
+    ├── telegram_monitor/            # Мониторинг TG каналов (Network I/O)
+    │   ├── Dockerfile
+    │   ├── requirements.txt
+    │   ├── AGENTS.md
+    │   ├── data/
+    │   │   ├── keywords.txt         # Ключевые слова (+/-) для фильтрации
+    │   │   └── monitoring_targets.txt # Каналы/чаты/группы для мониторинга
+    │   └── src/
+    │       ├── __init__.py
+    │       ├── client.py            # Telethon singleton
+    │       ├── parser.py            # Исторический парсинг + онлайн
+    │       ├── storage.py           # Сохранение в БД + enqueue
+    │       └── main.py              # Точка входа
+    │
     ├── transformer/                 # Фильтрация (CPU-bound)
     │   ├── Dockerfile
     │   ├── requirements.txt
@@ -157,16 +173,16 @@ GrindVacPro/
     │       ├── worker.py            # arq-воркер (max_jobs=10)
     │       └── prompts.py           # Системный промпт
     │
-    └── telegram_bot/                # Telegram-уведомления (aiogram 3 + arq)
-        ├── Dockerfile
-        ├── requirements.txt
-        └── src/
-            ├── main.py              # aiogram polling + arq worker
-            ├── worker.py            # send_vacancy_notification
-            ├── callbacks.py         # Stateless callback router
-            ├── keyboards.py         # Inline keyboard builders
-            └── messages.py          # Форматирование карточек
-
+    ├── telegram_bot/                # Telegram-уведомления (aiogram 3 + arq)
+    │   ├── Dockerfile
+    │   ├── requirements.txt
+    │   └── src/
+    │       ├── main.py              # aiogram polling + arq worker
+    │       ├── worker.py            # send_vacancy_notification
+    │       ├── callbacks.py         # Stateless callback router
+    │       ├── keyboards.py         # Inline keyboard builders
+    │       └── messages.py          # Форматирование карточек
+    │
     └── dashboard/                   # Визуализация (Streamlit)
         ├── Dockerfile
         ├── requirements.txt
@@ -198,6 +214,7 @@ docker compose up -d --build
 Это поднимет:
 - `postgres:5432` — PostgreSQL 18 + pgvector
 - `redis:6379` — Redis 7
+- `grindvac-telegram-monitor` — мониторинг Telegram-каналов
 - `grindvac-scraper` — сбор и парсинг данных
 - `grindvac-transformer` — CPU-bound фильтрация
 - `grindvac-analyzer` — LLM-анализ
@@ -208,6 +225,7 @@ docker compose up -d --build
 
 ```bash
 # Логи
+docker compose logs -f telegram_monitor
 docker compose logs -f scraper
 docker compose logs -f transformer
 docker compose logs -f analyzer
@@ -216,12 +234,6 @@ docker compose logs -f dashboard
 
 # Статус контейнеров
 docker compose ps
-```
-
-### 4. Подключение к БД
-
-```bash
-docker exec -it grindvac-postgres psql -U grindvac -d grindvac
 ```
 
 ## Конфигурация (.env)
@@ -240,6 +252,9 @@ docker exec -it grindvac-postgres psql -U grindvac -d grindvac
 | `SIMILARITY_THRESHOLD`  | Минимальное cosine similarity для фильтрации     | `0.70`                               |
 | `TELEGRAM_BOT_TOKEN`    | Token Telegram-бота                              | *(обязательно для telegram_bot)      |
 | `TELEGRAM_USER_ID`      | ID пользователя, который может управлять ботом   | *(обязательно для telegram_bot)      |
+| `TELETHON_API_ID`       | Telegram API ID для мониторинга каналов          | *(обязательно для telegram_monitor)  |
+| `TELETHON_API_HASH`     | Telegram API Hash для мониторинга каналов        | *(обязательно для telegram_monitor)  |
+| `TELETHON_SESSION`      | Путь к файлу сессии Telethon                     | `services/telegram_monitor/data/session` |
 
 ## Rate Limiting
 
@@ -250,15 +265,28 @@ Scraper ограничен **5 запросов за 6 секунд**: `await as
 - **По URL**: нормализация (stripping query-параметров и фрагментов) → `UNIQUE(vacancy_links.url)` + `ON CONFLICT DO NOTHING`
 - **По контенту**: SHA-256 от Markdown-текста вакансии → `UNIQUE(vacancies.content_hash)`. Дубликаты перепривязываются к существующей вакансии, ссылка получает статус `rejected`.
 
-## Telegram Bot
+## 📱 Telegram-инфраструктура
 
-Сервис работает в одном процессе: `aiogram 3` polling (background task) + `arq` worker (main task). Логика управления полностью stateless — состояние передаётся через `callback_data` (`vac:{id}:{action}:{idx?}`), без FSM. Flow:
+### Telegram Monitor
+Автономный сервис на `telethon`, который следит за подписанными каналами/чатами и загружает вакансии в общий пайплайн.
 
-1. **Карточка вакансии** (`show`) — заголовок, компания, score, pros/cons, cover_letter в `<code>`-теге, кнопки `[❌ Отказался]` / `[✔️ Откликнулся]`
-2. **Подтверждение** (`ca`/`cr`) — промежуточный экран «Вы уверены?» с кнопками `[Подтвердить]` / `[Назад]`
-3. **Причина** (`pa`/`pr` → `ra`/`rd`) — выбор причины из фиксированного списка; статус и причина сохраняются в БД
+- **Исторический парсинг**: при старте сканирует сообщения за сегодня и вчера.
+- **Онлайн-мониторинг**: слушает новые сообщения через `events.NewMessage`.
+- **Фильтрация**: поддерживает положительные и отрицательные ключевые слова (`!django` исключает).
+- **Формирование ссылок**: публичные через `t.me/{username}/{id}`, приватные через `t.me/c/{chat_id}/{id}`.
+- **Интеграция**: создаёт `vacancy_links` с `platform='tg'`, ставит задачи в `html_queue`.
 
-При отправке карточки кнопка `reply_markup` прикрепляется к сообщению, чтобы пользователь мог вернуться к карточке. После сохранения причины клавиатура скрывается.
+Конфиги лежат в `services/telegram_monitor/data/`:
+- `keywords.txt` — ключевые слова
+- `monitoring_targets.txt` — список каналов/чатов
+- Сессия Telethon сохраняется в том же каталоге (`session.session`, `session.session-journal`).
+
+### Telegram Bot
+Интерактивный интерфейс управления откликами через `aiogram 3` + `arq`.
+
+- Единый процесс: polling + воркер.
+- Stateless inline-кнопки без FSM.
+- Двухэтапное подтверждение: карточка → действие → причина.
 
 ## Добавление новых платформ
 
