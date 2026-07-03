@@ -1,5 +1,19 @@
 # GrindVacPro
 
+<table width="100%">
+  <tr>
+    <td width="33.3%" align="center">
+      <video src="https://github.com/user-attachments/assets/63ad10a2-d20d-40cf-b175-75b90623d76c" autoplay loop muted playsinline width="100%"></video>
+    </td>
+    <td width="33.3%" align="center">
+      <video src="https://github.com/user-attachments/assets/5b0a3b79-bc90-4ab9-b947-f4b392270341" autoplay loop muted playsinline width="100%"></video>
+    </td>
+    <td width="33.3%" align="center">
+      <video src="https://github.com/user-attachments/assets/6f5779ea-0c27-4c24-b5be-b1e14b4506d8" autoplay loop muted playsinline width="100%"></video>
+    </td>
+  </tr>
+</table>
+
 **GrindVacPro** — асинхронная система автоматизации поиска вакансий. Собирает вакансии с платформ (hh.ru, career.habr.com), фильтрует по семантическому сходству с резюме через локальную ML-модель (rubert-tiny2), анализирует подходящие вакансии через LLM и отправляет карточки в Telegram.
 
 ---
