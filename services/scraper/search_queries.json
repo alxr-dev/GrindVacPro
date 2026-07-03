@@ -11,7 +11,7 @@
     },
     "params": [
       {
-        "text": "NAME:((Junior OR Джуниор) AND (Python OR Phyton) NOT (Senior OR Сеньор OR Lead OR Лид OR Тимлид OR QA OR Тестировщик OR DevOps OR Девопс OR ML OR Game OR Gameplay OR CTO OR Data Engineer OR 1С OR Стажер))"
+        "text": "NAME:((Python OR Phyton) AND ((Junior OR Джуниор) OR (Developer OR Разработчик)) NOT (Senior OR Сеньор OR Lead OR Лид OR Тимлид OR QA OR Тестировщик OR DevOps OR Девопс OR ML OR Game OR Gameplay OR CTO OR Data Engineer OR 1С OR Стажер))"
       },
       {
         "text": "NAME:((Python OR автоматизац*) NOT (Senior OR Сеньор OR Lead OR Лид OR Тимлид OR QA OR Тестировщик OR DevOps OR Девопс OR ML OR Game OR Gameplay OR CTO OR Data Engineer OR 1С OR Стажер))"
