@@ -3,10 +3,10 @@
 <table width="100%">
   <tr>
     <td width="33.3%" align="center">
-      <img width="1280" height="720" alt="vacancy alert" src="https://github.com/user-attachments/assets/ad3654ab-8c63-4123-badd-efc3f8018903" />
+      <img width="854" height="480" alt="vacancy alert" src="https://github.com/user-attachments/assets/4d52ad14-ab15-4731-9d29-075dce6a43a5" />
     </td>
     <td width="33.3%" align="center">
-      <img width="854" height="480" alt="telegram log" src="https://github.com/user-attachments/assets/242502ea-54b4-4f4e-829a-324c67a8413b" />
+      <img width="854" height="480" alt="telegram log" src="https://github.com/user-attachments/assets/d7465313-591b-4529-bf02-2633ec8b6ab8" />
     </td>
     <td width="33.3%" align="center">
       <img width="640" height="450" alt="dashboard" src="https://github.com/user-attachments/assets/f17802e6-0de0-4974-8d51-6f2830391adf" />
